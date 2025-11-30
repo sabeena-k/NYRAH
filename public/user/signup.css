@@ -1,0 +1,151 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background: #fff;
+    min-height: 100vh;
+}
+
+/* MAIN CONTAINER WITH BACKGROUND IMAGE */
+.container {
+    display: flex;
+    justify-content:right  ;
+    align-items: center;
+    width: 100%;
+    min-height: 40vh;
+    background-image: url('/images/sup.webp');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    padding: 10px;
+}
+
+/* FORM SECTION */
+.right-side {
+    flex: 1 1 0;        /* Allows form to grow */
+    max-width: 900px;   /* Limit max width on very large screens */
+    display: flex;
+    justify-content:center;
+}
+
+.form-box {
+    background: transparent;
+    padding: 30px 20px;
+    border-radius: 12px;
+    width: 400px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+}
+
+.form-box h2 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #b10000;
+    font-size: 32px;
+    letter-spacing: 1px;
+}
+
+/* INPUT FIELDS */
+.form-box input {
+    width: 100%;
+    margin: 12px 0;
+    padding: 14px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+}
+
+/* POLICY CHECKBOX */
+.policy {
+    display: flex;
+    align-items: center;
+    font-size: 13px;
+    margin: 8px 0;
+}
+.custom-alert {
+    color: #b30000;           
+    background-color: #ffcccc; 
+    padding: 10px;
+    border-radius: 6px;
+    width: 70%;
+    text-align: center;
+    margin-left: 50px;
+}
+
+/* SIGNUP / LOGIN BUTTON */
+.signup-btn {
+    width: 100%;
+    padding: 14px;
+    background: #e60000;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.signup-btn:hover {
+    background: #c10000;
+}
+
+/* LOGIN TEXT */
+.login-text {
+    text-align: center;
+    margin: 15px 0;
+}
+
+.login-text a {
+    color: #0056ff;
+    text-decoration: none;
+}
+
+/* SOCIAL ICONS */
+.social-icons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.social-icons img {
+    width: 28px;
+    height: 28px;
+    cursor: pointer;
+}
+
+/* ERROR MESSAGES */
+.error-message {
+    color: #a20202;
+    font-size: 16px;
+    display: none;
+}
+
+/* ---------------- TABLET ---------------- */
+@media (max-width: 1000px) {
+    .right-side {
+        max-width: 80%; /* Slightly smaller on tablet */
+    }
+
+    .form-box {
+        padding: 40px 25px;
+    }
+}
+
+/* ---------------- MOBILE ---------------- */
+@media (max-width: 600px) {
+    .right-side {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .form-box {
+        padding: 30px 20px;
+    }
+
+    .form-box h2 {
+        font-size: 26px;
+    }
+}

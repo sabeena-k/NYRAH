@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" href="/user/signin.css" />
+<title> NYRAH Login</title>
+</head>
+<body>
+
+<div class="outer-box">
+    <div class="login-container">
+    
+
+        
+        <div class="left-box">
+             <div id="successMsg" class="success-message"></div>
+            <h2 class="logo">NYRAH</h2>
+
+            <div class="center-box">
+               
+
+    <a href="/auth/google" class="google-btn">
+        <img src="https://img.icons8.com/color/48/google-logo.png" />
+        <span>Login with Google</span>
+    </a>
+              </div>
+
+                
+                
+
+            <p class="or">or</p>
+              <form id="loginForm" method="POST" action="/signin">
+    <input class="input"type="email" name="email" placeholder="Email">
+    <input class="input"type="password" name="password" placeholder="Password">
+    
+    <div id="error2" class="error-message"></div>
+
+    <% if (locals.message && message.length > 0) { %>
+        <div class="custom-alert">
+            <%= message %>
+        </div>
+    <% } %>
+
+    <button type="submit" class="login-btn">Login</button>
+
+    <p class="forgot">Forget password ?</p>
+
+    <div class="bottom-link">
+        <span>New user</span> <a href="/signup">Sign up</a>
+    </div>
+</form>
+
+        </div>
+        <div class="right-box">
+            <img src="images/pink.webp" alt="login image">
+        </div>
+
+    </div>
+</div>
+
+</body>
+<script>
+    const params = new URLSearchParams(window.location.search);
+
+    if (params.get("msg") === "account_created") {
+        const box = document.getElementById("successMsg");
+        box.textContent = "Account created successfully!";
+
+        
+        document.addEventListener("click", () => {
+            box.style.display = "none";
+        }, { once: true });  
+    }
+</script>
+
+
+</html>

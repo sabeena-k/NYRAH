@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NYRAH Login</title>
+<style>
+
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #fdd6e0, #f8b3c6);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Center box */
+.login-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+}
+
+.login-box {
+    background: rgba(255,255,255,0.7);
+    backdrop-filter: blur(10px);
+    padding: 40px 35px;
+    border-radius: 20px;
+    max-width: 450px;
+    width: 100%;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+
+.brand {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #c01832;
+}
+
+.tagline {
+    margin-top: -10px;
+    margin-bottom: 30px;
+    font-size: 14px;
+    color: #444;
+}
+
+/* Inputs */
+.input-group {
+    text-align: left;
+    margin-bottom: 15px;
+}
+
+.input-group label {
+    font-size: 14px;
+    color: #333;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #999;
+    border-radius: 8px;
+    margin-top: 5px;
+    outline: none;
+    font-size: 15px;
+}
+
+/* Password wrapper */
+.password-wrapper {
+    display: flex;
+    align-items: center;
+}
+
+.password-wrapper input {
+    flex: 1;
+}
+
+.eye {
+    margin-left: -30px;
+    cursor: pointer;
+    font-size: 18px;
+    color: #555;
+}
+
+/* Forgot password */
+.forgot {
+    text-align: right;
+    margin-bottom: 20px;
+}
+
+.forgot a {
+    color: #333;
+    text-decoration: none;
+    font-size: 13px;
+}
+
+.forgot a:hover {
+    text-decoration: underline;
+}
+
+/* Button */
+.login-btn {
+    width: 100%;
+    padding: 12px;
+    background: #ff6f77;
+    border: none;
+    color: white;
+    font-size: 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.login-btn:hover {
+    background: #ff4c56;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .login-box {
+        padding: 25px 20px;
+    }
+
+    .brand {
+        font-size: 1.7rem;
+    }
+}
+</style>
+</head>
+<body>
+
+<div class="login-container">
+    <div class="login-box">
+        <h1 class="brand">NYRAH</h1>
+        <p class="tagline">Little styles, Big smiles</p>
+
+        <!-- MESSAGE (Login error) -->
+        <% if (message) { %>
+            <p style="color:red; text-align:center;"><%= message %></p>
+        <% } %>
+
+        <!-- LOGIN FORM -->
+        <form action="/admin/login" method="POST">
+            
+            <div class="input-group">
+                <label>Email Address</label>
+                <input type="email" name="email" placeholder="Enter Email" required>
+            </div>
+
+            <div class="input-group">
+                <label>Password</label>
+                <div class="password-wrapper">
+                    <input type="password" name="password" placeholder="Enter Password" required>
+                    <span class="eye">👁️</span>
+                </div>
+            </div>
+
+            <div class="forgot">
+                <a href="#">Forgot Password?</a>
+            </div>
+
+            <button type="submit" class="login-btn">Login</button>
+        </form>
+
+    </div>
+</div>
+
+</body>
+</html>

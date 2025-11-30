@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NYRAH Admin – Categories</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<style>
+/* --- Your Original CSS --- */
+* { 
+    margin: 0; 
+    padding: 0;
+     box-sizing: border-box;
+      font-family: Arial, sans-serif;
+     }
+body {
+     background: #ffe6ec;
+     }
+.container {
+     display: flex; 
+     min-height: 100vh;
+     }
+.sidebar {
+     width: 220px;
+      background: #fff; 
+      padding: 20px 15px; 
+      box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+       display: flex;
+        flex-direction: column;
+     }
+.sidebar h1 { color: #c8102e;
+     margin-bottom: 30px;
+     }
+.sidebar a {
+     text-decoration: none;
+      color: #333;
+       padding: 10px 5px;
+        display: flex;
+         align-items: center;
+          border-radius: 5px;
+           margin-bottom: 5px; 
+           transition: background 0.3s;
+         }
+.sidebar a:hover, .sidebar a.active {
+     background: #ff8c81; 
+     color: #fff; }
+.sidebar i {
+     margin-right: 10px;
+     }
+.main {
+     flex: 1; 
+     padding: 20px;
+      overflow-x: auto;
+     }
+.main h2 { 
+    text-align: center; 
+    margin-bottom: 20px;
+     color: #000;
+     }
+.search-bar 
+{ display: flex; 
+    justify-content: flex-end;
+     margin-bottom: 20px;
+     }
+.search-bar input {
+    padding: 5px 10px; 
+    border-radius: 20px;
+     border: 1px solid #ccc;
+      width: 200px;
+     }
+table {
+     width: 100%;
+      border-collapse: collapse; 
+      margin-bottom: 20px;
+       background: #fff; 
+       border-radius: 10px;
+        overflow: hidden;
+         box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+         }
+th, td {
+     padding: 12px 10px;
+      text-align: left; 
+      border-bottom: 1px solid #eee;
+     }
+th { 
+    background: #f8f8f8; 
+}
+td button {
+     border: none;
+      padding: 5px 10px;
+       margin-left: 5px;
+        border-radius: 5px;
+         cursor: pointer;
+          color: #fff;
+         }
+td button.edit { 
+    background: #ff8c81; 
+}
+td button.delete { 
+    background: #333; 
+}
+.add-btn {
+     display: block; 
+     text-align: right;
+      margin-top: 5px; 
+    }
+.add-btn button {
+     padding: 5px 10px;
+      border: none;
+       border-radius: 5px;
+        background: #333;
+         color: #fff;
+          cursor: pointer; 
+        }
+footer { 
+    text-align: center; 
+    margin-top: 20px;
+     color: #777; 
+     font-size: 12px; 
+    }
+@media (max-width: 768px){ 
+    .container{
+        flex-direction:column;
+    } .sidebar{
+        width:100%;
+        flex-direction:row;
+        overflow-x:auto;
+    
+    } .sidebar a{
+        flex:1;
+        justify-content:center;
+        margin:0 5px;
+        padding:10px 0;
+    } 
+    .main{
+        
+        padding:10px;
+    } 
+    table, th, td{
+        font-size:14px;
+    } }
+th.action-col, 
+td.action-cell {
+     width: 130px; 
+     text-align: center;
+      white-space: nowrap; }
+td.action-cell {
+     display: flex; 
+     justify-content: center;
+      gap: 8px; }
+
+#modal {
+     display:none;
+      position:fixed;
+       top:0; left:0; 
+       width:100%;
+        height:100%; 
+        background:rgba(0,0,0,0.5);
+         justify-content:center; 
+         align-items:center; }
+#modal-content { 
+    background:#fff;
+     padding:20px; 
+     border-radius:10px; 
+     width:300px; 
+     position:relative; }
+#modal input { 
+    width:100%;
+     padding:5px; 
+     margin-bottom:10px;
+     }
+#modal button { 
+    padding:5px 10px;
+     margin-right:5px;
+      cursor:pointer;
+       }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <div class="sidebar">
+        <h1>NYRAH</h1>
+        <a href="/admin/#" class="active"><i class="bi bi-speedometer2"></i> Dashboard</a>
+        <a href="#"><i class="bi bi-bag"></i> Orders</a>
+        <a href="#"><i class="bi bi-box-seam"></i> Products</a>
+        <a href="#"><i class="bi bi-graph-up"></i> Sales report</a>
+        <a href="/admin/customers"><i class="bi bi-people"></i> Customer</a>
+        <a href="#"><i class="bi bi-ticket-perforated"></i> Coupon</a>
+        <a href="/admin/category"><i class="bi bi-grid"></i> Category</a>
+        <a href="#"><i class="bi bi-arrow-counterclockwise"></i> Refund/Return</a>
+        <a href="#"><i class="bi bi-image"></i> Banners</a>
+        <a href="#"><i class="bi bi-box-arrow-right"></i> Sign Out</a>
+    </div>
+
+    <div class="main">
+        <div class="search-bar"><input type="text" placeholder="Search here..."></div>
+        <h2>Categories</h2>
+<table id="table-product">
+  <thead>
+    <tr><th>Name</th><th>Stock</th><th>Action</th></tr>
+  </thead>
+  <tbody>
+    <% categories.forEach(cat => { %>
+      <% if(cat.type === "productType"){ %>
+        <tr>
+          <td><%= cat.name %></td>
+          <td><%= cat.stock %></td>
+          <td>
+            <button class="edit" data-id="<%= cat._id %>" data-name="<%= cat.name %>" data-stock="<%= cat.stock %>">Edit</button>
+            <button class="delete" data-id="<%= cat._id %>">Delete</button>
+          </td>
+        </tr>
+      <% } %>
+    <% }) %>
+  </tbody>
+</table>
+<div class="add-btn">
+  <button data-table="table-product">Add Product Type</button>
+</div><br>
+<table id="table-brand">
+  <thead>
+    <tr><th>Name</th><th>Stock</th><th>Action</th></tr>
+  </thead>
+  <tbody>
+    <% categories.forEach(cat => { %>
+      <% if(cat.type === "brand"){ %>
+        <tr>
+          <td><%= cat.name %></td>
+          <td><%= cat.stock %></td>
+          <td>
+            <button class="edit" data-id="<%= cat._id %>" data-name="<%= cat.name %>" data-stock="<%= cat.stock %>">Edit</button>
+            <button class="delete" data-id="<%= cat._id %>">Delete</button>
+          </td>
+        </tr>
+      <% } %>
+    <% }) %>
+  </tbody>
+</table>
+<div class="add-btn">
+  <button data-table="table-brand">Add Brand</button>
+</div><br>
+<table id="table-size">
+  <thead>
+    <tr><th>Name</th><th>Stock</th><th>Action</th></tr>
+  </thead>
+  <tbody>
+    <% categories.forEach(cat => { %>
+      <% if(cat.type === "size"){ %>
+        <tr>
+          <td><%= cat.name %></td>
+          <td><%= cat.stock %></td>
+          <td>
+            <button class="edit" data-id="<%= cat._id %>" data-name="<%= cat.name %>" data-stock="<%= cat.stock %>">Edit</button>
+            <button class="delete" data-id="<%= cat._id %>">Delete</button>
+          </td>
+        </tr>
+      <% } %>
+    <% }) %>
+  </tbody>
+</table>
+<div class="add-btn">
+  <button data-table="table-size">Add Size</button>
+</div><br>
+<table id="table-color">
+  <thead>
+    <tr><th>Name</th><th>Stock</th><th>Action</th></tr>
+  </thead>
+  <tbody>
+    <% categories.forEach(cat => { %>
+      <% if(cat.type === "color"){ %>
+        <tr>
+          <td><%= cat.name %></td>
+          <td><%= cat.stock %></td>
+          <td>
+            <button class="edit" data-id="<%= cat._id %>" data-name="<%= cat.name %>" data-stock="<%= cat.stock %>">Edit</button>
+            <button class="delete" data-id="<%= cat._id %>">Delete</button>
+          </td>
+        </tr>
+      <% } %>
+    <% }) %>
+  </tbody>
+</table>
+<div class="add-btn">
+  <button data-table="table-color">Add Color</button>
+</div>
+<div id="modal">
+    <div id="modal-content">
+        <h3 id="modal-title">Add Item</h3>
+        <input type="text" id="modal-name" placeholder="Name">
+        <input type="number" id="modal-stock" placeholder="Stock">
+        <button id="modal-save">Save</button>
+        <button id="modal-cancel">Cancel</button>
+    </div>
+</div>
+
+<script>
+let currentType = ""; 
+let editId = null;
+const map = {
+    "table-product": "productType",
+    "table-brand": "brand",
+    "table-size": "size",
+    "table-color": "color"
+};
+document.querySelectorAll('.add-btn button').forEach(btn => {
+    btn.addEventListener('click', () => {
+        currentType = map[btn.dataset.table];
+        editId = null;
+
+        document.getElementById("modal-title").innerText = "Add Item";
+        document.getElementById("modal-name").value = "";
+        document.getElementById("modal-stock").value = "";
+
+        document.getElementById("modal").style.display = "flex";
+    });
+});
+document.getElementById('modal-cancel').addEventListener('click', () => {
+    document.getElementById('modal').style.display = 'none';
+});
+document.getElementById('modal-save').addEventListener('click', async () => {
+    const name = document.getElementById("modal-name").value.trim();
+    const stock = document.getElementById("modal-stock").value.trim();
+
+    if (!name || !stock) {
+        Swal.fire("Error", "Enter name & stock", "error");
+        return;
+    }
+    let url = "/admin/category/add";
+    let bodyData = { type: currentType, name, stock };
+    if (editId) {
+        url = "/admin/category/edit";
+        bodyData.id = editId;
+    }
+
+    const response = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(bodyData)
+    });
+    const result = await response.json();
+
+    if (result.success) {
+        Swal.fire("Success", editId ? "Updated!" : "Added!", "success").then(() => {
+            location.reload();
+        });
+    } else {
+        Swal.fire("Error", result.msg || "Something went wrong", "error");
+    }
+});
+document.querySelectorAll('.edit').forEach(btn => {
+    btn.addEventListener('click', () => {
+        editId = btn.dataset.id;
+        currentType = "productType";
+        document.getElementById("modal-title").innerText = "Edit Item";
+        document.getElementById("modal-name").value = btn.dataset.name;
+        document.getElementById("modal-stock").value = btn.dataset.stock;
+        document.getElementById("modal").style.display = "flex";
+    });
+});
+document.querySelectorAll('.delete').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const id = btn.dataset.id;
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "This will delete the category!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete it!'
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                const res = await fetch("/admin/category/delete", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ id })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    Swal.fire('Deleted!', 'Category has been deleted.', 'success').then(() => location.reload());
+                } else {
+                    Swal.fire("Error", data.msg || "Something went wrong", "error");
+                }
+            }
+        })
+    });
+});
+</script>
+
+
+</body>
+</html>
