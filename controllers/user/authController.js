@@ -196,7 +196,94 @@ const handleLogout = (req, res) => {
         res.redirect('/signin'); 
     });
 };
+const loadForgotPassword = async (req, res) => {
+    try {
+        res.render("user/forgot-password", { error: null });
+    } catch (err) {
+        res.send("Error loading forgot page");
+    }
+};
+const sendOtp =async (req, res) => {
+    try {
+        const { email } = req.body;
 
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            return res.render("user/forgot-password", { error: "Email not found" });
+        }
+
+        const otp = generateOtp();
+
+        user.resetOtp = otp;
+        user.otpExpire = Date.now() + 5 * 60 * 1000;
+        await user.save();
+
+        await sendOtpMail(email, otp);
+
+        res.render("resetPas", { email, error: null });
+
+    } catch (err) {
+        console.log(err);
+        res.render("user/forgot-password", { error: "Something went wrong" });
+    }
+};
+const loadOtpPage=async(req,res)=>{
+     try {
+        res.render("user/passVerify", { error: null });
+    } catch (err) {
+        res.send("Error loading forgot page");
+    }
+}
+const passverifyOtp = async (req, res) => {
+    try {
+        const { email, d1, d2, d3, d4 } = req.body;
+
+        const enteredOtp = d1 + d2 + d3 + d4;
+
+        const user = await User.findOne({ email });
+
+        if (!user || user.resetOtp !== enteredOtp) {
+            return res.render("otp-page", { email, error: "Invalid OTP" });
+        }
+
+        if (user.otpExpire < Date.now()) {
+            return res.render("otp-page", { email, error: "OTP expired" });
+        }
+
+        res.render("resetPass", { email, error: null });
+
+    } catch (err) {
+        console.log(err);
+        res.redirect("/forgot-password");
+    }
+};
+
+const resetPassword = async (req, res) => {
+    try {
+        const { email, password } = req.body;
+
+        const hashed = await bcrypt.hash(password, 10);
+
+        await User.updateOne(
+            { email },
+            {
+                $set: {
+                    password: hashed,
+                    resetOtp: null,
+                    otpExpire: null
+                }
+            }
+        );
+
+        res.redirect("/login");
+
+    } catch (err) {
+        console.log(err);
+        res.render("reset-password", { error: "Failed to reset password" });
+    }
+
+};
 module.exports = {
     loadSignUp,
     loadSignIn,
@@ -206,5 +293,7 @@ module.exports = {
     verifyOtp,
     resendOtp,
     SignIn,
-    handleLogout
+    handleLogout,sendOtp,
+    passverifyOtp,resetPassword,
+    loadForgotPassword,loadOtpPage
 };

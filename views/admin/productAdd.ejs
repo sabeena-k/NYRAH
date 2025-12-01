@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NYRAH - Add New Product</title>
+ <link rel="stylesheet" href="http://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.css">
+<style>
+/* Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+/* Body */
+body {
+    background-color: #fde2e2;
+    color: #333;
+}
+
+/* Container */
+.container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 220px;
+    background-color: #fff;
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+}
+
+.sidebar h1 {
+    color: #a83232;
+    font-size: 24px;
+    margin-bottom: 30px;
+}
+
+.sidebar ul {
+    list-style: none;
+}
+
+.sidebar ul li {
+    margin: 15px 0;
+}
+
+.sidebar ul li a {
+    text-decoration: none;
+    color: #333;
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    border-radius: 5px;
+    transition: 0.3s;
+}
+
+.sidebar ul li a.active,
+.sidebar ul li a:hover {
+    background-color: #f48c6a;
+    color: #fff;
+}
+
+/* Main content */
+.main-content {
+    flex: 1;
+    padding: 30px;
+}
+
+.main-content h2 {
+    margin-bottom: 10px;
+}
+
+.main-content p {
+    margin-bottom: 20px;
+    color: #555;
+}
+
+/* Form */
+form {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+form .form-group {
+    margin-bottom: 15px;
+}
+
+form label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+form input[type="text"],
+form input[type="number"],
+form select,
+form textarea {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+form textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+form .file-upload {
+    border: 2px dashed #ccc;
+    padding: 20px;
+    text-align: center;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+form .file-upload:hover {
+    border-color: #a83232;
+}
+
+form .images-preview {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+form .images-preview img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+/* Buttons */
+form .buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+form button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+form .btn-cancel {
+    background-color: #ccc;
+    color: #333;
+}
+
+form .btn-add {
+    background-color: #a83232;
+    color: #fff;
+}
+
+/* Responsive */
+@media(max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+    
+    .sidebar {
+        width: 100%;
+        display: flex;
+        overflow-x: auto;
+    }
+
+    .sidebar ul {
+        display: flex;
+        gap: 15px;
+    }
+
+    .sidebar ul li {
+        margin: 0;
+    }
+}
+
+</style>
+</head>
+<body>
+
+<div class="container">
+    <div class="sidebar">
+        <h1>NYRAH</h1>
+        <ul>
+            <li><a href="#">Dashboard</a></li>
+            <li><a href="#">Orders</a></li>
+            <li><a href="#" class="active">Products</a></li>
+            <li><a href="#">Sales report</a></li>
+            <li><a href="#">Customer</a></li>
+            <li><a href="#">Coupon</a></li>
+            <li><a href="#">Category</a></li>
+            <li><a href="#">Refund/Return</a></li>
+            <li><a href="#">Banners</a></li>
+            <li><a href="#">Sign Out</a></li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <h2>Add Product</h2>
+
+<form action="/admin/products/add" method="POST" enctype="multipart/form-data">
+  <input type="text" name="name" placeholder="Product Name">
+  <input type="number" name="price" placeholder="Price">
+  <select name="category">
+  <% productTypes.forEach(cat => { %>
+    <option value="<%= cat._id %>"><%= cat.name %></option>
+  <% }) %>
+</select>
+
+<<select name="brand">
+  <% brands.forEach(brand => { %>
+    <option value="<%= brand._id %>"><%= brand.brandName %></option>
+  <% }) %>
+</select>
+  <textarea name="description"></textarea>
+  <input type="file" name="image"id="fieldInput">
+  <button type="submit">Add Product</button>
+</form>
+
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.js"></script>
+<script>
+// Image preview
+const fileInput = document.getElementById('fileInput');
+const preview = document.getElementById('preview');
+
+fileInput.addEventListener('change', () => {
+    preview.innerHTML = '';
+    const files = fileInput.files;
+    for (let i = 0; i < files.length; i++) {
+        const img = document.createElement('img');
+        img.src = URL.createObjectURL(files[i]);
+        preview.appendChild(img);
+    }
+});
+</script>
+
+</body>
+</html>

@@ -7,7 +7,8 @@ const {
     verifyOtp,
     resendOtp,
        SignIn,
-       handleLogout}=require('../controllers/user/authController')
+       handleLogout,sendOtp,passverifyOtp,resetPassword,
+    loadForgotPassword,loadOtpPage}=require('../controllers/user/authController')
     const passport=require('../config/passport')
 
 
@@ -26,6 +27,10 @@ router.get('/auth/google/callback',passport.authenticate('google',{failureRedire
     res.redirect('/')
 });
 router.get('/logout',handleLogout)
-
+router.get("/forgot-password", loadForgotPassword)
+router.post('/forgot-password',sendOtp)
+router.get("/passVerify", loadOtpPage);
+router.post('/passVerify',passverifyOtp)
+router.post('/resetPass',resetPassword)
 
 module.exports = router;

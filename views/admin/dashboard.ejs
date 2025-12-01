@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NYRAH Admin Dashboard</title>
     <link rel="stylesheet" href="/admin/dashboard.css">
- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+   
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 
@@ -18,7 +19,8 @@
     <ul class="menu">
         <li class="active"><a href="#"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
         <li><a href="#"><i class="bi bi-bag"></i> Order</a></li>
-        <li><a href="#"><i class="bi bi-box-seam"></i> Products</a></li>
+        <li><a href="/admin/products"><i class="bi bi-box-seam"></i> Products</a></li>
+        <li><a href="/admin/brand"><i class="bi bi-t-shirt"></i> Brand</a></li>
         <li><a href="#"><i class="bi bi-graph-up"></i> Sales report</a></li>
         <li><a href="/admin/customers"><i class="bi bi-people"></i> Customer</a></li>
         <li><a href="/admin/category"><i class="bi bi-tags"></i> Category</a></li>
@@ -26,6 +28,7 @@
         <li><a href="#"><i class="bi bi-arrow-repeat"></i> Refund</a></li>
         <li><a href="#"><i class="bi bi-image"></i> Banners</a></li>
         <li><a href="#"><i class="bi bi-box-arrow-right"></i> Sign Out</a></li>
+        
     </ul>
 </aside>
 
@@ -61,7 +64,6 @@
             </div>
         </div>
 
-        <!-- TWO COLUMN CHARTS -->
         <div class="two-col">
 
             <div class="analytics box">
@@ -74,8 +76,6 @@
                 <canvas id="lineChart"></canvas>
             </div>
         </div>
-
-        <!-- LARGE GRAPH -->
         <div class="large-graph box">
             <h3>Total Revenue</h3>
             <canvas id="revenueChart"></canvas>
@@ -84,7 +84,7 @@
     </main>
 </div>
 
-<!-- ===================== CHART JS ====================== -->
+
 <script>
 new Chart(document.getElementById('donutChart'), {
     type: 'doughnut',

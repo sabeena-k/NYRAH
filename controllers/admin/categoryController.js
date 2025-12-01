@@ -39,7 +39,7 @@ const addCategory= async (req, res) => {
 };
 
 
-// Edit
+
 const editCategory = async (req, res) => {
     try {
         const { id, name, stock } = req.body;
@@ -51,7 +51,6 @@ const editCategory = async (req, res) => {
     }
 };
 
-// Delete
 const deleteCategory = async (req, res) => {
     try {
         const { id } = req.body;
