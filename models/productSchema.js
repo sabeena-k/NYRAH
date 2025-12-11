@@ -7,6 +7,11 @@ const productSchema=new Schema({
         type:String,
         required:true
     },
+    productId:  { 
+        type: String, 
+        unique: true 
+
+    },
     discription:{
         type:String,
         required:true
@@ -34,7 +39,7 @@ const productSchema=new Schema({
     },
     quantity:{
         type:Number,
-        default:true
+        default:0
 
     },
     color:{
@@ -43,7 +48,8 @@ const productSchema=new Schema({
     },
     productImage:{
         type:[String],
-        required:true
+        required:true,
+        default:[]
     },
     isBlock:{
         type:Boolean,
@@ -52,7 +58,7 @@ const productSchema=new Schema({
     status:{
         type:String,
         enum:["Available","Out of Stock","Discountinued"],
-        require:true,
+        required:true,
         default:"Available"
     },
 },{timestamps:true})

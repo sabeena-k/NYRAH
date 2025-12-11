@@ -4,7 +4,7 @@ const categorySchema = new mongoose.Schema({
     type: {
         type: String,
         required: true,
-        enum: ["productType", "brand", "size", "color"]
+       
     },
     name: {
         type: String,
@@ -17,7 +17,11 @@ const categorySchema = new mongoose.Schema({
     createdAt: {
         type: Date,
         default: Date.now
-    }
+    },
+    isBlocked: {
+    type: Boolean,
+    default: false
+}
 });
 
 module.exports = mongoose.model("Category", categorySchema);

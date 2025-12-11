@@ -8,14 +8,15 @@ const userAuth=(req,res,next)=>{
             if(data && !data.isBlocked){
                 next()
             }else{
-                res.redirect('/login')
-            }
+                res.redirect('/signin')
+ 
+           }
         }).catch(err=>{
             console.log('Error in user Auth middileware',error)
             res.status(500).send('Internal Server Error')
         })
     }else{
-        res.redirect('/login')
+        res.redirect('/signin')
     }
 }
 const adminAuth=(req,res,next)=>{

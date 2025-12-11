@@ -34,47 +34,53 @@ body {
   min-height: 100vh;
 }
 
-/* SIDEBAR */
 .sidebar {
-  width: 240px;
-  background: #ffffff;
-  padding: 20px 15px;
-  box-shadow: 2px 0 10px rgba(0,0,0,0.1);
-  position: fixed;
-  height: 100vh;
+    width: 240px;
+    background: #ffffff;
+    padding: 20px 15px;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    position: fixed;
+    height: 100vh;
 }
 
-.sidebar .logo {
-  font-size: 28px;
-  font-weight: bold;
-  color: #a40014;
-  margin-bottom: 20px;
-  text-align: center;
+.brand {
+    font-size: 26px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 20px;
 }
 
-.sidebar ul {
-  list-style: none;
+.menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
 }
 
-.sidebar li {
-  margin: 10px 0;
+.menu li {
+    margin-bottom: 8px;
 }
 
-.sidebar ul li a {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 12px 10px;
-  border-radius: 8px;
-  text-decoration: none;
-  color: #333;
-  font-size: 16px;
+.menu li a {
+    text-decoration: none;      /* Removes underline */
+    color: black;               /* Default text color */
+    display: flex;              /* Keep icon and text aligned */
+    align-items: center;
+    gap: 10px;                  /* space between icon and text */
+    padding: 12px 15px;
+    border-radius: 8px;
+    font-size: 15px;
+    transition: all 0.2s;
 }
 
-.sidebar ul li a:hover,
-.sidebar ul li a.active {
-  background: #fce4ec;
-  color: #d81b60;
+
+.menu li a:hover {
+    background: #fce4ec;
+    color: #d81b60;
+}
+
+.menu li.active a {
+    background: #fce4ec;
+    color: #d81b60;
 }
 
 /* MAIN CONTENT */
@@ -302,7 +308,7 @@ th, td {
   color: #333;
 }
 
-/* ---------- SEARCH + FILTER ---------- */
+
 .search-filter {
   display: flex;
   justify-content: space-between;
@@ -416,6 +422,7 @@ td a {
 
 .pagination {
   display: flex;
+  list-style: none;
   justify-content: center;
   margin-top: 25px;
 }
@@ -468,38 +475,13 @@ td a {
 </head>
 <body>
 <div class="container">
+<%- include('../../views/partials/admin/side')%>
 
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
-    <h2 class="logo">NYRAH</h2>
-    <ul>
-      <li><a href="/admin/dashboard"><i class="bi bi-speedometer2"></i><span>Dashboard</span></a></li>
-      <li><a href="/admin/orders"><i class="bi bi-bag"></i><span>Orders</span></a></li>
-      <li><a href="/admin/products"><i class="bi bi-box"></i><span>Products</span></a></li>
-      <li><a href="/admin/sales-report"><i class="bi bi-bar-chart"></i><span>Sales Report</span></a></li>
-      <li><a href="/admin/customers" class="active"><i class="bi bi-people"></i><span>Customer</span></a></li>
-      <li><a href="/admin/coupons"><i class="bi bi-gift"></i><span>Coupon</span></a></li>
-      <li><a href="/admin/category"><i class="bi bi-grid"></i><span>Category</span></a></li>
-      <li><a href="/admin/refund"><i class="bi bi-arrow-return-left"></i><span>Refund / Return</span></a></li>
-      <li><a href="/admin/banners"><i class="bi bi-card-image"></i><span>Banners</span></a></li>
-      <li><a href="/admin/logout"><i class="bi bi-box-arrow-right"></i><span>Sign Out</span></a></li>
-    </ul>
-  </aside>
-
-  <!-- MAIN CONTENT -->
   <main class="content">
     <header class="top-nav">
     
       <main class="main">
-        <div class="main-profile-btn" id="profileBtn">
-            <img src="/images/ima.webp" alt="Admin" class="profile-img">
-            <span class="profile-name">Admin</span>
-
-            <div class="profile-menu" id="profileMenu">
-                <a href="#">Profile</a>
-                <a href="/admin/logout">Logout</a>
-            </div>
-        </div>
+      <%- include('../../views/partials/admin/header')%>
     </main>
     </header>
 
@@ -551,18 +533,9 @@ td a {
           <%}%>
         </tbody>
       </table>
+      <%- include('../../views/partials/admin/footer')%>
     </div>
-    <div class="container mt-3">
-      <nav aria-label="page navigation">
-        <ul class="pagination justify-contant-center mb-20"style="margin-right:200px">
-          <%for(let i=1;i<=totalPages;i++){%>
-          <li class="page-item<%= (i===currentPage) ? 'active':'' %>">
-            <a class="page-link" href="?page=<%= i %>"><%= i %></a>
-          </li>  
-          <% } %>
-        </ul>
-      </nav>
-    </div>
+    
 
     
   </main>
@@ -584,6 +557,18 @@ td a {
             if(!profileBtn.contains(e.target)){
                 profileMenu.style.display = 'none';
             }
-        });</script>
+        });
+    document.addEventListener("DOMContentLoaded", () => {
+        let currentPath = window.location.pathname;
+
+        document.querySelectorAll(".menu li a").forEach(link => {
+            if (link.getAttribute("href") === currentPath) {
+                link.parentElement.classList.add("active");
+            }
+        });
+    });
+
+
+        </script>
 </body>
 </html>

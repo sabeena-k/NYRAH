@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About Us - NYRAH</title>
+<style>
+  
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Georgia', serif;
+    }
+
+    :root {
+        --bg-color: #FDE0D0;
+        --footer-bg: #F8CFC1;
+        --primary-color: #D43C3C;
+        --text-color: #4B4B4B;
+    }
+
+    body {
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        line-height: 1.6;
+    }
+
+    .navbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 50px;
+        background-color: var(--bg-color);
+    }
+
+    .navbar .logo {
+        font-weight: bold;
+        font-size: 24px;
+        color: var(--primary-color);
+    }
+
+    .navbar ul {
+        list-style: none;
+        display: flex;
+        gap: 25px;
+    }
+
+    .navbar ul li {
+        display: inline;
+    }
+
+    .navbar ul li a {
+        text-decoration: none;
+        color: var(--text-color);
+        font-weight: 500;
+    }
+
+    .navbar .btn {
+        padding: 8px 20px;
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .about-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        padding: 50px;
+        gap: 50px;
+    }
+
+    .about-container img {
+        max-width: 400px;
+        width: 100%;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .about-text {
+        max-width: 600px;
+    }
+
+    .about-text h2 {
+        font-size: 32px;
+        margin-bottom: 20px;
+        color: #4B4B4B;
+        font-family: 'Georgia', serif;
+    }
+
+    .about-text p {
+        font-size: 18px;
+        color: #4B4B4B;
+    }
+
+    footer {
+        background-color: var(--footer-bg);
+        padding: 30px 50px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 20px;
+        font-size: 14px;
+    }
+
+    .footer-section {
+        flex: 1;
+        min-width: 150px;
+    }
+
+    .footer-section h3 {
+        color: var(--primary-color);
+        margin-bottom: 10px;
+    }
+
+    .footer-section p, .footer-section a {
+        color: #333;
+        text-decoration: none;
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    .footer-socials img{
+        
+    width: 28px;
+    height: 28px;
+    cursor: pointer;
+}
+    
+
+    .footer-bottom {
+        text-align: center;
+        width: 100%;
+        margin-top: 20px;
+        font-size: 12px;
+        color: #555;
+    }
+
+    @media (max-width: 900px) {
+        .about-container {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .about-text {
+            max-width: 100%;
+        }
+    }
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="logo">NYRAH</div>
+    <ul>
+        <li><a href="/home">Home</a></li>
+        <li><a href="/">Collections</a></li>
+        <li><a href="/">All product</a></li>
+    </ul>
+    <button class="btn"><a href="/signup"style="color:#fff;text-decoration:none;"> Signup</a></button>
+</nav>
+
+<section class="about-container">
+    <img src="/images/about.jpg" alt="Our Story">
+    <div class="about-text">
+        <h2>Our Story</h2>
+        <p>Welcome to our little world of joy! A simple dream to bring smiles to every little girl with beautiful, comfortable, and stylish clothes. We believe every child deserves to feel special, so each dress we offer is made with love, care, and creativity.</p>
+    </div>
+</section>
+
+<footer>
+    <div class="footer-section">
+        <h3>NYRAH</h3>
+        <p>Little styles, Big smiles</p>
+        <p>Calicut, Kerala</p>
+        <p>mob: +974560461</p>
+        <p>Nyrah@gmail.com</p>
+    </div>
+    <div class="footer-section">
+        <h3>Policies</h3>
+        <a href="#">Privacy Policies</a>
+        <a href="#">Terms and Conditions</a>
+        <a href="#">Cookie Policies</a>
+    </div>
+    <div class="footer-section">
+        <h3>Branches</h3>
+        <p>Calicut</p>
+        <p>Kochi</p>
+        <p>Bangalore</p>
+    </div>
+    <div class="footer-section footer-socials">
+        <h3>Connect with us</h3>
+        <img src="https://img.icons8.com/color/48/google-logo.png">
+                <img src="images/face.png">
+                <img src="images/insta.png">
+    </div>
+    <div class="footer-bottom">
+        © 2025 NYRAH | All Rights Reserved
+    </div>
+</footer>
+
+</body>
+</html>

@@ -6,7 +6,7 @@ const env=require('dotenv').config()
 
 async function securePassword(password){
     try{
-      const passwordHash=await bcrypt.hash(password,10)
+      const passwordHash=await bcrypt.hash(password,8)
       return passwordHash;
     }catch(error){
    console.error("Error hashing password:", error);
@@ -90,7 +90,8 @@ const loadSignUp = async (req, res) => {
 const Signup=async(req,res)=>{
     try{
       const {name,email,phone,password,cPassword}=req.body;
-      
+      console.log("User email received:", email);
+
         if(password!==cPassword){
             return res.render('user/signup',{message:'Password do not match'})
 
@@ -150,7 +151,7 @@ const handleSignUp = async (req, res) => {
 };
 
 const handleSignIn = async (req, res) => {
-   const handleSignIn = async (req, res) => {
+
     try {
         const { email, password } = req.body;
         const user = await User.findOne({ email });
@@ -161,15 +162,14 @@ const handleSignIn = async (req, res) => {
         const match = await bcrypt.compare(password, user.password);
         if (!match) return res.render('user/signin', { message: 'Incorrect password' });
 
-        req.session.user = user._id;  // ✅ session set
-        res.redirect('/home');         // ✅ login success → home
+        req.session.user = user._id;  
+        res.redirect('/home');         
     } catch (error) {
         console.error('Login error', error);
         res.render('user/signin', { message: 'Login failed. Try again later.' });
     }
 };
 
-};
 const resendOtp=async(req,res)=>{
     try{
         const {email}=req.session.userData;

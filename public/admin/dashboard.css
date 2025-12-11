@@ -1,18 +1,18 @@
-/* ---------- GLOBAL ---------- */
+
 body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background: #f6f7fb;
+    background: #fde2e8;
 }
 
-/* MAIN WRAPPER */
+
 .container {
     display: flex;
     min-height: 100vh;
 }
 
-/* ---------- SIDEBAR ---------- */
+
 .sidebar {
     width: 240px;
     background: #ffffff;
@@ -40,11 +40,11 @@ body {
 }
 
 .menu li a {
-    text-decoration: none;      /* Removes underline */
-    color: black;               /* Default text color */
-    display: flex;              /* Keep icon and text aligned */
+    text-decoration: none;      
+    color: black;             
+    display: flex;              
     align-items: center;
-    gap: 10px;                  /* space between icon and text */
+    gap: 10px;                  
     padding: 12px 15px;
     border-radius: 8px;
     font-size: 15px;
@@ -161,7 +161,7 @@ body {
 }
 
 .profile-menu {
-    display: none; /* hidden initially */
+    display: none; 
     position: absolute;
     top: 45px;
     right: 0;

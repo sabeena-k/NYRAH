@@ -46,12 +46,13 @@ background: white;
      font-size: 34px;
     font-weight: 700;
     color: #8b0000;
-    margin-bottom: 60px;
-    text-align: center;   /* Center the logo */
+    margin-bottom: 70px;
+    text-align: center;   
     width: 100%;  
+    margin-top: -10px;
 }
 
-/* GOOGLE BUTTON */
+
 .google-btn {
     width: 90%;
     margin: 0 auto;
@@ -60,11 +61,13 @@ background: white;
     border: 1px solid #ddd;
     border-radius: 8px;
     display: flex;
-    align-items: center;     /* PERFECT vertical alignment */
+    align-items: center;     
     justify-content: center;
-    gap: 10px;               /* space between icon + text */
+    gap: 10px;               
     cursor: pointer;
     font-size: 16px;
+    text-decoration: none;
+    color: black;
 }
 
 .google-btn img {
@@ -74,14 +77,13 @@ background: white;
     display: block;
 }
 
-/* OR TEXT CENTER */
+
 .or {
     width: 100%;
     text-align: center;
     margin: 15px 0;
 }
 
-/* INPUTS & BUTTONS */
 .input,
 .login-btn {
     width: 90%;

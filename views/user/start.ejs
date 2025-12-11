@@ -19,19 +19,16 @@
         </div>
 
          <ul class="nav-links" id="navMenu">
-       
-            <% if (user) { %>
-                <!-- Logged-in user -->
-                <li><a href="/home">Home</a></li>
-                <li><a href="/categories">Categories</a></li>
-                <li><a href="/products">All Product</a></li>
-            <% } else { %>
-                <!-- Not logged-in -->
-                <li><a href="/explore#home">Home</a></li>
-                <li><a href="/explore#categories">Categories</a></li>
-                <li><a href="/explore#new">All Product</a></li>
-            <% } %>
-        </ul>
+    <% if (user) { %>
+        <li><a href="/home">Home</a></li>
+        <li><a href="/categories">Categories</a></li>
+        <li><a href="/products">All Product</a></li>
+    <% } else { %>
+        <li><a href="/start">Home</a></li>
+        <li><a href="/start">Collections</a></li>
+        <li><a href="/start">All Product</a></li>
+    <% } %>
+</ul>
 
         <% if (user) { %>
             <a href="/profile" class="signup-btn">Profile</a>
@@ -48,24 +45,13 @@
         <h1>NYRAH</h1>
         <p class="tagline">Little styles, Big smiles</p><br><br>
 
-        <% if (user) { %>
-            <a href="/home" class="explore-btn">Explore</a>
-        <% } else { %>
-            <a href="/home" class="explore-btn">Explore</a>
-        <% } %>
+        <a href="<%= user ? '/home' : '/start' %>" class="explore-btn">Explore</a>
+
+
     </div>
 </section>
     
-         <ul class="side-menu" id="sideMenuBox" style="display:none;">
-        <% if (user) { %>
-            <li><a href="/profile">Profile</a></li>
-            <li><a href="/orders">My Orders</a></li>
-            <li><a href="/logout">Logout</a></li>
-        <% } else { %>
-            <li><a href="/about">About</a></li>
-            <li><a href="/contact">Contact</a></li>
-        <% } %>
-    </ul>
+         
 <script>
    
     const toggle = document.getElementById("menuToggle");

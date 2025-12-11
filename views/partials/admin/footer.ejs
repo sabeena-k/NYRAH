@@ -1,0 +1,47 @@
+
+<style>
+.pagination-custom {
+    list-style: none;
+    display: flex;
+    gap: 8px;
+    margin: 20px 0;
+}
+.pagination-custom .page-item {
+    border-radius: 6px;
+    overflow: hidden;
+    transition: all 0.2s;
+}
+.pagination-custom .page-link {
+    display: block;
+    padding: 8px 14px;
+    background: white;
+    color: #ff4e91;
+    text-decoration: none;
+    font-weight: bold;
+    border: 1px solid #ff4e91;
+    border-radius: 6px;
+}
+.pagination-custom .page-link:hover {
+    background: #ff4e91;
+    color: white;
+}
+.pagination-custom .active .page-link {
+    background: #ff4e91;
+    color: white;
+    border-color: #ff4e91;
+}
+</style>
+<% let pageCount = typeof totalPages !== 'undefined' ? totalPages : 1; %>
+<% let current = typeof currentPage !== 'undefined' ? currentPage : 1; %>
+
+<div class="container mt-3">
+  <nav aria-label="page navigation">
+    <ul class="pagination justify-content-center pagination-custom">
+      <% for(let i = 1; i <= pageCount; i++) { %>
+        <li class="page-item <%= (i === current) ? 'active' : '' %>">
+          <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+        </li>
+      <% } %>
+    </ul>
+  </nav>
+</div>

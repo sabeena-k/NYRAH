@@ -10,7 +10,6 @@ body {
     min-height: 100vh;
 }
 
-/* MAIN CONTAINER WITH BACKGROUND IMAGE */
 .container {
     display: flex;
     justify-content:right  ;
@@ -24,10 +23,10 @@ body {
     padding: 10px;
 }
 
-/* FORM SECTION */
+
 .right-side {
-    flex: 1 1 0;        /* Allows form to grow */
-    max-width: 900px;   /* Limit max width on very large screens */
+    flex: 1 1 0;        
+    max-width: 900px;  
     display: flex;
     justify-content:center;
 }
@@ -48,7 +47,7 @@ body {
     letter-spacing: 1px;
 }
 
-/* INPUT FIELDS */
+
 .form-box input {
     width: 100%;
     margin: 12px 0;
@@ -57,7 +56,7 @@ body {
     border-radius: 8px;
 }
 
-/* POLICY CHECKBOX */
+
 .policy {
     display: flex;
     align-items: center;
@@ -74,7 +73,7 @@ body {
     margin-left: 50px;
 }
 
-/* SIGNUP / LOGIN BUTTON */
+
 .signup-btn {
     width: 100%;
     padding: 14px;
@@ -91,7 +90,7 @@ body {
     background: #c10000;
 }
 
-/* LOGIN TEXT */
+
 .login-text {
     text-align: center;
     margin: 15px 0;
@@ -102,7 +101,7 @@ body {
     text-decoration: none;
 }
 
-/* SOCIAL ICONS */
+
 .social-icons {
     display: flex;
     justify-content: center;
@@ -116,17 +115,17 @@ body {
     cursor: pointer;
 }
 
-/* ERROR MESSAGES */
+
 .error-message {
     color: #a20202;
     font-size: 16px;
     display: none;
 }
 
-/* ---------------- TABLET ---------------- */
+
 @media (max-width: 1000px) {
     .right-side {
-        max-width: 80%; /* Slightly smaller on tablet */
+        max-width: 80%; 
     }
 
     .form-box {
@@ -134,7 +133,7 @@ body {
     }
 }
 
-/* ---------------- MOBILE ---------------- */
+
 @media (max-width: 600px) {
     .right-side {
         width: 100%;

@@ -2,7 +2,7 @@ const Brand = require("../../models/brandSchema");
 
 const brandInfo = async (req, res) => {
   try {
-    const brands = await Brand.find().sort({ createdAt: -1 });
+    const brands = await Brand.find();
     res.render("admin/brand", { brands });
   } catch (err) {
     console.log(err);
@@ -13,50 +13,50 @@ const brandInfo = async (req, res) => {
 const addBrand = async (req, res) => {
   try {
     const { brandName } = req.body;
-    if (!brandName) return res.json({ success: false, msg: "Brand name required" });
+    let brandImage = null;
 
-    const exists = await Brand.findOne({ brandName });
-    if (exists) return res.json({ success: false, msg: "Brand already exists" });
+    if (req.file) brandImage = req.file.filename;
 
-    const brand = new Brand({
+    const newBrand = new Brand({
       brandName,
-      brandImage: req.file ? req.file.filename : null
+      brandImage,
+      isBlocked: false
     });
 
-    await brand.save();
-    res.json({ success: true, msg: "Brand Added Successfully" });
+    await newBrand.save();
+
+    res.json({ status: true, msg: "Brand added successfully" });
   } catch (err) {
     console.log(err);
-    res.json({ success: false, msg: "Server Error" });
+    res.status(500).json({ status: false, msg: "Something went wrong" });
   }
 };
 
 const editBrand = async (req, res) => {
   try {
     const { id, brandName } = req.body;
-    if (!id || !brandName) return res.json({ success: false, msg: "Invalid data" });
+    const brand = await Brand.findById(id);
+    if (!brand) return res.status(404).json({ msg: "Brand not found" });
 
-    const updateData = { brandName };
-    if (req.file) updateData.brandImage = req.file.filename;
+    brand.brandName = brandName || brand.brandName;
+    if (req.file) brand.brandImage = req.file.filename;
 
-    await Brand.findByIdAndUpdate(id, updateData);
-    res.json({ success: true, msg: "Brand Updated Successfully" });
+    await brand.save();
+    res.json({ status: true, msg: "Brand updated successfully" });
   } catch (err) {
     console.log(err);
-    res.json({ success: false, msg: "Server Error" });
+    res.status(500).json({ msg: "Server error" });
   }
 };
 
 const deleteBrand = async (req, res) => {
   try {
     const { id } = req.body;
-    if (!id) return res.json({ success: false });
-
     await Brand.findByIdAndDelete(id);
-    res.json({ success: true });
+    res.json({ status: true, msg: "Brand deleted successfully" });
   } catch (err) {
     console.log(err);
-    res.json({ success: false });
+    res.status(500).json({ msg: "Server error" });
   }
 };
 

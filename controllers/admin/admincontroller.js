@@ -45,7 +45,7 @@ const loadDashBoard = async (req, res) => {
         if (!req.session.admin) {
             return res.redirect('/admin/login'); 
         }
-        return res.render('admin/dashboard'); 
+        return res.render('admin/dashboard',{page:'dashboard'}); 
     
     } catch (error) {
         console.log(error);

@@ -10,7 +10,7 @@ const {
        handleLogout,sendOtp,passverifyOtp,resetPassword,
     loadForgotPassword,loadOtpPage}=require('../controllers/user/authController')
     const passport=require('../config/passport')
-
+const {userAuth}=require('../middlewares/auth')
 
 
 
