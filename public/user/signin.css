@@ -10,7 +10,6 @@ body {
     padding: 20px;
 }
 
-/* MAIN CONTAINER */
 .outer-box {
 background: white;
     padding: 40px;
@@ -20,15 +19,12 @@ background: white;
     margin: auto;
 }
 
-/* LAYOUT */
 .login-container {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 40px;
 }
-
-/* LEFT SIDE */
 .left-box {
     flex: 1;
 }
@@ -117,7 +113,6 @@ background: white;
     text-align: center;
 }
 
-/* RIGHT SIDE IMAGE */
 .right-box {
     flex: 1;
     display: flex;
@@ -142,7 +137,6 @@ background: white;
     margin-left: 50px;
 }
 
-/* TABLET VIEW */
 @media (max-width: 900px) {
     .login-container {
         flex-direction: column;
@@ -155,8 +149,6 @@ background: white;
         margin: 0 auto;
     }
 }
-
-/* MOBILE VIEW */
 @media (max-width: 600px) {
 
     .outer-box {
@@ -168,7 +160,7 @@ background: white;
     }
 
     .right-box img {
-        display: none; /* Hide image in mobile */
+        display: none;
     }
 
     .google-btn,

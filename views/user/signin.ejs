@@ -64,6 +64,14 @@
 
 </body>
 <script>
+      if (performance.getEntriesByType("navigation")[0].type === "back_forward") {
+    location.reload(true);
+  }
+
+  history.pushState(null, null, location.href);
+  window.onpopstate = function () {
+    history.go(1);
+  };
     const params = new URLSearchParams(window.location.search);
 
     if (params.get("msg") === "account_created") {

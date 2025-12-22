@@ -1,4 +1,4 @@
- /* ---------- Body ---------- */
+ 
 body {
   background-color: #fce5e5;
   font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
@@ -207,7 +207,6 @@ footer {
   transform: scale(1.2);   
 }
 
-/* Responsive */
 @media (max-width: 768px) {
   .footer-container {
     flex-direction: column;

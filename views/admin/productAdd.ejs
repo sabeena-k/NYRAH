@@ -5,12 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NYRAH - Add New Product</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 <link rel="stylesheet" href="/admin/dashboard.css">
-
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <style>
-/* Reset */
 * {
     margin: 0;
     padding: 0;
@@ -25,11 +23,9 @@ body {
 }
 
 .page-container {
-    min-height: calc(100vh - 60px); /* footer height */
+    min-height: calc(100vh - 60px); 
     display: flex;
 }
-
-/* Right content */
 .content {
     margin-left: 250px;
     padding: 30px;
@@ -141,8 +137,6 @@ textarea {
     background: #c7192b;
     color: white;
 }
-
-/* Footer */
 footer {
     text-align: center;
     padding: 20px 0;
@@ -227,68 +221,77 @@ footer {
         </div>
     </div>
 
-    <div class="row">
-        <div class="input-box">
-            <label>Size</label>
-            <input type="text" name="size" required>
+  <div class="row">
+  <div class="input-box full">
+    <label>Available Sizes</label>
+   
+
+    <select name="size" id="selectedSize" class="form-select" required>
+      <% if(size && size.length > 0) { %>
+        <% size.forEach(s => { %>
+          <option value="<%= s %>"><%= s %></option>
+        <% }) %>
+      <% } else { %>
+          <option value="">No sizes available</option>
+      <% } %>
+    </select>
+  </div>
+
+
+
+          <div class="input-box">
+            <label>Quantity</label>
+            <input type="text" name="quantity" required>
         </div>
+    
 
         <div class="input-box">
             <label>Color</label>
             <input type="text" name="color" required>
         </div>
-    </div>
-
-  <div class="image-upload-box">
-     <p>Drag and drop images here, or click to browse</p>
-      <button type="button" class="upload-btn" id="chooseBtn">Choose Files</button>
-       <input type="file" id="fileInput"name="images" multiple accept="image/*" style="display:none;">
-        <div class="preview-row" id="preview"></div> 
-    </div>
-    <div id="cropModal" class="modal"> 
-        <div class="modal-content"> 
-            <img id="cropImage" style="max-width:100%;">
-            <button id="cropBtn"type="button">Crop & Save</button> 
-            <button id="closeModal">Cancel</button> 
-        </div> 
-    </div>
-    <div class="btn-row">
-        <button type="button" class="cancel">Cancel</button>
-        <button type="submit" class="add">Add Product</button>
-    </div>
-</form>
-
-
-    </div>
-
+  </div>
+<div class="image-upload-box">
+  <p>Drag and drop images or click "Choose Images"</p>
+  <button type="button" id="chooseBtn">Choose Images</button>
+  <input type="file" name="images" id="imageInput" multiple accept="image/*" style="display:none">
+  <div class="preview-row" id="preview"></div>
 </div>
 
-<footer>
-    © 2025 | NYRAH | All Rights Reserved
-</footer>
+  <div id="cropModal" class="modal">
+    <div class="modal-content">
+      <img id="cropImage" style="max-width:100%">
+      <button id="cropBtn" type="button">Crop & Save</button>
+      <button id="closeModal" type="button">Cancel</button>
+    </div>
+  </div>
 
+  <div class="btn-row">
+    <button type="button" class="cancel">Cancel</button>
+    <button type="submit" class="add">Add Product</button>
+  </div>
+</form>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
 
 <script>
-
 let cropper;
-let croppedFiles = []; // store all cropped files
+let croppedFiles = [];
 
 const chooseBtn = document.getElementById("chooseBtn");
-const fileInput = document.getElementById("fileInput");
+const fileInput = document.getElementById("imageInput");
 const preview = document.getElementById("preview");
 
 chooseBtn.addEventListener("click", () => fileInput.click());
 
-fileInput.addEventListener("change", function (e) {
-    const file = e.target.files[0];
-    if (!file) return;
-
+fileInput.addEventListener("change", (e) => {
+    if (e.target.files.length === 0) return;
+    const file = e.target.files[0]; 
     const reader = new FileReader();
-    reader.onload = function (event) {
+    reader.onload = () => {
         const cropModal = document.getElementById("cropModal");
         const cropImage = document.getElementById("cropImage");
-
-        cropImage.src = event.target.result;
+        cropImage.src = reader.result;
         cropModal.style.display = "flex";
 
         if (cropper) cropper.destroy();
@@ -297,19 +300,16 @@ fileInput.addEventListener("change", function (e) {
     reader.readAsDataURL(file);
 });
 
-document.getElementById("cropBtn").addEventListener("click", function () {
+document.getElementById("cropBtn").addEventListener("click", () => {
     const canvas = cropper.getCroppedCanvas({ width: 500, height: 500 });
-
     canvas.toBlob((blob) => {
         const file = new File([blob], Date.now() + ".jpg", { type: "image/jpeg" });
         croppedFiles.push(file);
 
-        // update fileInput
         const dataTransfer = new DataTransfer();
         croppedFiles.forEach(f => dataTransfer.items.add(f));
         fileInput.files = dataTransfer.files;
 
-        // preview
         const img = document.createElement("img");
         img.src = URL.createObjectURL(file);
         img.style.width = "100px";
@@ -320,12 +320,34 @@ document.getElementById("cropBtn").addEventListener("click", function () {
         cropper.destroy();
     }, "image/jpeg");
 });
+document.getElementById("closeModal").addEventListener("click", () => {
+    document.getElementById("cropModal").style.display = "none";
+    if (cropper) cropper.destroy();
+});
 
-// prevent form submit without images
-document.querySelector(".product-form").addEventListener("submit", function(e){
-    if(croppedFiles.length === 0){
+document.querySelector(".cancel").addEventListener("click", () => {
+    window.location.href = "/admin/products";
+});
+document.querySelector(".product-form").addEventListener("submit", function(e) {
+    const regularPrice = Number(document.querySelector('input[name="price"]').value);
+    const offerPrice = Number(document.querySelector('input[name="offerPrice"]').value);
+    if (offerPrice >= regularPrice) {
+        e.preventDefault(); 
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Offer price cannot be equal or greater than the regular price!'
+        });
+        return false;
+    }
+    if (croppedFiles.length === 0 && fileInput.files.length === 0) {
         e.preventDefault();
-        alert("Please upload and crop at least one image!");
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Please upload and crop at least one image!'
+        });
+        return false;
     }
 });
 </script>

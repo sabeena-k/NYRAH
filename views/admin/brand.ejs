@@ -13,13 +13,11 @@
     background: #fde0e9;
 }
 
-/* LAYOUT */
 .layout, .container {
     display: flex;
     min-height: 100vh;
 }
 
-/* SIDEBAR */
 .sidebar {
     width: 240px;
     background: #ffffff;
@@ -29,7 +27,6 @@
     height: 100vh;
 }
 
-/* MAIN AREA */
 .main {
     margin-left: 260px;
     padding: 20px;
@@ -38,8 +35,6 @@
     min-width: 0;
     position: relative;
 }
-
-/* HEADER BAR */
 .header-bar {
     background-color: #ffd6e0;
     padding: 15px 20px;
@@ -71,7 +66,6 @@
     background-color: #b71c4f;
 }
 
-/* TABLE WRAPPER */
 .table-wrap {
     background: white;
     padding: 15px;
@@ -80,7 +74,6 @@
     margin-top: 15px;
 }
 
-/* TABLE */
 table {
     width: 100%;
     border-collapse: collapse;
@@ -105,14 +98,12 @@ table img {
     border-radius: 4px;
 }
 
-/* ACTION BUTTONS */
 .actions button {
     padding: 6px 12px;
     margin-right: 8px;
     cursor: pointer;
 }
 
-/* MODAL */
 #modal {
     display: none;
     position: fixed;
@@ -129,7 +120,6 @@ table img {
     border-radius: 6px;
 }
 
-/* PROFILE BUTTON */
 .main-profile-btn {
     position: absolute;
     top: 10px;
@@ -150,8 +140,6 @@ table img {
     border-radius: 50%;
     object-fit: cover;
 }
-
-/* PROFILE MENU */
 .profile-menu {
     display: none;
     position: absolute;
@@ -230,7 +218,7 @@ table img {
     <thead>
       <tr>
         <th>Brand</th>
-        <th>Image</th>
+        <th>Logo</th>
         <th>Status</th>
         <th>Actions</th>
       </tr>
@@ -240,14 +228,13 @@ table img {
         <tr>
           <td><%= b.brandName %></td>
           <td>
-            <% if(b.brandImage){ %>
-             <img src="/public/images/<%= b.brandImage %>" 
-     width="100" 
-     height="100"
-     style="object-fit: cover;">
+  <% if(b.brandImage){ %>
+   <img src="/uploads/productImages/<%=b.brandImage %>" class="thumb-img"> 
+  <% } else { %> 
+    No image 
+  <% } %>
+</td>
 
-            <% } else { %> No image <% } %>
-          </td>
           <td><%= b.isBlocked ? "Blocked" : "Active" %></td>
           <td>
             <button onclick="editBrand('<%= b._id %>', '<%= b.brandName %>')">Edit</button>
@@ -266,7 +253,7 @@ async function openAddBrand() {
         title: "Add Brand",
         html:
           `<input id="addBrandName" class="swal2-input" placeholder="Brand Name">
-           <input type="file" id="addBrandImage" class="swal2-file" accept="image/*">
+           <input type="file" id="addBrandImage"name="brandImage" class="swal2-file" accept="image/*">
            <img id="addImagePreview" style="display:none; width:120px; margin-top:10px;">`,
         showCancelButton: true,
         confirmButtonText: "Create",
@@ -305,7 +292,7 @@ async function editBrand(id, name) {
     title: "Edit Brand",
     html: `
       <input id="editBrandName" class="swal2-input" value="${name}">
-      <input type="file" id="editBrandImage" class="swal2-file" accept="image/*">
+      <input type="file" id="editBrandImage" name="brandImage" class="swal2-file" accept="image/*">
       <img id="imagePreview" style="display:none; width:120px; margin-top:10px; border-radius:6px;">
     `,
     didOpen: () => {

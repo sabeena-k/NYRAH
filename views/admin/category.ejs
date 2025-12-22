@@ -9,345 +9,232 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 <style>
 body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: #f9e4e4;
-}
-
-/* HEADER */
+     margin: 0;
+     font-family: Arial, sans-serif;
+      background: #f9e4e4; 
+    }
 .header-bar {
-    background: #ff4e91;
-    color: white;
-    padding: 15px 25px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: 50px;
-}
-
+     background: #080808;
+    color: white; 
+    padding: 15px 25px; 
+    display: flex; 
+    align-items: center; 
+    justify-content: space-between; 
+    margin-top: 50px; }
 .header-bar h2 {
-    margin: 0;
-    font-size: 22px;
-}
-
+     margin: 0; 
+     font-size: 22px; }
 .header-bar button {
-    background: white;
-    color: #ff4e91;
-    border: none;
-    padding: 10px 18px;
-    font-size: 14px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: bold;
-}
+     background: white; 
+     color: #0c0c0c; 
+     border: none; 
+     padding: 10px 18px; 
+     font-size: 14px; 
+     border-radius: 6px; 
+     cursor: pointer; 
+     font-weight: bold; }
+.header-bar button:hover { 
+    background: #ffe4ef; }
 
-.header-bar button:hover {
-    background: #ffe4ef;
-}
-
-/* TABLE */
 table {
-    width: 95%;
-    margin: 25px auto;
-    border-collapse: collapse;
-    background: white;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-}
-
+     width: 95%;
+    margin: 25px auto; 
+    border-collapse: collapse; 
+    background: white; 
+    box-shadow: 0 0 10px rgba(0,0,0,0.1); }
 thead {
-    background: #ff4e91;
-    color: white;
-}
-
-th, td {
-    padding: 12px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-}
-
-tr:hover {
-    background: #fff1f7;
-}
+     background: #0a0a0a; 
+     color: white; }
+th, td { padding: 12px; 
+    text-align: left; 
+    border-bottom: 1px solid #ddd; }
+tr:hover { 
+    background: #fff1f7; }
 
 .action-btn {
-    padding: 6px 12px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-right: 5px;
-}
-
-.edit-btn { background: #4caf50; color: white; }
-.delete-btn { background: #e51c23; color: white; }
-.block-btn { background: #ff9800; color: white; }
-.unblock-btn { background: #2196f3; color: white; }
-
-/* MODAL */
+     padding: 6px 12px; 
+     border: none; 
+     border-radius: 5px; 
+     cursor: pointer; 
+     margin-right: 5px; }
+.edit-btn {
+     background: #4caf50; 
+     color: white; }
+.delete-btn { 
+    background: #e51c23; 
+    color: white; }
+.block-btn { 
+    background: #ff9800;
+     color: white; }
+.unblock-btn { 
+    background: #2196f3; 
+    color: white; }
+.offer-btn { 
+    background: #9c27b0;
+     color: white; }
 .modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.45);
-    display: none;
-    justify-content: center;
-    align-items: center;
-}
-
+     position: fixed;
+      top: 0; 
+      left: 0; 
+      width: 100%; 
+      height: 100%;
+       background: rgba(0,0,0,0.45);
+        display: none;
+         justify-content: center;
+         align-items: center; }
 .modal-content {
-    background: white;
-    width: 350px;
-    padding: 25px;
-    border-radius: 8px;
-}
-
+     background: white; 
+     width: 350px; 
+     padding: 25px; 
+     border-radius: 8px; }
 .modal-content h3 {
-    margin-top: 0;
-}
-
+     margin-top: 0; }
 .modal-content input {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-}
-
+     width: 100%; 
+     padding: 10px; 
+     margin-bottom: 15px; 
+     border: 1px solid #ccc; 
+     border-radius: 6px; }
 .save-btn {
-    background: #ff4e91;
-    color: white;
-    padding: 10px 14px;
-    width: 100%;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-}
-
-.save-btn:hover {
-    background: #ff2e78;
-}
+     background: #080808;
+      color: white;
+       padding: 10px 14px;
+        width: 100%; 
+        border: none;
+         border-radius: 6px; 
+         cursor: pointer; }
+.save-btn:hover { 
+    background: #ff2e78; }
 </style>
 </head>
 
 <body>
+<body>
 <div class="container">
-
-    <%- include('../../views/partials/admin/side') %>
-
-    <main class="main">
-
-        <%- include('../../views/partials/admin/header') %>
-
-        <!-- HEADER -->
-        <div class="header-bar">
-            <h2>Categories</h2>
-            <button onclick="openAdd()">+ Add Category</button>
-        </div>
-
-        <!-- CATEGORY TABLE -->
-        <table>
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Stock</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-
-            <tbody>
-                <% categories.forEach(c => { %>
-                <tr>
-                    <td><%= c.name %></td>
-                    <td><%= c.stock %></td>
-                    <td><%= c.isBlocked ? "Blocked" : "Active" %></td>
-                    <td>
-
-                        <!-- EDIT -->
-                        <button class="action-btn edit-btn"
-                            onclick="openEdit('<%= c._id %>', '<%= c.name %>', '<%= c.stock %>')">
-                            Edit
-                        </button>
-
-                        <!-- BLOCK / UNBLOCK -->
-                        <% if (!c.isBlocked) { %>
-                            <button class="action-btn block-btn" onclick="confirmBlock('<%= c._id %>')">Block</button>
-                        <% } else { %>
-                            <button class="action-btn unblock-btn" onclick="confirmUnblock('<%= c._id %>')">Unblock</button>
-                        <% } %>
-
-                        <!-- DELETE -->
-                        <button class="action-btn delete-btn" onclick="confirmDelete('<%= c._id %>')">Delete</button>
-
-                    </td>
-                </tr>
-                <% }) %>
-            </tbody>
-        </table>
-     <%- include('../../views/partials/admin/footer')%>
-    </main>
+<%- include('../../views/partials/admin/side') %>
+<main class="main">
+<%- include('../../views/partials/admin/header') %>
+<div class="header-bar">
+<h2>Categories</h2>
+<button onclick="openAdd()">+ Add Category</button>
 </div>
-
-<!-- ADD MODAL -->
+<table>
+<thead>
+<tr>
+<th>Roll No</th>
+<th>Name</th>
+<th>Description</th>
+<th>Status</th>
+<th>Actions</th>
+</tr>
+</thead>
+<tbody>
+<% categories.forEach(c => { %>
+<tr>
+<td><%= c.rollNo %></td>
+<td><%= c.name %></td>
+<td><%= c.description %></td>
+<td><%= c.isBlocked ? "Blocked" : "Active" %></td>
+<td>
+<button class="action-btn edit-btn" onclick="openEdit('<%= c._id %>', '<%= c.name %>', '<%= c.description %>')">Edit</button>
+<button class="action-btn offer-btn" onclick="openOffer('<%= c._id %>', '<%= c.name %>')">Add Offer</button>
+<% if (!c.isBlocked) { %>
+<button class="action-btn block-btn" onclick="confirmBlock('<%= c._id %>')">Block</button>
+<% } else { %>
+<button class="action-btn unblock-btn" onclick="confirmUnblock('<%= c._id %>')">Unblock</button>
+<% } %>
+<button class="action-btn delete-btn" onclick="confirmDelete('<%= c._id %>')">Delete</button>
+</td>
+</tr>
+<% }) %>
+</tbody>
+</table>
+<%- include('../../views/partials/admin/footer')%>
+</main>
+</div>
 <div class="modal" id="addModal">
-  <div class="modal-content">
-    <h3>Add Category</h3>
-    <form onsubmit="event.preventDefault(); saveCategory()">
-      <input type="text" id="type" placeholder="Category Type" required>
-      <input type="text" id="addName" placeholder="Category Name" required>
-      <input type="number" id="addStock" placeholder="Stock" required>
-      <button type="submit" class="save-btn">Save</button>
-    </form>
-  </div>
+<div class="modal-content">
+<h3>Add Category</h3>
+<form onsubmit="event.preventDefault(); saveCategory()">
+<input type="text" id="addName" placeholder="Category Name" required>
+<input type="text" id="addDesc" placeholder="Description" required>
+<button type="submit" class="save-btn">Save</button>
+</form>
 </div>
-
-<!-- EDIT MODAL -->
+</div>
 <div class="modal" id="editModal">
-    <div class="modal-content">
-        <h3>Edit Category</h3>
-        <input type="hidden" id="editId">
-        <input type="text" id="editName" required>
-        <input type="number" id="editStock" required>
-        <button class="save-btn" onclick="saveEditCategory()">Update</button>
-    </div>
+<div class="modal-content">
+<h3>Edit Category</h3>
+<input type="hidden" id="editId">
+<input type="text" id="editName" required>
+<input type="text" id="editDesc" required>
+<button class="save-btn" onclick="saveEditCategory()">Update</button>
 </div>
-
+</div>
+<div class="modal" id="offerModal">
+<div class="modal-content">
+<h3 id="offerTitle">Add Offer</h3>
+<input type="hidden" id="offerCategoryId">
+<input type="number" id="offerPercent" placeholder="Offer Percentage (%)" required>
+<button class="save-btn" onclick="saveOffer()">Apply Offer</button>
+</div>
+</div>
 <script>
-function openAdd() {
-    document.getElementById('addModal').style.display = "flex";
+function openAdd(){
+    document.getElementById('addModal').style.display="flex"}
+function openEdit(id,name,desc){
+    document.getElementById('editId').value=id;
+    document.getElementById('editName').value=name;
+    document.getElementById('editDesc').value=desc;
+    document.getElementById('editModal').style.display="flex"}
+function openOffer(id,name){
+    document.getElementById("offerCategoryId").value=id;
+    document.getElementById("offerTitle").innerText=`Add Offer - ${name}`;
+    document.getElementById("offerModal").style.display="flex"}
+window.onclick=function(e){if(e.target.classList.contains('modal')){e.target.style.display="none"}}
+function confirmBlock(id){
+    Swal.fire({title:"Are you sure?",text:"Do you want to block this category?",icon:"warning",showCancelButton:true,confirmButtonText:"Yes, Block"})
+    .then((result)=>{
+        if(result.isConfirmed){
+            fetch(`/admin/category/${id}/block`,{method:"PATCH"})
+            .then(res=>res.json()).then(data=>{if(data.success)location.reload()})}})}
+function confirmUnblock(id){
+    Swal.fire({title:"Are you sure?",text:"Do you want to unblock this category?",icon:"question",showCancelButton:true,confirmButtonText:"Yes, Unblock"}).then((result)=>{if(result.isConfirmed){fetch(`/admin/category/${id}/unblock`,{method:"PATCH"}).then(res=>res.json()).then(data=>{if(data.success)location.reload()})}})}
+function saveCategory(){
+    const name=document.getElementById("addName").value.trim();
+    const description=document.getElementById("addDesc").value.trim();
+    if(!name||!description){
+        Swal.fire("Error","All fields required","error");return}
+        fetch("/admin/category",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({name,description})})
+        .then(res=>res.json())
+        .then(data=>{
+            if(data.success)Swal.fire("Success",data.msg,"success")
+            .then(()=>location.reload());
+        else Swal.fire("Error",data.msg,"error")})}
+function saveEditCategory(){
+    const id=document.getElementById('editId').value;const name=document.getElementById('editName').value.trim();
+    
+    const description=document.getElementById('editDesc').value.trim();
+    if(!name||!description){Swal.fire("Error","All fields required","error");
+    return
 }
-
-function openEdit(id, name, stock) {
-    document.getElementById('editId').value = id;
-    document.getElementById('editName').value = name;
-    document.getElementById('editStock').value = stock;
-    document.getElementById('editModal').style.display = "flex";
-}
-
-window.onclick = function(e) {
-    if (e.target.classList.contains('modal')) {
-        e.target.style.display = "none";
-    }
-}
-function confirmBlock(id) {
-    Swal.fire({
-        title: "Are you sure?",
-        text: "Do you want to block this category?",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonText: "Yes, Block"
-    }).then((result) => {
-        if (result.isConfirmed) {
-            fetch(`/admin/category/${id}/block`, { method: "PATCH" })
-            .then(res => res.json())
-            .then(data => {
-                if(data.success) location.reload();
-            });
-        }
-    });
-}
-
-function confirmUnblock(id) {
-    Swal.fire({
-        title: "Are you sure?",
-        text: "Do you want to unblock this category?",
-        icon: "question",
-        showCancelButton: true,
-        confirmButtonText: "Yes, Unblock"
-    }).then((result) => {
-        if (result.isConfirmed) {
-            fetch(`/admin/category/${id}/unblock`, { method: "PATCH" })
-            .then(res => res.json())
-            .then(data => {
-                if(data.success) location.reload();
-            });
-        }
-    });
-}
-function saveEditCategory() {
-    const id = document.getElementById('editId').value; 
-    const name = document.getElementById('editName').value.trim();
-    const stock = Number(document.getElementById('editStock').value);
-
-    if (!name || isNaN(stock)) {
-        Swal.fire("Error", "Enter valid name & stock", "error");
-        return;
-    }
-    fetch(`/admin/category/${id}`, {
-        method: "PUT", 
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, stock })
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.success) {
-            Swal.fire("Updated!", "Category updated successfully.", "success")
-                .then(() => location.reload());
-        } else {
-            Swal.fire("Error!", data.msg || "Something went wrong.", "error");
-        }
-    })
-    .catch(() => Swal.fire("Error!", "Server error occurred.", "error"));
-}
- function saveCategory() {
-    const type = document.getElementById("type").value.trim();
-    const name = document.getElementById("addName").value.trim();
-    const stock = Number(document.getElementById("addStock").value || 0);
-
-    if (!type || !name) {
-        Swal.fire("Error", "Type and Name are required", "error");
-        return;
-    }
-
-    fetch("/admin/category", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ type, name, stock })
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.success) {
-            Swal.fire("Success", data.msg, "success").then(() => location.reload());
-        } else {
-            Swal.fire("Error", data.msg, "error");
-        }
-    })
-    .catch(err => {
-        console.error(err);
-        Swal.fire("Error", "Something went wrong", "error");
-    });
-}
-
-function confirmDelete(id) {
-    Swal.fire({
-        title: 'Are you sure?',
-        text: "Delete this category?",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Yes, delete!'
-    }).then(result => {
-        if (result.isConfirmed) {
-
-            fetch("/admin/category/delete", {
-                method: "DELETE",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ id })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    Swal.fire('Deleted!', 'Category deleted', 'success')
-                        .then(() => location.reload());
-                } else {
-                    Swal.fire('Error', 'Delete failed', 'error');
-                }
-            });
-
-        }
-    });
-}
+fetch(`/admin/category/${id}`,{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({name,description})})
+.then(res=>res.json()).then(data=>{if(data.success)Swal.fire("Updated!","Category updated successfully","success")
+.then(()=>location.reload());else Swal.fire("Error",data.msg,"error")})}
+function confirmDelete(id){
+    Swal.fire({title:'Are you sure?',text:"Delete this category?",icon:'warning',showCancelButton:true,confirmButtonText:'Yes, delete!'})
+    .then(result=>{
+        if(result.isConfirmed){fetch("/admin/category/delete",{method:"DELETE",headers:{"Content-Type":"application/json"},body:JSON.stringify({id})})
+        .then(res=>res.json()).then(data=>{
+    if(data.success)Swal.fire('Deleted!','Category deleted','success')
+    .then(()=>location.reload());else Swal.fire('Error','Delete failed','error')})}})}
+function saveOffer(){
+    const categoryId=document.getElementById("offerCategoryId").value;
+    const discount=Number(document.getElementById("offerPercent").value);
+    if(!discount||discount<=0){Swal.fire("Error","Enter valid discount","error");
+    return}fetch(`/admin/category/${categoryId}/offer`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({discount})}).
+    then(res=>res.json()).then(data=>{if(data.success)Swal.fire("Success","Offer added successfully","success")
+    .then(()=>location.reload());else Swal.fire("Error",data.msg,"error")})}
 </script>
-
 </body>
 </html>

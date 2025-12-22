@@ -1,27 +1,30 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose"
 
 const categorySchema = new mongoose.Schema({
-    type: {
-        type: String,
-        required: true,
-       
+    rollNo: {
+        type: Number,
+        unique: true
     },
     name: {
         type: String,
         required: true
     },
-    stock: {
-        type: Number,
-        default: 0
+    description: {
+        type: String,
+        required: true
     },
+    isBlocked: {
+        type: Boolean,
+        default: false
+    },categoryOffer: {
+    type: Number,
+    default: 0  
+  },
     createdAt: {
         type: Date,
         default: Date.now
-    },
-    isBlocked: {
-    type: Boolean,
-    default: false
-}
+    }
 });
 
-module.exports = mongoose.model("Category", categorySchema);
+const Category = mongoose.model("Category", categorySchema);
+export default Category;

@@ -1,193 +1,55 @@
 <!DOCTYPE html>
-<html lang="ml">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NYRAH Admin – Products</title>
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link rel="stylesheet" href="/admin/dashboard.css">
 
   <style>
-    /* ---------------- RESET ---------------- */
-    * {
+    body {
+      background: #fae7eb;
       margin: 0;
-      padding: 0;
-      box-sizing: border-box;
       font-family: Arial, sans-serif;
     }
 
-    body {
-      background: #fae7eb;
-      display: flex;
-      min-height: 100vh;
-    }
-
-    /* ---------------- SIDEBAR ---------------- */
-    .sidebar {
-      width: 240px;
-      background: #fff;
-      padding: 20px 15px;
-      box-shadow: 2px 0 5px rgba(0,0,0,0.1);
-      position: fixed;
-      height: 100vh;
-      overflow-y: auto;
-    }
-
-    .brand {
-      font-size: 1.8rem;
-      font-weight: bold;
-      margin-bottom: 30px;
-    }
-
-    .menu {
-      list-style: none;
-    }
-
-    .menu li {
-      margin-bottom: 8px;
-    }
-
-    .menu li a {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 12px 15px;
-      text-decoration: none;
-      color: black;
-      border-radius: 8px;
-      transition: 0.2s;
-    }
-
-    .menu li a:hover,
-    .menu li.active a {
-      background: #fcec;
-      color: #d81b60;
-    }
-
-    /* ---------------- MAIN ---------------- */
     .main {
       margin-left: 260px;
-      padding: 20px;
-      width: calc(100% - 260px);
+      padding: 35px;
+     width: 90%;
+     margin-top: 35px;
     }
 
-    .main-profile-btn {
-      display: flex;
-      justify-content: flex-end;
-      align-items: center;
-      margin-bottom: 20px;
-      position: relative;
-    }
-
-    .profile-img {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      margin-right: 10px;
-    }
-
-    .profile-menu {
-      display: none;
-      position: absolute;
-      top: 50px;
-      right: 0;
-      background: white;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      overflow: hidden;
-      min-width: 120px;
-      z-index: 10;
-    }
-
-    .profile-menu a {
-      display: block;
-      padding: 8px 12px;
-      text-decoration: none;
-      color: black;
-    }
-
-    .profile-menu a:hover {
-      background: #f0f0f0;
-    }
-
-    /* ---------------- TOP BAR ---------------- */
     .top-bar {
       background: #ffe5ee;
-      padding: 20px;
-      border-radius: 12px;
-      border: 1px solid #ffccd9;
+      padding: 15px 20px;
+      border-radius: 10px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 15px;
     }
 
-    .title {
-      font-size: 20px;
-      font-weight: 700;
-    }
-
-    .actions {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-    }
-
-    .search-box {
-      position: relative;
-    }
-
-    .search-box input {
-      padding: 8px 35px 8px 12px;
-      border-radius: 8px;
-      border: 1px solid #fcdceb;
-      width: 220px;
-    }
-
-    .search-box i {
-      position: absolute;
-      right: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: #777;
-    }
-
     .btn-new {
-      background: #000;
-      color: white;
-      padding: 8px 18px;
-      border-radius: 8px;
+      background: black;
+      color: #fff;
+      padding: 8px 16px;
+      border-radius: 6px;
       text-decoration: none;
-      font-size: 14px;
-    }
-
-    .btn-filter {
-      background: white;
-      border: 1px solid #bbb;
-      padding: 8px 18px;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      cursor: pointer;
-    }
-
-    /* ---------------- TABLE ---------------- */
-    .table-container {
-      width: 100%;
-      overflow-x: auto;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      min-width: 700px;
+      background: #fff;
     }
 
     th, td {
-      padding: 10px 12px;
+      padding: 10px;
       border: 1px solid #ddd;
+      text-align: center;
     }
 
     thead {
@@ -196,173 +58,180 @@
 
     .btn-edit {
       background: #2ba84a;
-      padding: 6px 12px;
-      border-radius: 6px;
-      color: white;
+      padding: 6px 10px;
+      color: #fff;
+      border-radius: 5px;
       text-decoration: none;
-      margin-right: 6px;
     }
 
     .btn-delete {
       background: #e63946;
-      padding: 6px 12px;
-      border-radius: 6px;
-      color: white;
+      padding: 6px 10px;
+      color: #fff;
+      border-radius: 5px;
       border: none;
+      cursor: pointer;
     }
-  .btn-offer {
-  padding: 6px 14px;
-  background: #000;
-  color: #fff;
-  border-radius: 6px;
-  font-size: 13px;
-  text-decoration: none;
-  transition: 0.3s ease;
-}
 
-.btn-offer:hover {
-  background: #333;
+    .btn-offer {
+      background: #000;
+      padding: 6px 12px;
+      color: #fff;
+      border-radius: 5px;
+      border: none;
+      cursor: pointer;
+    }
 
- 
-  }
+    .badge {
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 12px;
+    }
+
+    .bg-success {
+      background: green;
+      color: #fff;
+    }
+
+    .bg-secondary {
+      background: gray;
+      color: #fff;
+    }
   </style>
 </head>
 <body>
-
-  
 <div class="container">
 <%- include('../../views/partials/admin/side')%>
-   
+
+  <main class="content">
+   <header class="top-nav">
+  <%- include('../../views/partials/admin/header')%>
+</header>
+
+<main class="main">
+
+
+  <div class="top-bar">
+    <h2>Products Management</h2>
+    <a href="/admin/products/add" class="btn-new">+ New</a>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>ID</th>
+        <th>Brand</th>
+        <th>Category</th>
+        <th>Price</th>
+        <th>Qty</th>
+        <th>Offer</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% products.forEach(p => { %>
+        <tr>
+          <td><%= p.productName %></td>
+          <td><%= p._id %></td>
+          <td><%= p.brand?.brandName || "-" %></td>
+          <td><%= p.category?.name || "-" %></td>
+
+          <td>
+            <% if (p.productOffer > 0) { %>
+              <span style="text-decoration: line-through; color:gray;">₹<%= p.regularPrice %></span><br>
+              <strong>₹<%= p.salesPrice || (p.regularPrice - (p.regularPrice * p.productOffer / 100)) %></strong>
+            <% } else { %>
+              ₹<%= p.regularPrice %>
+            <% } %>
+          </td>
+
+          <td><%= p.quantity %></td>
+
+          <td>
+            <% if (p.productOffer > 0) { %>
+              <span class="badge bg-success"><%= p.productOffer %>% OFF</span>
+            <% } else { %>
+              <span class="badge bg-secondary">No Offer</span>
+            <% } %>
+          </td>
+
+          <td>
+            <a href="/admin/products/edit/<%= p._id %>" class="btn-edit">Edit</a>
+
+            <form action="/admin/products/delete/<%= p._id %>" method="POST" style="display:inline;">
+              <button class="btn-delete">Delete</button>
+            </form>
+
+            <button type="button"
+                    class="btn-offer"
+                    data-id="<%= p._id %>"
+                    data-hasoffer="<%= p.productOffer > 0 ? 1 : 0 %>">
+              <%= p.productOffer > 0 ? "Remove Offer" : "Add Offer" %>
+            </button>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+
+</main>
+
+<div id="offerModal" style="display:none; position:fixed; top:0; left:0;
+            width:100%; height:100%; background:rgba(0,0,0,0.6);
+            justify-content:center; align-items:center; z-index:2000;">
+  <div style="background:#fff; padding:20px; border-radius:10px; text-align:center;">
+    <h4>Add Offer (%)</h4>
+    <input type="number" id="offerInput" min="1" max="99" style="width:120px; padding:6px; text-align:center;">
+    <div style="margin-top:15px;">
+      <button id="offerSaveBtn" class="btn-edit">Save</button>
+      <button id="offerCancelBtn" class="btn-delete">Cancel</button>
+    </div>
+  </div>
 </div>
-  <!-- MAIN -->
-  <main class="main">
-   
-    <div class="main-profile-btn" id="profileBtn">
-      <img src="/images/ima.webp" class="profile-img">
-      <span>Admin</span>
 
-      <div class="profile-menu" id="profileMenu">
-        <a href="#">Profile</a>
-        <a href="/admin/logout">Logout</a>
-      </div>
-    </div>
+<script>
+  const offerModal = document.getElementById('offerModal');
+  const offerInput = document.getElementById('offerInput');
+  let currentProductId = null;
 
-    <!-- TOP BAR -->
-    <div class="top-bar">
-      <h2 class="title">Products Management</h2>
+  document.querySelectorAll('.btn-offer').forEach(btn => {
+    btn.addEventListener('click', () => {
+      currentProductId = btn.dataset.id;
+      const hasOffer = btn.dataset.hasoffer === '1';
 
-      <div class="actions">
-        <div class="search-box">
-          <input type="text" placeholder="Search here">
-          <i class="bi bi-search"></i>
-        </div>
-
-        <a href="/admin/products/add" class="btn-new">New</a>
-
-        <button class="btn-filter">
-          Filters <i class="bi bi-sliders"></i>
-        </button>
-      </div>
-    </div>
-    <div class="table-container">
-      <table>
-        <thead>
-          <tr>
-            <th>Product</th>
-            <th>Product ID</th>
-            <th>Price</th>
-            <th>Offer Price</th>
-            <th>Offer</th>
-            <th>Category</th>
-            <th>Variant</th>
-            <th>Color</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-
-        <% products.forEach(p => { %>
-    <tr>
-      <td><%= p.productName %></td>        
-      <td><%= p.productId  %></td>   
-      <td>₹<%= p.regularPrice %></td>      
-      <td>
-            ₹<%= p.salesPrice ? p.salesPrice : p.regularPrice %>
-           </td>
-     <td>
-  <button 
-    class="offer-btn" 
-    data-id="<%= p._id %>" 
-    data-hasoffer="<%= p.productOffer ? 1 : 0 %>"
-  >
-    <%= p.productOffer ? "Remove Offer" : "Add Offer" %>
-  </button>
-</td>
-      <td><%= p.category?.name %></td>
-      <td><%= p.addedOn ? p.addedOn.toDateString() : '' %></td>
-      <td><%= p.color || '-' %></td>      
-      <td>
-        <a class="btn-edit" href="/admin/products/edit/<%= p._id %>">Edit</a>
-        <form action="/admin/products/delete/<%= p._id %>" method="POST" style="display:inline;">
-          <button class="btn-delete" onclick="return confirm('Delete this product?')">Delete</button>
-        </form>
-      </td>
-    </tr>
-  <% }) %>
-</tbody>
-      </table>
-      <%- include('../../views/partials/admin/footer')%>
-    </div>
-
-  </main>
-
-  <script>
-document.querySelectorAll(".offer-btn").forEach(button => {
-  button.addEventListener("click", function() {
-    const productId = this.dataset.id;
-    const hasOffer = parseInt(this.dataset.hasoffer);
-
-    if (hasOffer === 0) {
-      // Add offer
-      Swal.fire({
-        title: "Add Offer (%)",
-        input: "number",
-        inputAttributes: { min: 1, max: 90 },
-        showCancelButton: true,
-        confirmButtonText: "Save"
-      }).then(result => {
-        if (result.isConfirmed) {
-          fetch(`/admin/products/${productId}/add-offer`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ offer: result.value })
-          })
+      if (hasOffer) {
+        fetch(`/admin/products/remove-offer/${currentProductId}`, { method: 'POST' })
           .then(res => res.json())
           .then(data => {
-            if (data.success) location.reload();
+            if (data.success) window.location.reload();
           });
-        }
-      });
-
-    } else {
-      // Remove offer
-      Swal.fire({
-        title: "Remove Offer?",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonText: "Yes, Remove"
-      }).then(result => {
-        if (result.isConfirmed) {
-          fetch(`/admin/products/${productId}/remove-offer`, { method: "POST" })
-            .then(res => res.json())
-            .then(data => {
-              if (data.success) location.reload();
-            });
-        }
-      });
-    }
+      } else {
+        offerModal.style.display = 'flex';
+        offerInput.value = '';
+      }
+    });
   });
-});
-  </script>
 
-</body>
+  
+  document.getElementById('offerSaveBtn').addEventListener('click', () => {
+    const offer = offerInput.value;
+    if (!offer || offer < 1 || offer > 99) return alert("Offer must be 1-99%");
+    fetch(`/admin/products/add-offer/${currentProductId}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ offer })
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) window.location.reload();
+      });
+  });
+
+  document.getElementById('offerCancelBtn').addEventListener('click', () => {
+    offerModal.style.display = 'none';
+  });
+</script>
+</body>   
 </html>

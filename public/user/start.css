@@ -9,7 +9,6 @@ body {
     background: #FADBCB;
 }
 
-/* NAVBAR */
 nav {
     position: fixed;
     top: 0;
@@ -41,7 +40,7 @@ nav {
 .dropdown {
     display: none;
     position: absolute;
-    top: 60px; /* navbar height */
+    top: 60px; 
     left: 0;
     background:transparent;
     border: 1px solid #ccc;
@@ -138,7 +137,7 @@ nav {
     font-weight: 500;
 }
 
-/* 🔥 Responsive for Tablets & Mobiles */
+
 @media (max-width: 900px) {
     .nav-links {
         gap: 20px;
@@ -220,7 +219,7 @@ footer {
 }
 
 .footer-section {
-  flex: 1 1 180px; /* flexible columns */
+  flex: 1 1 180px; 
 }
 
 .footer-section h3, 
@@ -234,7 +233,6 @@ footer {
   font-size: 14px;
 }
 
-/* Footer bottom */
 .footer-bottom {
   text-align: center;
   margin-top: 30px;
@@ -245,23 +243,22 @@ footer {
 }
 .footer-section.connect .social-icons {
   display: flex;
-  justify-content: center;  /* center horizontally */
-  gap: 15px;                /* space between icons */
+  justify-content: center;  
+  gap: 15px;                
   margin-top: 10px;
 }
 
 .footer-section.connect .social-icons a {
-  color: #201818;           /* icon color */
+  color: #201818;          
   font-size: 22px;
   transition: transform 0.3s, color 0.3s;
 }
 
 .footer-section.connect .social-icons a:hover {
-  color: #000;              /* hover color */
-  transform: scale(1.2);    /* zoom effect */
+  color: #000;             
+  transform: scale(1.2);   
 }
 
-/* Responsive */
 @media (max-width: 768px) {
   .footer-container {
     flex-direction: column;

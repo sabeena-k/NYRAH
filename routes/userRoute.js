@@ -1,15 +1,15 @@
-const express=require('express')
+import express from'express'
 const router=express.Router()
-const {loadStartPage,loadHomePage,about,contact,loadProduct}=require('../controllers/user/userController')
+import {loadStartPage,loadHomePage,about,contact,loadProduct,loadSingleProduct}from'../controllers/user/userController.js'
 
-const {userAuth}=require('../middlewares/auth')
 
-router.get("/", loadStartPage);
 
-router.get("/home",userAuth,loadHomePage);
+router.get('/',loadStartPage);
+router.get("/home",loadHomePage);
 router.get('/about',about);
 router.get('/contact',contact)
 router.get('/AllProducts',loadProduct)
+router.get('/product/:id',loadSingleProduct);
 
-module.exports = router;
+export default router
 

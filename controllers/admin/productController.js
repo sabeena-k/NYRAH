@@ -1,177 +1,116 @@
-const Products = require('../../models/productSchema');
-const Category = require('../../models/categorySchema');
-const Brand = require('../../models/brandSchema');
-const User=require('../../models/userSchema')
-const path=require('path')
-const fs=require('fs')
-const sharp=require('sharp')
+import {
+  getProductsPaginated,
+  getProductAddPageData,
+  createProduct,
+  getEditPageData,
+  updateProduct,
+  applyOffer,
+  removeOfferService,
+  deleteProduct
+} from "../../services/admin/productServices.js"
 
 const productInfo = async (req, res) => {
-    try {
-        const page = parseInt(req.query.page) || 1;
-        const limit = 5;
-        const skip = (page - 1) * limit;
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = 5;
 
-        const totalCount = await Products.countDocuments();
-        const totalPages = Math.ceil(totalCount / limit);
+    const { products, totalPages } =
+      await getProductsPaginated(page, limit);
 
-        const products = await Products.find({})
-            .populate("category")
-            .populate("brand")
-            .skip(skip)
-            .limit(limit)
-            .sort({ createdAt: -1 });
-
-        res.render("admin/products", {
-            products,
-            currentPage: page,
-            totalPages
-        });
-    } catch (error) {
-        console.log(error);
-        res.redirect("/admin/pageError");
-    }
+    res.render("admin/products", {
+      products,
+      currentPage: page,
+      totalPages
+    });
+  } catch (err) {
+    console.log(err);
+    res.redirect("/admin/pageError");
+  }
 };
-
 const productAddPage = async (req, res) => {
-    try {
-        const cat = await Category.find({});
-        const brands = await Brand.find({});
-        res.render("admin/productAdd", { cat:cat,brand:brands });
-    } catch (error) {
-        console.log(error);
-        res.redirect("/admin/pageError");
-    }
+  try {
+    const data = await getProductAddPageData();
+    res.render("admin/productAdd", data);
+  } catch (error) {
+    console.log(error);
+    res.redirect("/admin/pageError");
+  }
 };
-
 const productAdd = async (req, res) => {
-    try {
-        const { name, price, category, brand, description } = req.body;
-
-        if (!name || !price || !category || !brand || !description) {
-            console.log("Missing fields");
-            return res.redirect("/admin/productAdd?error=missing_fields");
-        }
-        if (!req.files || req.files.length === 0) {
-            console.log("No images uploaded");
-            return res.redirect("/admin/productAdd?error=no_images");
-        }
-        const allImages = req.files.map(file => file.filename);
-     const productData = {
-    productName: name,    
-    productId: "SKU-" + Date.now(),       
-    discription: description,  
-    regularPrice: price,        
-    salesPrice: req.body.offerPrice || price,
-    category: category,
-    brand: brand,
-    color: req.body.color,      
-    productImage: allImages
-}
-        const product = new Products(productData);
-        await product.save() 
-        res.redirect("/admin/products");
-    } catch (error) {
-        console.log("ADD PRODUCT ERROR:", error);
-        res.redirect("/admin/pageError");
-    }
+  try {
+    await createProduct(req.body, req.files);
+    res.redirect("/admin/products");
+  } catch (err) {
+    console.log(err);
+    res.redirect("/admin/pageError");
+  }
 };
 
 const productEditPage = async (req, res) => {
-    try {
-        const id = req.params.id;
-        const product = await Products.findById(id)
-            .populate('category')
-            .populate('brand');
-
-        const cat = await Category.find({});
-        const brands = await Brand.find({});
-
-        res.render('admin/productEdit', { product, cat, brands });
-    } catch (err) {
-        console.log(err);
-        res.redirect('/admin/pageError');
-    }
+  try {
+    const data = await getEditPageData(req.params.id);
+    if (!data.product) return res.redirect("/admin/products");
+    res.render("admin/productEdit", data);
+  } catch (err) {
+    console.log(err);
+    res.redirect("/admin/pageError");
+  }
 };
 
 const productEdit = async (req, res) => {
-    try {
-        const id = req.params.id;
-        const { name, price, category, brand, description } = req.body;
-
-        await Products.findByIdAndUpdate(id, {
-            productName: name,
-            discription: description,
-            regularPrice: price,
-            salesPrice: req.body.offerPrice || price,
-            category,
-            brand,
-            color: req.body.color
-        });
-
-        res.redirect('/admin/products');
-    } catch (err) {
-        console.log(err);
-        res.redirect('/admin/pageError');
-    }
+  try {
+    await updateProduct(req.params.id, req.body, req.files);
+    res.redirect("/admin/products");
+  } catch (err) {
+    console.log(err);
+    res.redirect("/admin/pageError");
+  }
 };
 const addOffer = async (req, res) => {
   try {
-    const id = req.params.id;
-    const offer = parseFloat(req.body.offer); // Make sure it's a number
+    const offer = Number(req.body.offer);
+    if (offer <= 0 || offer >= 100) {
+      return res.status(400).json({ success: false });
+    }
 
-    const product = await Products.findById(id);
-    if (!product) return res.status(404).json({ success: false, message: "Product not found" });
+    const product = await applyOffer(req.params.id, offer);
+    if (!product) return res.status(404).json({ success: false });
 
-    // calculate salesPrice
-    const salesPrice = product.regularPrice - (product.regularPrice * offer / 100);
-
-    product.productOffer = offer;
-    product.salesPrice = salesPrice;
-    await product.save();
-
-    res.json({ success: true, salesPrice });
+    res.json({ success: true });
   } catch (err) {
     console.log(err);
-    res.status(500).json({ success: false, error: err.message });
+    res.status(500).json({ success: false });
   }
 };
 
 const removeOffer = async (req, res) => {
   try {
-    const id = req.params.id;
-
-    const product = await Products.findById(id);
-    if (!product) return res.status(404).json({ success: false, message: "Product not found" });
-
-    product.productOffer = null;
-    product.salesPrice = product.regularPrice; 
-    await product.save();
-
+    const product = await removeOfferService(req.params.id);
+    if (!product) return res.status(404).json({ success: false });
     res.json({ success: true });
   } catch (err) {
     console.log(err);
-    res.status(500).json({ success: false, error: err.message });
+    res.status(500).json({ success: false });
   }
 };
 
 const productDelete = async (req, res) => {
-    try {
-        await Products.findByIdAndDelete(req.params.id);
-        res.redirect("/admin/products");
-    } catch (error) {
-        console.log(error);
-        res.redirect("/admin/pageError");
-    }
+  try {
+    await deleteProduct(req.params.id);
+    res.redirect("/admin/products");
+  } catch (error) {
+    console.log(error);
+    res.redirect("/admin/pageError");
+  }
 };
 
-module.exports = {
-    productInfo,
-    productAddPage,
-    productAdd,
-    productEdit,
-    productEditPage,
-    addOffer,
-    removeOffer,
-    productDelete
+export {
+  productInfo,
+  productAddPage,
+  productAdd,
+  productEditPage,
+  productEdit,
+  addOffer,
+  removeOffer,
+  productDelete
 };

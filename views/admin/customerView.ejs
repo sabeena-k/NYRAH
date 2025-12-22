@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/admin/dashboard.css">
+    <style>.customer-page {
+  display: flex;
+  gap: 20px;
+}
+.profile-card {
+  width: 280px;
+  background: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+}
+
+.avatar img {
+  width: 80px;
+  border-radius: 50%;
+}
+
+.status {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  margin: 10px 0;
+}
+
+.status.active {
+  background: #e7f9f1;
+  color: #1ca97c;
+}
+
+.status.blocked {
+  background: #fdecea;
+  color: #e74c3c;
+}
+
+.info {
+  list-style: none;
+  padding: 0;
+  text-align: left;
+}
+
+.details-section {
+  flex: 1;
+}
+
+.stats {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.stat-box {
+  background: #fff;
+  padding: 15px;
+  border-radius: 10px;
+  flex: 1;
+}
+
+.table-box {
+  background: #fff;
+  padding: 15px;
+  border-radius: 10px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+</style>
+</head>
+<body>
+    <div class="container">
+    <%- include('../../views/partials/admin/side') %>
+    <main class="main">
+        <%- include('../../views/partials/admin/header') %>
+
+    <div class="customer-page">
+
+ 
+  <div class="profile-card">
+    <div class="avatar">
+      <img src="/images/avatar.png" alt="User">
+    </div>
+
+    <h3><%= customer.name %></h3>
+    <span class="status <%= customer.isBlocked ? 'blocked' : 'active' %>">
+      <%= customer.isBlocked ? 'Blocked' : 'Active' %>
+    </span>
+
+    <ul class="info">
+      <li><strong>Customer ID:</strong> <%= customer._id %></li>
+      <li><strong>Email:</strong> <%= customer.email %></li>
+      <li><strong>Phone:</strong> <%= customer.phone %></li>
+      <li><strong>Address:</strong> <%= customer.address || 'N/A' %></li>
+    </ul>
+  </div>
+
+  <div class="details-section">
+
+    <div class="stats">
+      <div class="stat-box">
+        <p>Total Orders</p>
+        <h3><%= totalOrders %></h3>
+      </div>
+
+      <div class="stat-box">
+        <p>Total Balance</p>
+        <h3>₹ <%= totalBalance %></h3>
+      </div>
+    </div>
+
+    <div class="table-box">
+      <h4>Transaction History</h4>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Order ID</th>
+            <th>Product</th>
+            <th>Total</th>
+            <th>Status</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <% orders.forEach(order => { %>
+            <tr>
+              <td><%= order._id %></td>
+              <td><%= order.items[0].productName %></td>
+              <td>₹ <%= order.totalAmount %></td>
+              <td class="status <%= order.status.toLowerCase() %>">
+                <%= order.status %>
+              </td>
+              <td><%= order.createdAt.toDateString() %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
+    </main></div>
+</body>
+</html>

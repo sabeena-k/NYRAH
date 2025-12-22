@@ -1,5 +1,6 @@
-const mongoose=require('mongoose');
-const env=require('dotenv').config();
+import mongoose from'mongoose'
+import env from'dotenv'
+env.config();
 
 
 const connect=async()=>{
@@ -14,4 +15,4 @@ const connect=async()=>{
 
 
 
-module.exports=connect;
+export default connect;

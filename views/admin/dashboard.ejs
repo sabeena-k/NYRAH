@@ -12,41 +12,36 @@
 
 <body>
 <div class="container">
-
-    <%- include('../../views/partials/admin/side')%>
-
+    <%- include('../../views/partials/admin/side') %>
     <main class="main">
+        <%- include('../../views/partials/admin/header') %>
 
-        <%- include('../../views/partials/admin/header')%>
+        <h2 class="section-title">Dashboard Overview</h2>
 
-        <h2 class="section-title">Today's Sales</h2>
+        <div class="filter-container">
+            <select id="dashboardFilter">
+                <option value="weekly">Weekly</option>
+                <option value="monthly" selected>Monthly</option>
+                <option value="yearly">Yearly</option>
+                <option value="custom">Custom</option>
+            </select>
+            <input type="date" id="startDate" style="display:none;">
+            <input type="date" id="endDate" style="display:none;">
+            <button id="applyCustom" style="display:none;">Apply</button>
+        </div>
 
         <div class="top-cards">
-            <div class="card pink">
-                <h3>₹ 19k</h3>
-                <p>Revenue</p>
-            </div>
-            <div class="card green">
-                <h3>300</h3>
-                <p>Sold</p>
-            </div>
-            <div class="card purple">
-                <h3>50</h3>
-                <p>Customers</p>
-            </div>
-            <div class="card yellow">
-                <h3>15</h3>
-                <p>Returns</p>
-            </div>
+            <div class="card pink"><h3 id="revenueCard">₹ 19k</h3><p>Revenue</p></div>
+            <div class="card green"><h3 id="soldCard">300</h3><p>Sold</p></div>
+            <div class="card purple"><h3 id="customerCard">50</h3><p>Customers</p></div>
+            <div class="card yellow"><h3 id="returnCard">15</h3><p>Returns</p></div>
         </div>
 
         <div class="two-col">
-
             <div class="analytics box">
                 <h3>Customer Growth</h3>
                 <canvas id="donutChart"></canvas>
             </div>
-
             <div class="analytics box">
                 <h3>Product Sold</h3>
                 <canvas id="lineChart" width="500" height="350"></canvas>
@@ -59,68 +54,88 @@
         </div>
 
     </main>
-
 </div>
 
 <script>
-new Chart(document.getElementById('donutChart'), {
-    type: 'doughnut',
-    data: {
-        labels: ["New", "Returning"],
-        datasets: [{
-            data: [60, 40],
-            backgroundColor: ["#4CAF50", "#FFEB3B"],
-            borderWidth: 0
-        }]
-    },
-    options: { responsive: false }
-});
-
-new Chart(document.getElementById('lineChart'), {
+const lineChart = new Chart(document.getElementById('lineChart'), {
     type: 'line',
-    data: {
-        labels: ["Mon", "Tue", "Wed", "Thu", "Fri"],
-        datasets: [{
-            label: "Sales",
-            data: [50, 70, 40, 90, 120],
-            borderColor: "#6a00ff",
-            borderWidth: 2,
-            tension: 0.3
-        }]
-    },
-    options: { responsive: false }
+    data: { labels: [], datasets:[{label:"Sales", data:[], borderColor:"#6a00ff", borderWidth:2, tension:0.3}] },
+    options:{ responsive:false }
 });
 
-new Chart(document.getElementById('revenueChart'), {
+const revenueChart = new Chart(document.getElementById('revenueChart'), {
     type: 'bar',
-    data: {
-        labels: ["Jan", "Feb", "Mar", "Apr", "May"],
-        datasets: [{
-            label: "Revenue",
-            data: [20000, 25000, 18000, 30000, 35000],
-            backgroundColor: "#ffb347"
-        }]
-    },
-    options: { responsive: false }
+    data:{ labels:[], datasets:[{label:"Revenue", data:[], backgroundColor:"#ffb347"}] },
+    options:{ responsive:false }
 });
+
+new Chart(document.getElementById('donutChart'), {
+    type:'doughnut',
+    data:{ labels:["New","Returning","Rejected","Confirmed"], datasets:[{data:[60,40,20,30], backgroundColor:["#4CAF50","#FFEB3B","#f62c11","#8e44ad"], borderWidth:0}] },
+    options:{ responsive:false }
+});
+
+const dashboardFilter = document.getElementById('dashboardFilter');
+const startDate = document.getElementById('startDate');
+const endDate = document.getElementById('endDate');
+const applyCustom = document.getElementById('applyCustom');
+
+dashboardFilter.addEventListener('change', function(){
+    if(this.value === 'custom'){
+        startDate.style.display = 'inline-block';
+        endDate.style.display = 'inline-block';
+        applyCustom.style.display = 'inline-block';
+    } else {
+        startDate.style.display = 'none';
+        endDate.style.display = 'none';
+        applyCustom.style.display = 'none';
+        updateDashboardCharts(this.value);
+    }
+});
+
+applyCustom.addEventListener('click', function(){
+    const start = startDate.value;
+    const end = endDate.value;
+    if(!start || !end){
+        Swal.fire("Error","Select both start and end dates","error");
+        return;
+    }
+    updateDashboardCharts('custom', start, end);
+});
+
+function updateDashboardCharts(filter, start=null, end=null){
+    let salesData=[], revenueData=[], labels=[];
+    if(filter==='weekly'){
+        labels=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+        salesData=[50,60,40,70,80,90,100];
+        revenueData=[5000,6000,4000,7000,8000,9000,10000];
+    } else if(filter==='monthly'){
+        labels=["Week1","Week2","Week3","Week4"];
+        salesData=[200,300,250,400];
+        revenueData=[20000,30000,25000,40000];
+    } else if(filter==='yearly'){
+        labels=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+        salesData=[2000,2500,1800,3000,3500,4000,4500,3800,4200,5000,4800,5200];
+        revenueData=[20000,25000,18000,30000,35000,40000,45000,38000,42000,50000,48000,52000];
+    } else if(filter==='custom'){
+        labels=["Custom1","Custom2","Custom3"];
+        salesData=[100,150,200];
+        revenueData=[10000,15000,20000];
+    }
+    lineChart.data.labels=labels;
+    lineChart.data.datasets[0].data=salesData;
+    lineChart.update();
+    revenueChart.data.labels=labels;
+    revenueChart.data.datasets[0].data=revenueData;
+    revenueChart.update();
+}
+updateDashboardCharts('monthly');
 
 const profileBtn = document.getElementById('profileBtn');
 const profileMenu = document.getElementById('profileMenu');
-
-profileBtn.addEventListener('click', function(e){
-    e.stopPropagation(); 
-    if(profileMenu.style.display === 'flex'){
-        profileMenu.style.display = 'none';
-    } else {
-        profileMenu.style.display = 'flex';
-    }
-});
-
-window.addEventListener('click', function(e){
-    if(!profileBtn.contains(e.target)){
-        profileMenu.style.display = 'none';
-    }
-});
+profileBtn.addEventListener('click', function(e){ e.stopPropagation(); profileMenu.style.display = profileMenu.style.display==='flex'?'none':'flex'; });
+window.addEventListener('click', function(e){ if(!profileBtn.contains(e.target)){ profileMenu.style.display='none'; } });
 </script>
+
 </body>
 </html>

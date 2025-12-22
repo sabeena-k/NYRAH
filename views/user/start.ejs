@@ -6,77 +6,56 @@
     <title>NYRAH – Start</title>
     <link rel="stylesheet" href="/user/start.css" />
 </head>
+<nav class="navbar"> 
+    <div class="left-section"> 
+        
+        <button class="menu-btn" id="menuToggle">☰</button>
+         <div class="dropdown" id="menuDropdown">
+             <a class="inp" href="/about">About Us</a><br>
+              <a class="inp"href="/contact">Contact</a> </div> <h2 class="brand">NYRAH</h2>
+               </div>
+                <ul class="nav-links" id="navMenu"> 
+                    <% if (user) { %> <li><a href="/home">Home</a></li>
+                     <li><a href="/categories">Categories</a></li>
+                      <li><a href="/products">All Product</a></li> 
+                      <% } else { %> <li><a href="/#">Home</a></li> 
+                      <li><a href="#">Collections</a></li>
+                       <li><a href="#">All Product</a></li> 
+                       <% } %> 
+                       </ul> 
+                       <% if (user) { %>
+                         <a href="/profile" class="signup-btn">Profile</a>
+                        <% } else { %>
+                             <a href="/signup" class="signup-btn">Sign up</a> 
+                        <% } %>
+                         </nav>
+                          <section class="hero"> 
+                            <div class="hero-img"> 
+                                <img src="images/cuty.jpg" alt="Girl Dress" />
+                                 </div> 
+                                 <div class="hero-text"> 
+                                    <h1>NYRAH</h1>
+                                  <p class="tagline">Little styles, Big smiles</p>
+                                  <br><br>
+                                   <a href="/home" class="explore-btn">Explore</a>
+                                    </div>
+                                     </section> 
+                                     <script> 
+                                     const toggle = document.getElementById("menuToggle"); 
+                                     const navMenu = document.getElementById("sideMenuBox");
+                                      toggle.addEventListener("click", () => { 
+                                        sideMenu.style.display = sideMenu.style.display === "none" ? "block" : "none"; });
+                                         const menuToggle = document.getElementById('menuToggle'); 
+                                         const menuDropdown = document.getElementById('menuDropdown');
+                                          menuToggle.addEventListener('click', () => {
+                                             if(menuDropdown.style.display === 'block') { menuDropdown.style.display = 'none';
 
-<body>
-    <nav class="navbar">
-        <div class="left-section">
-            <button class="menu-btn" id="menuToggle">☰</button>
-        <div class="dropdown" id="menuDropdown">
-        <a class="inp" href="/about">About Us</a><br>
-        <a class="inp"href="/contact">Contact</a>
-    </div>
-            <h2 class="brand">NYRAH</h2>
-        </div>
+                                              } else { menuDropdown.style.display = 'block'; }
+                                             }); 
+                                             document.addEventListener('click', (e) => {
+                                                 if(!menuDropdown.contains(e.target) && e.target !== menuToggle) { menuDropdown.style.display = 'none';     }
+                                                 }); 
 
-         <ul class="nav-links" id="navMenu">
-    <% if (user) { %>
-        <li><a href="/home">Home</a></li>
-        <li><a href="/categories">Categories</a></li>
-        <li><a href="/products">All Product</a></li>
-    <% } else { %>
-        <li><a href="/start">Home</a></li>
-        <li><a href="/start">Collections</a></li>
-        <li><a href="/start">All Product</a></li>
-    <% } %>
-</ul>
-
-        <% if (user) { %>
-            <a href="/profile" class="signup-btn">Profile</a>
-        <% } else { %>
-            <a href="/signup" class="signup-btn">Sign up</a>
-        <% } %>
-    </nav>
-<section class="hero">
-    <div class="hero-img">
-        <img src="images/cuty.jpg" alt="Girl Dress" />
-    </div>
-
-    <div class="hero-text">
-        <h1>NYRAH</h1>
-        <p class="tagline">Little styles, Big smiles</p><br><br>
-
-        <a href="<%= user ? '/home' : '/start' %>" class="explore-btn">Explore</a>
-
-
-    </div>
-</section>
-    
-         
-<script>
-   
-    const toggle = document.getElementById("menuToggle");
-    const navMenu = document.getElementById("sideMenuBox");
-
-    toggle.addEventListener("click", () => {
-        sideMenu.style.display =
-            sideMenu.style.display === "none" ? "block" : "none";
-    });
-    const menuToggle = document.getElementById('menuToggle');
-const menuDropdown = document.getElementById('menuDropdown');
-
-menuToggle.addEventListener('click', () => {
-    if(menuDropdown.style.display === 'block') {
-        menuDropdown.style.display = 'none';
-    } else {
-        menuDropdown.style.display = 'block';
-    }
-});
-document.addEventListener('click', (e) => {
-    if(!menuDropdown.contains(e.target) && e.target !== menuToggle) {
-        menuDropdown.style.display = 'none';
-    }
-});
-</script>
-</body>
+</script> 
+</body> 
 </html>
-<%- include("../../views/partials/user/footer") %>

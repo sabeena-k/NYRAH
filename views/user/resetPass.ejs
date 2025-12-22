@@ -1,97 +1,126 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Change Password</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-            background-color: #f5c1c1; /* light pink background */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Change Password</title>
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        background-color: #f5c1c1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
 
+    .container {
+        display: flex;
+        background-color: #f5c1c1;
+        width: 80%;
+        max-width: 900px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .form-section {
+        flex: 1;
+        padding: 40px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .form-section h1 {
+        margin-bottom: 10px;
+        font-size: 2rem;
+        color: #7d2d2d;
+    }
+
+    .form-section p {
+        margin-bottom: 20px;
+        font-size: 1rem;
+        color: #333;
+    }
+
+    .form-section input {
+        width: 100%;
+        padding: 12px 15px;
+        margin-bottom: 15px;
+        border-radius: 25px;
+        border: 1px solid #ccc;
+        font-size: 1rem;
+        outline: none;
+        transition: border 0.3s;
+    }
+
+    .form-section input:focus {
+        border-color: #b22222;
+    }
+
+    .form-section button {
+        padding: 12px;
+        width: 100%;
+        background-color: #b22222;
+        color: white;
+        border: none;
+        border-radius: 25px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+
+    .form-section button:hover {
+        background-color: #8b1a1a;
+    }
+
+    .image-section {
+        flex: 1;
+       
+    }
+
+    @media (max-width: 768px) {
         .container {
-            display: flex;
-            background-color: #f5c1c1;
-            width: 80%;
-            max-width: 900px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            border-radius: 10px;
-            overflow: hidden;
+            flex-direction: column;
         }
-
-        .form-section {
-            flex: 1;
-            padding: 40px;
-        }
-
-        .form-section h1 {
-            margin-bottom: 10px;
-            font-size: 2rem;
-        }
-
-        .form-section p {
-            margin-bottom: 20px;
-            font-size: 1rem;
-        }
-
-        .form-section input {
-            width: 100%;
-            padding: 12px 15px;
-            margin-bottom: 20px;
-            border-radius: 8px;
-            border: 1px solid #ccc;
-            font-size: 1rem;
-        }
-
-        .form-section button {
-            padding: 12px;
-            width: 100%;
-            background-color: #b22222; /* firebrick red */
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        .form-section button:hover {
-            background-color: #8b1a1a;
-        }
-
         .image-section {
-            flex: 1;
-            background: url('https://i.ibb.co/YT9n6XL/girl.png') center center/cover no-repeat;
+            height: 300px;
         }
-
-        @media (max-width: 768px) {
-            .container {
-                flex-direction: column;
-            }
-
-            .image-section {
-                height: 300px;
-            }
-        }
-    </style>
+    }
+</style>
 </head>
 <body>
-    <div class="container">
-        <div class="form-section">
-            <h1>Change Password</h1>
-            <p>Please confirm your password</p>
-            <input type="password" placeholder="New Password">
-            <input type="password" placeholder="Confirm Password">
-            <button>Change Password</button>
-        </div>
-        <div class="image-section"></div>
+<div class="container">
+
+   
+    <div class="form-section">
+        <h1>Change Password</h1>
+        <p>Please enter your new password</p>
+
+        <form action="/resetPass" method="POST">
+            <input type="hidden" name="email" value="<%= email %>">
+
+            <input type="password" name="password" placeholder="New Password" required>
+            <input type="password" name="confirmPassword" placeholder="Confirm Password" required>
+
+            <button type="submit">Change Password</button>
+        </form>
     </div>
+
+    <div class="image-section">
+        <img src="images/lk.png" alt="">
+    </div>
+
+</div>
+<script>
+  history.pushState(null, null, location.href);
+  window.onpopstate = function () {
+    history.go(1);
+  };
+</script>
 </body>
 </html>
+

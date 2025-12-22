@@ -1,6 +1,18 @@
 
      
-        <div class="main-profile-btn" id="profileBtn">
+       <style>
+        .profile-menu {
+  display: none;
+}
+
+.profile-menu.show {
+  display: block;
+}
+
+       </style>
+       
+       
+       <div class="main-profile-btn" id="profileBtn">
             <img src="/images/ima.webp" alt="Admin" class="profile-img">
             <span class="profile-name">Admin</span>
 
@@ -9,4 +21,23 @@
                 <a href="/admin/logout">Logout</a>
             </div>
         </div>
- 
+      <script>
+document.addEventListener("DOMContentLoaded", function () {
+  const profileBtn = document.getElementById("profileBtn");
+  const profileMenu = document.getElementById("profileMenu");
+
+  if (!profileBtn || !profileMenu) {
+    console.log("Profile elements not found");
+    return;
+  }
+
+  profileBtn.addEventListener("click", function (e) {
+    e.stopPropagation();
+    profileMenu.classList.toggle("show");
+  });
+
+  document.addEventListener("click", function () {
+    profileMenu.classList.remove("show");
+  });
+});
+</script>

@@ -6,497 +6,39 @@
   <title>NYRAH Admin – Customers</title>
   
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-  
-  <style>
-   * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: Arial, sans-serif;
-}
-
-/* COLORS */
-:root {
-  --pink-bg: #ffe5ef;
-  --white: #fff;
-  --primary-text: #333;
-  --active-green: #c8f7dd;
-  --blocked-red: #f8d0d0;
-}
-
-/* LAYOUT */
-body {
-  background: var(--pink-bg);
-}
-
-.container {
-  display: flex;
-  min-height: 100vh;
-}
-
-.sidebar {
-    width: 240px;
-    background: #ffffff;
-    padding: 20px 15px;
-    box-shadow: 2px 0 10px rgba(0,0,0,0.1);
-    position: fixed;
-    height: 100vh;
-}
-
-.brand {
-    font-size: 26px;
-    font-weight: bold;
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-.menu {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.menu li {
-    margin-bottom: 8px;
-}
-
-.menu li a {
-    text-decoration: none;      /* Removes underline */
-    color: black;               /* Default text color */
-    display: flex;              /* Keep icon and text aligned */
-    align-items: center;
-    gap: 10px;                  /* space between icon and text */
-    padding: 12px 15px;
-    border-radius: 8px;
-    font-size: 15px;
-    transition: all 0.2s;
-}
-
-
-.menu li a:hover {
-    background: #fce4ec;
-    color: #d81b60;
-}
-
-.menu li.active a {
-    background: #fce4ec;
-    color: #d81b60;
-}
-
-/* MAIN CONTENT */
-.content {
-  width: 100%;
-  padding: 25px 35px;
-  margin-left: 240px;
-}
-
-.top-nav {
-  text-align: right;
-}
-
-.profile-icon {
-  font-size: 28px;
-}
-
-.title {
-  margin-top: 10px;
-  font-size: 24px;
-  font-weight: bold;
-}
-
-/* SEARCH + FILTER */
-.search-filter {
-  margin-top: 20px;
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-}
-
-.search-box {
-  background: white;
-  padding: 10px 15px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  width: 100%;
-}
-
-.search-box input {
-  border: none;
-  outline: none;
-  margin-left: 10px;
-  width: 100%;
-}
-
-.filter-btn {
-  padding: 10px 15px;
-  border: none;
-  border-radius: 8px;
-  background: white;
-  cursor: pointer;
-}
-
-/* TABLE */
-.table-container {
-  margin-top: 20px;
-  background: white;
-  border-radius: 12px;
-  overflow: hidden;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-thead {
-  background: #ff8888;
-  color: white;
-}
-
-th, td {
-  padding: 12px 15px;
-  text-align: left;
-}
-
-/* STATUS BADGES */
-.badge {
-  padding: 4px 10px;
-  border-radius: 6px;
-  font-size: 13px;
-}
-
-.badge.active {
-  background: var(--active-green);
-  color: green;
-}
-
-.badge.blocked {
-  background: var(--blocked-red);
-  color: red;
-}
-
-/* MOBILE LIST */
-.mobile-list {
-  display: none;
-  margin-top: 20px;
-}
-
-.customer-card {
-  background: white;
-  padding: 15px;
-  border-radius: 12px;
-  margin-bottom: 15px;
-  box-shadow: 0 0 8px rgba(0,0,0,0.1);
-}
-
-.customer-card .head {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.customer-card img {
-  border-radius: 50%;
-}
-
-/* MOBILE ACTIONS */
-.actions {
-  margin-top: 10px;
-  display: flex;
-  gap: 15px;
-}
-
-/* RESPONSIVE */
-@media (max-width: 900px) {
-  .sidebar {
-    width: 200px; /* text always visible */
-  }
-  .content {
-    margin-left: 200px;
-  }
-}
-
-@media (max-width: 700px) {
-  table {
-    display: none;
-  }
-  .mobile-list {
-    display: block;
-  }
-  .search-filter {
-    flex-direction: column;
-  }
-}
-
-/* PAGINATION */
-.pagination {
-  margin-top: 20px;
-  display: flex;
-  gap: 10px;
-}
-
-.pagination a, .pagination strong {
-  padding: 5px 10px;
-  border-radius: 6px;
-  background: white;
-  text-decoration: none;
-  color: var(--primary-text);
-}
-
-.pagination strong {
-  background: #ff8888;
-  color: white;
-}
-.main-profile-btn {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    background: #fff;
-    padding: 4px 8px;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-    cursor: pointer;
-}
-
-.main-profile-btn .profile-img {
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 1px solid #ccc;
-}
-
-.main-profile-btn .profile-name {
-    font-size: 12px;
-    font-weight: bold;
-    color: #333;
-}
-
-.profile-menu {
-    display: none; /* hidden initially */
-    position: absolute;
-    top: 45px;
-    right: 0;
-    background: #fff;
-    border-radius: 6px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-    flex-direction: column;
-    min-width: 120px;
-    z-index: 10;
-}
-
-.profile-menu a {
-    padding: 8px 12px;
-    display: block;
-    text-decoration: none;
-    color: #333;
-    font-size: 13px;
-}
-
-.profile-menu a:hover {
-    background: #f0f0f0;
-}
- 
-  .title {
-  font-size: 24px;
-  font-weight: 600;
-  margin: 20px 0;
-  color: #333;
-}
-
-
-.search-filter {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.search-box {
-  display: flex;
-  align-items: center;
-  border: 2px solid #ddd;
-  padding: 8px 14px;
-  border-radius: 10px;
-  background: #fff;
-  width: 250px;
-}
-
-.search-box i {
-  color: #777;
-  margin-right: 8px;
-  font-size: 18px;
-}
-
-.search-box input {
-  border: none;
-  outline: none;
-  width: 100%;
-  font-size: 15px;
-}
-
-.filter-btn {
-  background: #007bff;
-  color: white;
-  padding: 8px 18px;
-  border: none;
-  font-size: 15px;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-.filter-btn:hover {
-  background: #0067d1;
-}
-
-/* ---------- TABLE ---------- */
-.table-container {
-  background: white;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.08);
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-table thead {
-  background: #f2f4f8;
-}
-
-table th {
-  padding: 12px;
-  text-align: left;
-  font-weight: 600;
-  color: #444;
-}
-
-table td {
-  padding: 12px;
-  border-bottom: 1px solid #eee;
-  font-size: 14px;
-  color: #555;
-}
-
-table tr:hover {
-  background: #f9fbfc;
-}
-
-/* Block / Unblock Button */
-.btn {
-  border: none;
-  padding: 7px 15px;
-  border-radius: 8px;
-  cursor: pointer;
-  color: white;
-  font-size: 13px;
-}
-
-.btn-danger {
-  background: #e63946;
-}
-
-.btn-danger:hover {
-  background: #cc2d3a;
-}
-
-.btn-success {
-  background: #2ba84a;
-}
-
-.btn-success:hover {
-  background: #21963e;
-}
-
-td a {
-  color: white;
-  text-decoration: none;
-}
-
-
-.pagination {
-  display: flex;
-  list-style: none;
-  justify-content: center;
-  margin-top: 25px;
-}
-
-.page-item {
-  list-style: none;
-  margin: 0 4px;
-}
-
-.page-link {
-  display: block;
-  padding: 8px 14px;
-  background: #e9ecef;
-  color: #333;
-  text-decoration: none;
-  border-radius: 6px;
-  font-size: 14px;
-}
-
-.page-item.active .page-link {
-  background: #007bff;
-  color: white;
-  font-weight: 600;
-}
-
-.page-link:hover {
-  background: #d6d8db;
-
-}
-.status-badge {
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 13px;
-  font-weight: 600;
-  display: inline-block;
-}
-
-.status-active {
-  background: #d4f8e8;
-  color: #1f8a4d;
-  border: 1px solid #1f8a4d;
-}
-
-.status-blocked {
-  background: #ffe3e3;
-  color: #d12c2c;
-  border: 1px solid #d12c2c;
-}
- </style>
+  <link rel="stylesheet" href="/admin/dashboard.css">
+ <link rel="stylesheet" href="/admin/customer.css">
 </head>
 <body>
 <div class="container">
 <%- include('../../views/partials/admin/side')%>
 
   <main class="content">
-    <header class="top-nav">
-    
-      <main class="main">
-      <%- include('../../views/partials/admin/header')%>
-    </main>
-    </header>
+   <header class="top-nav">
+  <%- include('../../views/partials/admin/header')%>
+</header>
+
 
     <h2 class="title">Customers</h2>
 
     <div class="search-filter">
       <div class="search-box">
         <i class="bi bi-search"></i>
-        <input type="text" placeholder="Search here">
+   <form method="GET" action="/admin/customers">
+  <input 
+  type="text" 
+  id="searchInput"
+  name="search" 
+  placeholder="Search by name"
+  value="<%= search %>"
+>
+</form>
       </div>
-      <button class="filter-btn">
-        Filters <i class="bi bi-sliders"></i>
-      </button>
-    </div>
-
+       <a href="/admin/customers" class="filter-btn"style="text-decoration:none">
+  Clear
+</a>
+    </div>  
+   
     <div class="table-container">
       <table>
         <thead>
@@ -514,19 +56,26 @@ td a {
            <td><%=data[i].email%></td>
            <td><%=data[i].phone%></td>
           <td>
-  <% if (data[i].isBlocked === false) { %>
-      <a href="/admin/blockCustomer?id=<%= data[i]._id %>" 
-         class="btn btn-danger text-white" 
-         style="width:80px; text-decoration:none;">
-         Block
-      </a>
-  <% } else { %>
-      <a href="/admin/unblockCustomer?id=<%= data[i]._id %>" 
-         class="btn btn-success text-white" 
-         style="width:80px; text-decoration:none;">
-         Unblock
-      </a>
-  <% } %>
+            
+ <a href="/admin/customers/<%= data[i]._id %>"
+   class="view-btn">
+   <i class="bi bi-eye"></i>
+</a>
+
+<% if (!data[i].isBlocked) { %>
+  <a href="/admin/blockCustomer?id=<%= data[i]._id %>&page=<%= currentPage %>&search=<%= search %>"
+     class="btn btn-danger text-white"
+     style="width:80px; text-decoration:none;">
+    Block
+  </a>
+<% } else { %>
+  <a href="/admin/unblockCustomer?id=<%= data[i]._id %>&page=<%= currentPage %>&search=<%= search %>"
+     class="btn btn-success text-white"
+     style="width:80px; text-decoration:none;">
+    Unblock
+  </a>
+<% } %>
+
 </td>
 
           </tr>
@@ -540,24 +89,29 @@ td a {
     
   </main>
 </div>
-<script> const profileBtn = document.getElementById('profileBtn');
-        const profileMenu = document.getElementById('profileMenu');
-
-        profileBtn.addEventListener('click', function(e){
-            e.stopPropagation(); 
-            if(profileMenu.style.display === 'flex'){
-                profileMenu.style.display = 'none';
+<script> 
+document.getElementById("searchInput").addEventListener("keydown", function (e) {
+    if (e.key === "Enter") {
+        e.preventDefault();
+        let searchName = this.value.trim().toLowerCase();
+        let rows = document.querySelectorAll("tbody tr");
+        let found = false;
+        rows.forEach(row => {
+            let nameCell = row.querySelector("td"); 
+            let customerName = nameCell.innerText.trim().toLowerCase();
+            if (customerName === searchName) {
+                row.style.display = "";
+                found = true;
             } else {
-                profileMenu.style.display = 'flex';
+                row.style.display = "none";
             }
         });
+        if (!found && searchName !== "") {
+            alert("Customer not found");
+        }
+    }
+});
 
-        // Click outside to close
-        window.addEventListener('click', function(e){
-            if(!profileBtn.contains(e.target)){
-                profileMenu.style.display = 'none';
-            }
-        });
     document.addEventListener("DOMContentLoaded", () => {
         let currentPath = window.location.pathname;
 

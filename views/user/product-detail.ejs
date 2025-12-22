@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= product.productName %></title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <link rel="stylesheet"href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+   <link rel="stylesheet" href="/user/product.css">
+  <style>
+    
+
+    .main-img {
+      width: 100%;
+      height: 420px;
+      object-fit: cover;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #eee;
+    }
+    .thumb-img {
+      width: 100%;
+      height: 110px;
+      object-fit: cover;
+      border-radius: 8px;
+      cursor: pointer;
+      border: 2px solid transparent;
+    }
+    .thumb-img:hover {
+      border-color: #ff6767;
+    }
+    .offer-badge {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      background: #ff4d4f;
+      color: #fff;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 14px;
+    }
+    .size-btn.active {
+      background: #000;
+      color: #fff;
+    }
+  </style>
+</head>
+
+<body>
+
+<header class="bg-light shadow-sm py-3">
+  <div class="container d-flex justify-content-between align-items-center">
+    <a href="/" class="navbar-brand fw-bold text-dark">NYRAH</a>
+
+    <div class="d-flex align-items-center gap-3">
+      <a href="#" class="text-dark"><i class="bi bi-search fs-5"></i></a>
+      <a href="#" class="text-dark"><i class="bi bi-heart fs-5"></i></a>
+      <a href="#" class="text-dark"><i class="bi bi-cart fs-5"></i></a>
+      <a href="/logout" class="btn btn-danger btn-sm">Logout</a>
+    </div>
+  </div>
+</header>
+  <div class="bg-light">
+<div class="container py-5">
+
+  <div class="row">
+    <div class="col-md-6 position-relative">
+
+      <% if (product.productOffer > 0) { %>
+        <div class="offer-badge">
+          <%= product.productOffer %>% OFF
+        </div>
+      <% } %>
+
+      <img id="mainImage"
+           src="/uploads/productImages/<%= product.productImage[0] %>"
+           class="main-img mb-3" />
+
+      <div class="row g-3">
+        <% product.productImage.forEach(img => { %>
+          <div class="col-3">
+            <img src="/uploads/productImages/<%= img %>"
+                 class="thumb-img"
+                 onclick="document.getElementById('mainImage').src=this.src" />
+          </div>
+        <% }) %>
+      </div>
+    </div>
+    <div class="col-md-6">
+
+      <h2 class="fw-bold"><%= product.productName %></h2>
+
+      <h4 class="text-danger fw-bold">
+        ₹<span id="price">
+          <%= product.salesPrice || product.regularPrice %>
+        </span>
+      </h4>
+
+      <input type="hidden" id="basePrice"
+             value="<%= product.salesPrice || product.regularPrice %>">
+
+      <p class="text-muted">
+        Brand:
+        <strong><%= product.brand?.brandName || "N/A" %></strong>
+      </p>
+      <p class="text-muted">
+        Color:
+        <strong><%= product.color %></strong>
+      </p>
+      <h6 class="mt-4 fw-bold">Select Size</h6>
+
+      <% const sizePrices = {
+        "6 Months": 0,
+        "1 Year": 50,
+        "2 Year": 100,
+        "3 Year": 150,
+        "4 Year": 200
+      }; %>
+
+      <div class="d-flex gap-2 flex-wrap">
+        <% Object.keys(sizePrices).forEach(size => { %>
+          <button
+            type="button"
+            class="btn btn-outline-dark size-btn"
+            data-extra="<%= sizePrices[size] %>"
+            onclick="selectSize(this, '<%= size %>')">
+            <%= size %>
+          </button>
+        <% }) %>
+      </div>
+
+      <input type="hidden" id="selectedSize">
+
+      <div class="mt-4 d-flex gap-3">
+        <button class="btn btn-outline-danger px-4">Add to Wishlist</button>
+        <button class="btn btn-dark px-4">Add to Cart</button>
+      </div>
+<div class="mt-4 bg-white rounded shadow-sm p-4">
+
+  <ul class="nav nav-tabs mb-3" role="tablist">
+    <li class="nav-item">
+      <button class="nav-link active"
+              data-bs-toggle="tab"
+              data-bs-target="#descTab"
+              type="button">
+        Description
+      </button>
+    </li>
+
+    <li class="nav-item">
+      <button class="nav-link"
+              data-bs-toggle="tab"
+              data-bs-target="#reviewTab"
+              type="button">
+        Reviews (<%= reviews.length %>)
+      </button>
+    </li>
+  </ul>
+
+  <div class="tab-content">
+
+    <div class="tab-pane fade show active" id="descTab">
+      <p class="text-secondary mb-0">
+        <%= product.description %>
+      </p>
+    </div>
+
+    <div class="tab-pane fade" id="reviewTab">
+
+      <% if (reviews.length === 0) { %>
+        <p class="text-muted">No reviews yet</p>
+      <% } else { %>
+        <% reviews.forEach(review => { %>
+          <div class="border-bottom pb-3 mb-3">
+            <strong><%= review.userName || "User" %></strong>
+
+            <div class="text-warning mb-1">
+              ⭐ <%= review.rating %>/5
+            </div>
+
+            <p class="text-secondary mb-0">
+              <%= review.comment %>
+            </p>
+          </div>
+        <% }) %>
+      <% } %>
+
+    </div>
+  </div>
+</div>
+
+
+    </div>
+  </div>
+
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  const basePrice = Number(document.getElementById("basePrice").value);
+  const priceEl = document.getElementById("price");
+
+  function selectSize(btn, size) {
+    document.querySelectorAll('.size-btn')
+      .forEach(b => b.classList.remove('active'));
+
+    btn.classList.add('active');
+
+    const extra = Number(btn.dataset.extra);
+    priceEl.innerText = basePrice + extra;
+
+    document.getElementById('selectedSize').value = size;
+  }
+</script>
+
+</body>
+</html>

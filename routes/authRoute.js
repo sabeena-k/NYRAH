@@ -1,16 +1,16 @@
-const express=require('express')
+import express from 'express'
 const router=express.Router()
-const {
+import {
     loadSignUp,
     loadSignIn,
     Signup,
     verifyOtp,
     resendOtp,
        SignIn,
-       handleLogout,sendOtp,passverifyOtp,resetPassword,
-    loadForgotPassword,loadOtpPage}=require('../controllers/user/authController')
-    const passport=require('../config/passport')
-const {userAuth}=require('../middlewares/auth')
+       handleLogout,logout,sendOtp,passverifyOtp,resendForgotOtp,resetPassword,
+    loadForgotPassword,loadOtpPage,loadResetPasswordPage}from'../controllers/user/authController.js'
+    import passport from'../config/passport.js'
+import {userAuth}from'../middlewares/auth.js'
 
 
 
@@ -27,10 +27,13 @@ router.get('/auth/google/callback',passport.authenticate('google',{failureRedire
     res.redirect('/')
 });
 router.get('/logout',handleLogout)
+router.post("/logout",logout);
 router.get("/forgot-password", loadForgotPassword)
 router.post('/forgot-password',sendOtp)
 router.get("/passVerify", loadOtpPage);
 router.post('/passVerify',passverifyOtp)
+router.post("/resend-forgot-otp", resendForgotOtp);
+router.get("/resetPass", loadResetPasswordPage);
 router.post('/resetPass',resetPassword)
 
-module.exports = router;
+export default router

@@ -113,8 +113,6 @@
         text-decoration: none;
         font-weight: bold;
     }
-
-    /* Responsive */
     @media (max-width: 768px) {
         .container {
             flex-direction: column;
@@ -126,6 +124,31 @@
             height: 260px;
         }
     }
+.resend-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+#resendBtn{
+    color: #b33030;
+    text-decoration: none;
+    font-size: 14px;
+    background: transparent;
+    border: 0;
+    cursor: pointer;                
+                        
+}
+#resendBtn:disabled {
+    color: #aaa;
+    cursor: not-allowed;
+}
+
+.timer {
+    font-size: 14px;
+    color: #333;
+}
 
 </style>
 
@@ -134,48 +157,80 @@
 
 <div class="container">
 
-    <!-- LEFT IMAGE -->
     <div class="left">
-        <img src="/images/girl-otp.jpg" alt="">
+        <img src="images/otp.webp" alt="">
     </div>
-
-    <!-- RIGHT CONTENT -->
     <div class="right">
         <h2>OTP Verification</h2>
         <p class="subtitle">Please check your mail address for OTP</p>
 
-        <form action="/admin/passVerify" method="POST">
+   <form action="/passVerify" method="POST">
+  <input type="hidden" name="email" value="<%= email %>">
 
-            <input type="hidden" name="email" value="<%= email %>">
+  <div class="otp-boxes">
+    <input type="text" name="d1" maxlength="1" required>
+    <input type="text" name="d2" maxlength="1" required>
+    <input type="text" name="d3" maxlength="1" required>
+    <input type="text" name="d4" maxlength="1" required>
+  </div>
 
-            <div class="otp-boxes">
-                <input type="text" name="d1" maxlength="1" required>
-                <input type="text" name="d2" maxlength="1" required>
-                <input type="text" name="d3" maxlength="1" required>
-                <input type="text" name="d4" maxlength="1" required>
-            </div>
+  <div class="resend-section">
+    <button id="resendBtn" type="button">Resend OTP</button>
+    <span id="timer">01:00</span>
+  </div>
 
-            <button class="btn" type="submit">Send OTP</button>
+  <button type="submit" class="btn">Verify OTP</button>
 
-        </form>
+  <% if(error){ %>
+    <p style="color:red"><%= error %></p>
+  <% } %>
+</form>
+
 
         <div class="back">
-            <a href="/admin/login">Go back to login page</a>
+            <a href="/home">Go back to login page</a>
         </div>
 
     </div>
 
 </div>
 <script>
-    const boxes = document.querySelectorAll(".otp-boxes input");
+    const resendBtn = document.getElementById("resendBtn");
+const timerEl = document.getElementById("timer");
 
-    boxes.forEach((box, index) => {
-        box.addEventListener("input", () => {
-            if (box.value.length === 1 && index < boxes.length - 1) {
-                boxes[index + 1].focus();
-            }
-        });
-    });
-</script>
+let timeLeft = 60;
+let timer;
+
+function startTimer() {
+  resendBtn.disabled = true;
+  timeLeft = 60;
+
+  timer = setInterval(() => {
+    timeLeft--;
+    timerEl.textContent = `00:${timeLeft.toString().padStart(2, "0")}`;
+
+    if (timeLeft <= 0) {
+      clearInterval(timer);
+      resendBtn.disabled = false;
+      timerEl.textContent = "00:00";
+    }
+  }, 1000);
+}
+
+startTimer();
+
+resendBtn.addEventListener("click", async () => {
+  const res = await fetch("/resend-forgot-otp", {
+    method: "POST",
+    credentials: "same-origin"
+  });
+
+  const data = await res.json();
+  alert(data.message);
+
+  if (data.success) startTimer();
+});
+
+  </script>
 </body>
 </html>

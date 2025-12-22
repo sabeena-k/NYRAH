@@ -6,7 +6,6 @@
 <title>NYRAH Login</title>
 <style>
 
-
 body {
     margin: 0;
     padding: 0;
@@ -17,15 +16,12 @@ body {
     justify-content: center;
     align-items: center;
 }
-
-
 .login-container {
     width: 100%;
     display: flex;
     justify-content: center;
     padding: 20px;
 }
-
 .login-box {
     background:transparent;
     backdrop-filter: blur(10px);
@@ -36,32 +32,25 @@ body {
     box-shadow: 0 4px 20px rgba(0,0,0,0.1);
     text-align: center;
 }
-
-
 .brand {
     font-size: 2rem;
     font-weight: 700;
     color: #c01832;
 }
-
 .tagline {
     margin-top: -10px;
     margin-bottom: 30px;
     font-size: 14px;
     color: #444;
 }
-
-/* Inputs */
 .input-group {
     text-align: left;
     margin-bottom: 15px;
 }
-
 .input-group label {
     font-size: 14px;
     color: #333;
 }
-
 .input-group input {
     width: 100%;
     padding: 12px;
@@ -71,41 +60,31 @@ body {
     outline: none;
     font-size: 15px;
 }
-
-/* Password wrapper */
 .password-wrapper {
     display: flex;
     align-items: center;
 }
-
 .password-wrapper input {
     flex: 1;
 }
-
 .eye {
     margin-left: -30px;
     cursor: pointer;
     font-size: 18px;
     color: #555;
 }
-
-/* Forgot password */
 .forgot {
     text-align: right;
     margin-bottom: 20px;
 }
-
 .forgot a {
     color: #333;
     text-decoration: none;
     font-size: 13px;
 }
-
 .forgot a:hover {
     text-decoration: underline;
 }
-
-/* Button */
 .login-btn {
     width: 100%;
     padding: 12px;
@@ -121,8 +100,6 @@ body {
 .login-btn:hover {
     background: #ff4c56;
 }
-
-/* Responsive */
 @media (max-width: 480px) {
     .login-box {
         padding: 25px 20px;
@@ -141,7 +118,6 @@ body {
         <h1 class="brand">NYRAH</h1>
         <p class="tagline">Little styles, Big smiles</p>
 
-        <!-- MESSAGE (Login error) -->
         <% if (message) { %>
             <p style="color:red; text-align:center;"><%= message %></p>
         <% } %>
@@ -158,13 +134,13 @@ body {
                 <label>Password</label>
                 <div class="password-wrapper">
                     <input type="password" name="password" placeholder="Enter Password" required>
-                    <span class="eye">👁️</span>
+                  
                 </div>
             </div>
 
-            <div class="forgot">
-                <a href="#">Forgot Password?</a>
-            </div>
+           <div class="forgot">
+    <a href="/admin/forgot-password">Forgot Password?</a>
+</div>
 
             <button type="submit" class="login-btn">Login</button>
         </form>
