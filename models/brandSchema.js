@@ -10,7 +10,7 @@ const brandSchema = new Schema({
         type: String,  // single image
         required: false
     },
-    isBlocked: {
+    isBlock: {
         type: Boolean,
         default: false
     },

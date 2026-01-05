@@ -105,6 +105,12 @@ tr:hover {
          cursor: pointer; }
 .save-btn:hover { 
     background: #ff2e78; }
+    img.cat-img{
+  width:60px;
+  height:60px;
+  object-fit:cover;
+  border-radius:6px;
+}
 </style>
 </head>
 
@@ -124,16 +130,24 @@ tr:hover {
 <th>Roll No</th>
 <th>Name</th>
 <th>Description</th>
+<th>Image</th>
 <th>Status</th>
 <th>Actions</th>
 </tr>
 </thead>
 <tbody>
-<% categories.forEach(c => { %>
+<% categories.forEach((c,i)=> { %>
 <tr>
-<td><%= c.rollNo %></td>
+<td><%= i+1 %></td>
 <td><%= c.name %></td>
 <td><%= c.description %></td>
+ <td>
+            <% if(c.image){ %>
+              <img src="/uploads/categoryImages/<%= c.image %>" class="cat-img">
+            <% } else { %>
+              N/A
+            <% } %>
+          </td>
 <td><%= c.isBlocked ? "Blocked" : "Active" %></td>
 <td>
 <button class="action-btn edit-btn" onclick="openEdit('<%= c._id %>', '<%= c.name %>', '<%= c.description %>')">Edit</button>
@@ -158,6 +172,7 @@ tr:hover {
 <form onsubmit="event.preventDefault(); saveCategory()">
 <input type="text" id="addName" placeholder="Category Name" required>
 <input type="text" id="addDesc" placeholder="Description" required>
+<input type="file" id="addImage" accept="image/*" required>
 <button type="submit" class="save-btn">Save</button>
 </form>
 </div>
@@ -201,16 +216,37 @@ function confirmBlock(id){
 function confirmUnblock(id){
     Swal.fire({title:"Are you sure?",text:"Do you want to unblock this category?",icon:"question",showCancelButton:true,confirmButtonText:"Yes, Unblock"}).then((result)=>{if(result.isConfirmed){fetch(`/admin/category/${id}/unblock`,{method:"PATCH"}).then(res=>res.json()).then(data=>{if(data.success)location.reload()})}})}
 function saveCategory(){
-    const name=document.getElementById("addName").value.trim();
-    const description=document.getElementById("addDesc").value.trim();
-    if(!name||!description){
-        Swal.fire("Error","All fields required","error");return}
-        fetch("/admin/category",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({name,description})})
-        .then(res=>res.json())
-        .then(data=>{
-            if(data.success)Swal.fire("Success",data.msg,"success")
-            .then(()=>location.reload());
-        else Swal.fire("Error",data.msg,"error")})}
+  const name = document.getElementById("addName").value.trim();
+  const description = document.getElementById("addDesc").value.trim();
+     const imageInput = document.getElementById("addImage");
+   const image = imageInput.files[0];
+
+console.log("Image:", image);
+
+  if(!name || !description || !image){
+    Swal.fire("Error","All fields required","error");
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("name", name);
+  formData.append("description", description);
+  formData.append("image", image);
+
+  fetch("/admin/category", {
+    method: "POST",
+    body: formData
+  })
+  .then(res => res.json())
+  .then(data => {
+    if(data.success){
+      Swal.fire("Success", data.msg, "success")
+      .then(() => location.reload());
+    } else {
+      Swal.fire("Error", data.msg, "error");
+    }
+  });
+}
 function saveEditCategory(){
     const id=document.getElementById('editId').value;const name=document.getElementById('editName').value.trim();
     

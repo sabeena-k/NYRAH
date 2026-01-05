@@ -1,5 +1,6 @@
-import User from '../models/userSchema.js'
+import User from '../../models/userSchema.js'
 import bcrypt from 'bcrypt'
+import Product from '../../models/productSchema.js'  
 
 export const createUser=async({name,email,phone,password})=>{
     const hashedPassword=await bcrypt.hash(password,8);
@@ -45,5 +46,13 @@ export const verifyResetOtp = async (email, enteredOtp) => {
   }
 
   return { status: "success" };
+};
+export const getNewCollections=async(limit)=>{
+    return await Product.find({
+        isBlock: false,
+    isNew: true
+  })
+  .sort({ createdAt: -1 })
+  .limit(limit);
 };
 

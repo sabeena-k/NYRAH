@@ -1,4 +1,4 @@
-import {createUser,findUserByEmail,updateUserPassword,saveResetOtp,verifyResetOtp } from '../../services/userService.js';
+import {createUser,findUserByEmail,updateUserPassword,saveResetOtp,verifyResetOtp } from '../../services/user/userService.js';
 import nodeMailer from 'nodemailer'
 import bcrypt from 'bcrypt'
 import env from 'dotenv'
@@ -235,7 +235,7 @@ req.session.save(() => {
 };
 const resendForgotOtp = async (req, res) => {
   try {
-    const email = req.session.resetEmail;   // ✅ CORRECT KEY
+    const email = req.session.resetEmail;
 
     if (!email) {
       return res.json({

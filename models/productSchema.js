@@ -21,6 +21,10 @@ const productSchema=new Schema({
          ref: "Brand",
           required: true 
     },
+    isNew:{
+        type:Boolean,
+        default:true
+    },
     category:{
         type:Schema.Types.ObjectId,
         ref:"Category",
@@ -43,7 +47,7 @@ const productSchema=new Schema({
         default:0
 
     },
-    sizes: [
+    size: [
   {
     size: {
       type: String,
@@ -79,6 +83,15 @@ const productSchema=new Schema({
         required:true,
         default:"Available"
     },
+     variants: [
+    {
+      size: String,
+      color: String,
+      price: Number,
+      stock: Number,
+      image:String
+    }
+  ]
 },{timestamps:true})
 const Product=mongoose.model('Product',productSchema)
 

@@ -28,8 +28,8 @@
      
       <ul class="navbar-nav mx-auto mb-2 mb-lg-0 gap-4">
         <li class="nav-item"><a href="/" class="nav-link text-dark">Home</a></li>
-        <li class="nav-item"><a href="#" class="nav-link text-dark">New Arrivals</a></li>
-        <li class="nav-item"><a href="#" class="nav-link text-dark">Categories</a></li>
+        <li class="nav-item"><a href="/newArrivals" class="nav-link text-dark">New Arrivals</a></li>
+        <li class="nav-item"><a href="/AllCategories" class="nav-link text-dark">Categories</a></li>
         <li class="nav-item"><a href="/AllProducts" class="nav-link text-dark">All Products</a></li>
       </ul>
 
@@ -44,12 +44,17 @@
         <% } else { %>
 
          
-          <div class="profile-circle d-flex justify-content-center align-items-center text-white bg-danger rounded-circle" style="width:40px; height:40px;">
-            <%= user.name.charAt(0).toUpperCase() %>
-          </div>
+              <div class="profile-circle d-flex justify-content-center align-items-center text-white bg-danger rounded-circle"
+                style="width:40px; height:40px;">
+           <%= user?.name ? user.name.charAt(0).toUpperCase() : "U" %>
+        </div>
+
 
          
-          <a href="#" class="text-dark"><i class="bi bi-search fs-5"></i></a>
+          <div class="search-container position-relative">
+  <input type="text" id="searchInput" placeholder="Search products..." class="form-control">
+  <div id="searchResults" class="position-absolute bg-white border rounded shadow-sm"></div>
+</div>
           <a href="#" class="text-dark"><i class="bi bi-heart fs-5"></i></a>
           <a href="#" class="text-dark"><i class="bi bi-cart fs-5"></i></a>
 
@@ -63,3 +68,41 @@
   </div>
 </nav>
 </header>
+<script>
+const searchInput = document.getElementById("searchInput");
+const searchResults = document.getElementById("searchResults");
+
+function debounce(fn, delay) {
+  let timeoutId;
+  return function (...args) {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => fn.apply(this, args), delay);
+  };
+}
+
+async function handleSearch() {
+  const query = searchInput.value.trim();
+  if (!query) {
+    searchResults.innerHTML = "";
+    searchResults.style.display = "none";
+    return;
+  }
+
+  const res = await fetch(`/search-products?q=${encodeURIComponent(query)}`);
+  const data = await res.json();
+
+  searchResults.innerHTML = data.map(p => `
+    <div class="search-item d-flex align-items-center gap-2 p-2">
+      <a href="/product/${p._id}" 
+         class="text-dark text-decoration-none">
+         ${p.productName}
+      </a>
+    </div>
+  `).join("");
+
+  searchResults.style.display = "block";
+}
+
+searchInput.addEventListener("input", debounce(handleSearch, 500));
+</script>
+

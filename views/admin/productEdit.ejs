@@ -58,12 +58,15 @@ button.add { background: #f44c3a; color: white; }
           <div class="col">
             <label>Category</label>
             <select name="category" class="form-control">
-              <% categories.forEach(cat => { %>
-                <option value="<%= cat._id %>" <%= product.category.toString() === cat._id.toString() ? "selected" : "" %>>
-                  <%= cat.name %>
-                </option>
-              <% }) %>
-            </select>
+     <option value="">Select Category</option>
+      <% categories.forEach(cat => { %>
+      <option value="<%= cat._id %>" 
+      <%= product.category?._id.toString() === cat._id.toString() ? "selected" : "" %>>
+      <%= cat.name %>
+      </option>
+      <% }) %>
+      </select>
+
           </div>
 
           <div class="col">

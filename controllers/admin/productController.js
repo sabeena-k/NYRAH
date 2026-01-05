@@ -6,21 +6,35 @@ import {
   updateProduct,
   applyOffer,
   removeOfferService,
-  deleteProduct
+  deleteProduct,
+  getProductById,loadVariantsService,
+  addVariantService,
+  getVariantByIdService,
+  updateVariantService,
+  deleteVariantService
 } from "../../services/admin/productServices.js"
+import Category from "../../models/categorySchema.js";
+import Brand from "../../models/brandSchema.js";
 
 const productInfo = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = 5;
+     const search=req.query.search||"";
+    const filters = {
+      category: req.query.category || "",
+      brand: req.query.brand || "",
+      status: req.query.status || ""
+    };
+const { products, totalPages } = await getProductsPaginated(page, limit, filters);
 
-    const { products, totalPages } =
-      await getProductsPaginated(page, limit);
+  const categories = await Category.find();
+  const brands = await Brand.find();
 
     res.render("admin/products", {
       products,
       currentPage: page,
-      totalPages
+      totalPages,search,filters,categories,brands
     });
   } catch (err) {
     console.log(err);
@@ -103,6 +117,48 @@ const productDelete = async (req, res) => {
     res.redirect("/admin/pageError");
   }
 };
+ const loadProductVariants = async (req, res) => {
+  const product = await getProductById(req.params.id);
+  res.render("admin/ProductVariants", { product });
+};
+const addVariant = async (req, res) => {
+  try {
+    const { color, size, price, stock } = req.body;
+    await addVariantService(req.params.id, {
+      color,
+      size,
+      price,
+      stock,
+      image: req.file?.filename
+    });
+    res.redirect(`/admin/productVariants/${req.params.id}`);
+  } catch (err) {
+    console.log(err);
+    res.redirect("/admin/pageError");
+  }
+};
+const editVariantPage = async (req, res) => {
+  const { product, variant } = await getVariantByIdService(req.params.productId, req.params.variantId);
+  res.render("admin/EditVariant", { product, variant });
+};
+const updateVariant = async (req, res) => {
+  try {
+    await updateVariantService(req.params.productId, req.params.variantId, req.body, req.file);
+    res.redirect(`/admin/productVariants/${req.params.productId}`);
+  } catch (err) {
+    console.log(err);
+    res.redirect("/admin/pageError");
+  }
+};
+const deleteVariant = async (req, res) => {
+  try {
+    await deleteVariantService(req.params.productId, req.params.variantId);
+    res.redirect(`/admin/productVariants/${req.params.productId}`);
+  } catch (err) {
+    console.log(err);
+    res.redirect("/admin/pageError");
+  }
+};
 
 export {
   productInfo,
@@ -112,5 +168,9 @@ export {
   productEdit,
   addOffer,
   removeOffer,
-  productDelete
+  productDelete,loadProductVariants,
+  addVariant,
+  editVariantPage,
+  updateVariant,
+  deleteVariant
 };

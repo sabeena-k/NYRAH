@@ -4,19 +4,34 @@ import Brand from "../../models/brandSchema.js";
 import path from "path";
 import fs from "fs";
 
-const getProductsPaginated = async (page, limit) => {
+const getProductsPaginated = async (page = 1, limit = 10, filters = {}) => {
+  page = Math.max(1, parseInt(page));
+  limit = Math.min(50, parseInt(limit));
+  const query = {};
+
   const skip = (page - 1) * limit;
-
-  const totalCount = await Products.countDocuments();
-  const totalPages = Math.ceil(totalCount / limit);
-
-  const products = await Products.find()
-    .populate("category")
-    .populate("brand")
-    .sort({ createdAt: -1 })
-    .skip(skip)
-    .limit(limit);
-
+    if (filters.search) {
+    query.productName ={$regex:filters.search, $options: "i" };
+  }
+   if (filters.category) {
+    query.category = filters.category;
+  }
+  if (filters.brand) {
+    query.brand = filters.brand;
+  }
+  if (filters.status === "active") query.isBlock = false;
+  if (filters.status === "blocked") query.isBlock = true;
+   const [products, totalCount] = await Promise.all([
+    Products.find(query)
+      .populate("category")
+      .populate("brand")
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit),
+    Products.countDocuments(query)
+  ]);
+ 
+  const totalPages = Math.ceil(totalCount / limit); 
   return { products, totalPages };
 };
 const getProductAddPageData = async () => {
@@ -44,9 +59,14 @@ const getProductAddPageData = async () => {
     productOffer: 0,
     salesPrice: price,
     quantity: Number(body.quantity) || 0,
-    size: body.size,
+    size:[{
+      size: body.size,
+      price: price,
+      stock: Number(body.quantity)}],
     color: body.color,
-    productImage: images
+    productImage: images,
+     isNew: body.isNew === "true",
+    isBlock: false
   });
 
   return await product.save();
@@ -67,7 +87,7 @@ const getEditPageData = async (id) => {
     categories,
     brands,
     sizes: [
-      "6 Month","6-12 Month","1-2 Years","2-3 Years",
+      "6 Months","6-12 Months","1-2 Years","2-3 Years",
       "3-4 Years","4-5 Years","5-6 Years","6-7 Years",
       "7-8 Years","8-9 Years","9-10 Years"
     ],
@@ -82,7 +102,11 @@ const updateProduct = async (id, body, files) => {
   product.description = body.description;
   product.category = body.category;
   product.brand = body.brand;
-  product.size = body.size;
+  product.size = [{
+  size: body.size,
+  price: Number(body.price),
+  stock: Number(body.quantity)
+}];
   product.color = body.color;
   product.regularPrice = Number(body.price);
   product.quantity = Number(body.quantity) || 0;
@@ -130,7 +154,49 @@ const removeOfferService = async (id) => {
 const deleteProduct = async (id) => {
   return await Products.findByIdAndDelete(id);
 };
+const loadVariantsService = async (productId) => {
+  return await Products.findById(productId);
+};
+const addVariantService = async (productId, data) => {
+  const product = await Products.findById(productId);
+  if (!product) return null;
 
+  product.variants.unshift({
+    color: data.color,
+    size: data.size,
+    price: Number(data.price),
+    stock: Number(data.stock),
+    image: data.image
+  });
+
+  return await product.save();
+};
+const getVariantByIdService = async (productId, variantId) => {
+  const product = await Products.findById(productId);
+  if (!product) return null;
+  const variant = product.variants.id(variantId);
+  return { product, variant };
+};
+const updateVariantService = async (productId, variantId, body, file) => {
+  const product = await Products.findById(productId);
+  if (!product) return null;
+
+  const variant = product.variants.id(variantId);
+  variant.color = body.color;
+  variant.size = body.size;
+  variant.price = Number(body.price);
+  variant.stock = Number(body.stock);
+  if (file) variant.image = file.filename;
+
+  return await product.save();
+};
+const deleteVariantService = async (productId, variantId) => {
+  const product = await Products.findById(productId);
+  if (!product) return null;
+
+  product.variants.id(variantId).remove();
+  return await product.save();
+};
 export {
   getProductsPaginated,
   getProductAddPageData,
@@ -139,5 +205,11 @@ export {
   updateProduct,
   applyOffer,
   removeOfferService,
-  deleteProduct
+  deleteProduct,
+  getProductById,  
+  loadVariantsService,
+  addVariantService,
+  getVariantByIdService,
+  updateVariantService,
+  deleteVariantService
 };

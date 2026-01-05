@@ -1,7 +1,7 @@
 import Category from "../../models/categorySchema.js";
 import Products from "../../models/productSchema.js";
 
-export const getCategoriesPaginated = async (page, limit = 5) => {
+export const getCategoriesPaginated = async (page, limit = 4) => {
   const skip = (page - 1) * limit;
 
   const totalCount = await Category.countDocuments();
@@ -15,7 +15,7 @@ export const getCategoriesPaginated = async (page, limit = 5) => {
   return { categories, totalPages };
 };
 
-export const createCategory = async (name, description) => {
+export const createCategory = async (name, description,image) => {
   if (!name || !description) {
     throw new Error("Name and Description are required");
   }
@@ -26,10 +26,12 @@ export const createCategory = async (name, description) => {
 
   if (exists) throw new Error("Category already exists");
 
-  const count = await Category.countDocuments();
-  const rollNo = count + 1;
+  const lastCategory = await Category
+    .findOne()
+    .sort({ rollNo: -1 });
+     const rollNo = lastCategory ? lastCategory.rollNo + 1 : 1;
 
-  const newItem = new Category({ name, description, rollNo });
+  const newItem = new Category({ name, description,image,rollNo });
   await newItem.save();
 
   return true;

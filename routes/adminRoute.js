@@ -11,10 +11,14 @@ import {customerInfo,customerBlocked, customerUnBlocked,viewCustomer} from"../co
 import { categoryInfo, addCategory, editCategory, deleteCategory,blockCategory,unblockCategory,addCatOffer,removeCatOffer}from'../controllers/admin/categoryController.js'
 import {productInfo,productAddPage, productAdd,
     productEdit,productEditPage,addOffer,
-    productDelete,
+    productDelete,loadProductVariants,
+  addVariant,
+  editVariantPage,
+  updateVariant,
+  deleteVariant,
     removeOffer}from'../controllers/admin/productController.js'
 import{brandInfo, addBrand, editBrand, deleteBrand}from'../controllers/admin/bandController.js'
-
+import {categoryUpload} from"../middlewares/category.js"
 
 
 
@@ -40,7 +44,7 @@ router.get('/unblockCustomer',adminAuth,customerUnBlocked)
 router.get('/customers/:id',adminAuth,viewCustomer);
 
 router.get('/category', adminAuth, categoryInfo);
-router.post('/category', adminAuth, addCategory);
+router.post('/category', adminAuth,categoryUpload.single("image"),addCategory);
 router.put('/category/:id', adminAuth, editCategory);
 router.patch('/category/:id/block', adminAuth, blockCategory);
 router.patch('/category/:id/unblock', adminAuth, unblockCategory);
@@ -59,7 +63,13 @@ router.post('/products/edit/:id', adminAuth, upload.array("images", 4), productE
 router.post('/products/delete/:id', adminAuth, productDelete);
 router.post('/products/add-offer/:id', adminAuth, addOffer);
 router.post('/products/remove-offer/:id', adminAuth, removeOffer);
+router.get('/productVariants/:id',loadProductVariants)
+router.get('/productVariants/:id', adminAuth, loadProductVariants);
 
+router.post('/productVariants/:id/add', adminAuth, upload.single('image'), addVariant);
+router.get('/productVariants/:productId/edit/:variantId', adminAuth, editVariantPage);
+router.post('/productVariants/:productId/edit/:variantId', adminAuth, upload.single('image'), updateVariant);
+router.post('/productVariants/:productId/delete/:variantId', adminAuth, deleteVariant);
 
 router.get("/brand",adminAuth, brandInfo);
 router.post("/brand/add",adminAuth, upload.single("brandImage"), addBrand);

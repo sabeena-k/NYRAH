@@ -27,7 +27,8 @@ const categoryInfo = async (req, res) => {
 const addCategory = async (req, res) => {
   try {
     const { name, description } = req.body;
-    await createCategory(name, description);
+    const image = req.file ? req.file.filename : null; 
+    await createCategory(name, description, image);
 
     res.json({ success: true, msg: "Saved Successfully" });
   } catch (err) {

@@ -22,22 +22,109 @@
      margin-top: 35px;
     }
 
-    .top-bar {
-      background: #ffe5ee;
-      padding: 15px 20px;
-      border-radius: 10px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 15px;
-    }
+.top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  flex-wrap: nowrap;
+  margin-bottom: 20px;
+}
+.top-bar h2 {
+  margin: 0;
+  white-space: nowrap;
+}
+    
+.search-filter {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  border: 2px solid #ddd;
+  padding: 8px 14px;
+  border-radius: 10px;
+  background: #fff;
+  width: 250px;
+}
+
+.search-box i {
+  color: #777;
+  margin-right: 8px;
+  font-size: 18px;
+}
+
+.search-box input {
+  border: none;
+  outline: none;
+  width: 180px;
+}
+.filter-dropdown {
+  position: relative;
+}
+.filter-btn {
+  background-color: #343a40;
+  color: #fff;
+  padding: 8px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.filter-content {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: #fff;
+  min-width: 250px;
+  padding: 15px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  border-radius: 5px;
+  z-index: 1000;
+}
+.filter-dropdown.active .filter-content {
+  display: block;
+}
+.filter-content select {
+  width: 100%;
+  padding: 6px 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+.filter-buttons {
+  display: flex;
+  justify-content: space-between;
+}
+
+.filter-buttons .btn-dark {
+  background-color: #343a40;
+  color: #fff;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 5px;
+}
+
+.filter-buttons .btn-secondary {
+  background-color: #6c757d;
+  color: #fff;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 5px;
+}
 
     .btn-new {
-      background: black;
-      color: #fff;
-      padding: 8px 16px;
-      border-radius: 6px;
-      text-decoration: none;
+      background: #ff2e78;
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 6px;
+  text-decoration: none;
+  white-space: nowrap;
     }
 
     table {
@@ -112,10 +199,65 @@
 
 
   <div class="top-bar">
-    <h2>Products Management</h2>
-    <a href="/admin/products/add" class="btn-new">+ New</a>
-  </div>
 
+    <h2>Products Management</h2>
+    <div class="search-filter">
+      <div class="search-box">
+        <i class="bi bi-search"></i>
+      <form method="GET" action="/admin/products">
+  <input 
+  type="text" 
+  id="searchInput"
+  name="search" 
+  placeholder="Search by name"
+  value="<%= search %>"
+>
+</form>
+      </div>
+       <a href="/admin/products" class="filter-btn"style="text-decoration:none">
+  Clear
+</a>
+    </div> 
+    <a href="/admin/products/add" class="btn-new">+ New</a>
+  
+ 
+<div class="filter-dropdown">
+  <button class="filter-btn">Filter ▼</button>
+  
+  <div class="filter-content">
+    <form method="GET" action="/admin/products">
+      <select name="category">
+        <option value="">All Categories</option>
+        <% categories.forEach(cat => { %>
+          <option value="<%= cat._id %>" <%= filters.category == cat._id ? "selected" : "" %>>
+            <%= cat.name %>
+          </option>
+        <% }) %>
+      </select>
+
+      <select name="brand">
+        <option value="">All Brands</option>
+        <% brands.forEach(b => { %>
+          <option value="<%= b._id %>" <%= filters.brand == b._id ? "selected" : "" %>>
+            <%= b.brandName %>
+          </option>
+        <% }) %>
+      </select>
+
+      <select name="status">
+        <option value="">All Status</option>
+        <option value="active" <%= filters.status == "active" ? "selected" : "" %>>Active</option>
+        <option value="blocked" <%= filters.status == "blocked" ? "selected" : "" %>>Blocked</option>
+      </select>
+
+      <div class="filter-buttons">
+        <button class="btn btn-dark" type="submit">Apply</button>
+        <a href="/admin/products" class="btn btn-secondary">Clear</a>
+      </div>
+    </form>
+  </div>
+</div>
+  </div>
   <table>
     <thead>
       <tr>
@@ -126,6 +268,7 @@
         <th>Price</th>
         <th>Qty</th>
         <th>Offer</th>
+        <th>Variants</th>
         <th>Action</th>
       </tr>
     </thead>
@@ -156,13 +299,20 @@
               <span class="badge bg-secondary">No Offer</span>
             <% } %>
           </td>
+            <td>
+
+  <a href="/admin/productVariants/<%= p._id %>"
+     class="btn btn-sm btn-outline-secondary ms-2">
+     Add Variant
+  </a>
+</td>
 
           <td>
             <a href="/admin/products/edit/<%= p._id %>" class="btn-edit">Edit</a>
 
-            <form action="/admin/products/delete/<%= p._id %>" method="POST" style="display:inline;">
-              <button class="btn-delete">Delete</button>
-            </form>
+            <form class="delete-product-form" data-id="<%= p._id %>" action="/admin/products/delete/<%= p._id %>" method="POST" style="display:inline;">
+               <button type="submit" class="btn-delete">Delete</button>
+               </form>
 
             <button type="button"
                     class="btn-offer"
@@ -213,7 +363,40 @@
       }
     });
   });
+document.getElementById("searchInput").addEventListener("keydown", function (e) {
+    if (e.key === "Enter") {
+        e.preventDefault();
+        let searchName = this.value.trim().toLowerCase();
+        let rows = document.querySelectorAll("tbody tr");
+        let found = false;
+        rows.forEach(row => {
+            let nameCell = row.querySelector("td"); 
+            let productName = nameCell.innerText.trim().toLowerCase();
+            if (productName === searchName) {
+                row.style.display = "";
+                found = true;
+            } else {
+                row.style.display = "none";
+            }
+        });
+        if (!found && searchName !== "") {
+            alert("product not found");
+        }
+    }
+});
+document.addEventListener("DOMContentLoaded", function() {
+  const filterDropdown = document.querySelector(".filter-dropdown");
+  const filterBtn = filterDropdown.querySelector(".filter-btn");
 
+  filterBtn.addEventListener("click", () => {
+    filterDropdown.classList.toggle("active");
+  });
+  window.addEventListener("click", function(e) {
+    if (!filterDropdown.contains(e.target)) {
+      filterDropdown.classList.remove("active");
+    }
+  });
+});
   
   document.getElementById('offerSaveBtn').addEventListener('click', () => {
     const offer = offerInput.value;
@@ -231,6 +414,28 @@
 
   document.getElementById('offerCancelBtn').addEventListener('click', () => {
     offerModal.style.display = 'none';
+  });
+   const deleteForms = document.querySelectorAll('.delete-product-form');
+
+  deleteForms.forEach(form => {
+    form.addEventListener('submit', function(e) {
+      e.preventDefault(); // prevent immediate form submission
+
+      Swal.fire({
+        title: 'Are you sure?',
+        text: "This product will be permanently deleted!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Yes, delete it!',
+        cancelButtonText: 'Cancel'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          form.submit();
+        }
+      });
+    });
   });
 </script>
 </body>   
