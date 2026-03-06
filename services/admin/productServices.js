@@ -4,36 +4,49 @@ import Brand from "../../models/brandSchema.js";
 import path from "path";
 import fs from "fs";
 
+//product page//
+
 const getProductsPaginated = async (page = 1, limit = 10, filters = {}) => {
   page = Math.max(1, parseInt(page));
   limit = Math.min(50, parseInt(limit));
+  const skip = (page - 1) * limit;
+
   const query = {};
 
-  const skip = (page - 1) * limit;
-    if (filters.search) {
-    query.productName ={$regex:filters.search, $options: "i" };
+ 
+  if (filters.search && filters.search.trim() !== "") {
+    query.productName = { $regex: filters.search.trim(), $options: "i" };
   }
-   if (filters.category) {
+
+
+  if (filters.category && filters.category.trim() !== "") {
     query.category = filters.category;
   }
-  if (filters.brand) {
+
+
+  if (filters.brand && filters.brand.trim() !== "") {
     query.brand = filters.brand;
   }
+
+
   if (filters.status === "active") query.isBlock = false;
   if (filters.status === "blocked") query.isBlock = true;
-   const [products, totalCount] = await Promise.all([
+
+  const [products, totalCount] = await Promise.all([
     Products.find(query)
       .populate("category")
       .populate("brand")
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit),
-    Products.countDocuments(query)
+    Products.countDocuments(query),
   ]);
- 
-  const totalPages = Math.ceil(totalCount / limit); 
+
+  const totalPages = Math.ceil(totalCount / limit);
   return { products, totalPages };
 };
+
+//Product ADD//
 const getProductAddPageData = async () => {
   const cat = await Category.find();
   const brand = await Brand.find();
@@ -49,6 +62,22 @@ const getProductAddPageData = async () => {
   const images = files.map(f => f.filename);
   const price = Number(body.price);
 
+  let sizesArray = [];
+
+  if (Array.isArray(body.size)) {
+    sizesArray = body.size.map(size => ({
+      size: size,
+      price: price,
+      stock: Number(body.quantity)
+    }));
+  } else if (body.size) {
+    sizesArray = [{
+      size: body.size,
+      price: price,
+      stock: Number(body.quantity)
+    }];
+  }
+
   const product = new Products({
     productName: body.name,
     productId: "SKU-" + Date.now(),
@@ -59,24 +88,24 @@ const getProductAddPageData = async () => {
     productOffer: 0,
     salesPrice: price,
     quantity: Number(body.quantity) || 0,
-    size:[{
-      size: body.size,
-      price: price,
-      stock: Number(body.quantity)}],
+    size: sizesArray,
     color: body.color,
     productImage: images,
-     isNew: body.isNew === "true",
+    isNewProduct: body.isNew === "true",
     isBlock: false
   });
 
   return await product.save();
 };
+
+//view single product//
 const getProductById = async (id) => {
   return await Products.findById(id)
     .populate("category")
     .populate("brand");
 };
 
+//product Edit//
 const getEditPageData = async (id) => {
   const product = await getProductById(id);
   const categories = await Category.find();
@@ -94,6 +123,8 @@ const getEditPageData = async (id) => {
     colors: ["Red","Blue","Green","Black","White"]
   };
 };
+
+//product Update//
 const updateProduct = async (id, body, files) => {
   const product = await Products.findById(id);
   if (!product) return null;
@@ -102,11 +133,23 @@ const updateProduct = async (id, body, files) => {
   product.description = body.description;
   product.category = body.category;
   product.brand = body.brand;
-  product.size = [{
-  size: body.size,
-  price: Number(body.price),
-  stock: Number(body.quantity)
-}];
+ let sizes = [];
+
+if (Array.isArray(body.size)) {
+  sizes = body.size.map(s => ({
+    size: s,
+    price: Number(body.price),
+    stock: Number(body.quantity)
+  }));
+} else if (body.size) {
+  sizes = [{
+    size: body.size,
+    price: Number(body.price),
+    stock: Number(body.quantity)
+  }];
+}
+
+      product.size = sizes;
   product.color = body.color;
   product.regularPrice = Number(body.price);
   product.quantity = Number(body.quantity) || 0;
@@ -132,6 +175,8 @@ const updateProduct = async (id, body, files) => {
 
   return await product.save();
 };
+
+//Offer//
 const applyOffer = async (id, offer) => {
   const product = await Products.findById(id);
   if (!product) return null;
@@ -142,6 +187,7 @@ const applyOffer = async (id, offer) => {
 
   return await product.save();
 };
+//remove Offer//
 const removeOfferService = async (id) => {
   const product = await Products.findById(id);
   if (!product) return null;
@@ -151,12 +197,30 @@ const removeOfferService = async (id) => {
   return await product.save();
 };
 
-const deleteProduct = async (id) => {
-  return await Products.findByIdAndDelete(id);
+//block product//
+const blockProductService = async (id) => {
+  return await Products.findByIdAndUpdate(
+    id,
+    { isBlock: true },
+    { new: true }
+  );
 };
+
+//unblock product//
+const unblockProductService = async (id) => {
+  return await Products.findByIdAndUpdate(
+    id,
+    { isBlock: false },
+    { new: true }
+  );
+};
+
+//variants//
 const loadVariantsService = async (productId) => {
   return await Products.findById(productId);
 };
+
+//add variant//
 const addVariantService = async (productId, data) => {
   const product = await Products.findById(productId);
   if (!product) return null;
@@ -171,12 +235,16 @@ const addVariantService = async (productId, data) => {
 
   return await product.save();
 };
+
+//view variants//
 const getVariantByIdService = async (productId, variantId) => {
   const product = await Products.findById(productId);
   if (!product) return null;
   const variant = product.variants.id(variantId);
   return { product, variant };
 };
+
+//update variant//
 const updateVariantService = async (productId, variantId, body, file) => {
   const product = await Products.findById(productId);
   if (!product) return null;
@@ -190,6 +258,8 @@ const updateVariantService = async (productId, variantId, body, file) => {
 
   return await product.save();
 };
+
+//delete variant//
 const deleteVariantService = async (productId, variantId) => {
   const product = await Products.findById(productId);
   if (!product) return null;
@@ -205,7 +275,8 @@ export {
   updateProduct,
   applyOffer,
   removeOfferService,
-  deleteProduct,
+  blockProductService,
+  unblockProductService,
   getProductById,  
   loadVariantsService,
   addVariantService,

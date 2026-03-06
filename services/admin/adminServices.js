@@ -2,18 +2,21 @@ import User from "../../models/userSchema.js";
 import bcrypt from "bcrypt";
 import nodemailer from "nodemailer";
 
+//admin//
 const findAdmin = async (email) => {
   return await User.findOne({ email, isAdmin: true });
 };
-
+//passeord check//
 const checkPassword = async (password, hashedPassword) => {
   return await bcrypt.compare(password, hashedPassword);
 };
 
+//otp generate//
 const generateOTP = () => {
   return Math.floor(100000 + Math.random() * 900000);
 };
 
+//send Otp//
 const sendOTPEmail = async (email, otp) => {
   const transporter = nodemailer.createTransport({
     service: "Gmail",
@@ -33,6 +36,7 @@ const sendOTPEmail = async (email, otp) => {
   await transporter.sendMail(mailOptions);
 };
 
+//update pass//
 const updatePassword = async (email, password) => {
   const hashedPassword = await bcrypt.hash(password, 10);
   await User.updateOne(

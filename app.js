@@ -39,7 +39,10 @@ app.use(session({
     cookie: { secure: false }
 }));
 
-
+app.use((req, res, next) => {
+    res.locals.user = req.session.user || null;
+    next();
+});
 app.use((req, res, next) => {
     res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, private");
     res.setHeader("Pragma", "no-cache");

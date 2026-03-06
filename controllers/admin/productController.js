@@ -6,13 +6,15 @@ import {
   updateProduct,
   applyOffer,
   removeOfferService,
-  deleteProduct,
+  blockProductService,
+  unblockProductService,
   getProductById,loadVariantsService,
   addVariantService,
   getVariantByIdService,
   updateVariantService,
   deleteVariantService
 } from "../../services/admin/productServices.js"
+import Product from "../../models/productSchema.js";
 import Category from "../../models/categorySchema.js";
 import Brand from "../../models/brandSchema.js";
 
@@ -108,9 +110,19 @@ const removeOffer = async (req, res) => {
   }
 };
 
-const productDelete = async (req, res) => {
+const blockProduct = async (req, res) => {
   try {
-    await deleteProduct(req.params.id);
+    await blockProductService(req.params.id);
+    res.redirect("/admin/products");
+  } catch (error) {
+    console.log(error);
+    res.redirect("/admin/pageError");
+  }
+};
+
+const unblockProduct = async (req, res) => {
+  try {
+    await unblockProductService(req.params.id);
     res.redirect("/admin/products");
   } catch (error) {
     console.log(error);
@@ -159,6 +171,18 @@ const deleteVariant = async (req, res) => {
     res.redirect("/admin/pageError");
   }
 };
+ const searchProducts = async (req, res) => {
+  const query = req.query.q;
+  try {
+    const products = await Product.find({ productName: new RegExp(query, 'i') })
+      .limit(10)
+      .lean();
+    res.json(products); // <- Must return JSON
+  } catch (err) {
+    console.error(err);
+    res.status(500).json([]);
+  }
+};
 
 export {
   productInfo,
@@ -168,9 +192,10 @@ export {
   productEdit,
   addOffer,
   removeOffer,
-  productDelete,loadProductVariants,
+ blockProduct,unblockProduct,loadProductVariants,
   addVariant,
   editVariantPage,
   updateVariant,
-  deleteVariant
+  deleteVariant,
+  searchProducts
 };

@@ -1,7 +1,11 @@
 import Brand from "../../models/brandSchema.js";
+
+//get brand//
 export const getBrands = async () => {
   return await Brand.find();
 };
+
+//create brand//
 export const createBrand = async (brandName, file) => {
   const brandImage = file ? file.filename : null;
 
@@ -14,6 +18,8 @@ export const createBrand = async (brandName, file) => {
   await newBrand.save();
   return newBrand;
 };
+
+//update brand//
 export const updateBrand = async (id, brandName, file) => {
   const brand = await Brand.findById(id);
   if (!brand) throw new Error("Brand not found");
@@ -24,6 +30,7 @@ export const updateBrand = async (id, brandName, file) => {
   await brand.save();
   return brand;
 }
-  export const removeBrand = async (id) => {
+//delete brand//
+export const removeBrand = async (id) => {
   await Brand.findByIdAndDelete(id);
 };

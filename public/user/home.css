@@ -288,4 +288,123 @@ footer {
 }
 .middle img{
   width: 100%;
+}.product-card.blocked {
+  opacity: 0.6;
 }
+
+.status-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  padding: 5px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 4px;
+  color: white;
+  z-index: 10;
+}
+
+.bg-danger {
+  background-color: #dc3545;
+}
+
+.bg-warning {
+  background-color: #ffc107;
+}
+.section-title {
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #d14d4d;
+  }
+
+  .product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 30px;
+  }
+
+  .product-card {
+    background: #fff;
+    border-radius: 15px;
+    overflow: hidden;
+    transition: 0.3s ease;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    position: relative;
+  }
+
+  .product-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  }
+
+  .product-card.blocked {
+    opacity: 0.65;
+  }
+
+  .image-wrapper {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .image-wrapper img {
+    width: 100%;
+    height: 260px;
+    object-fit: cover;
+    transition: 0.4s ease;
+  }
+
+  .product-card:hover img {
+    transform: scale(1.08);
+  }
+
+  .status {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    padding: 6px 12px;
+    font-size: 12px;
+    border-radius: 20px;
+    z-index: 10;
+  }
+
+  .card-content {
+    padding: 18px;
+    text-align: center;
+  }
+
+  .card-content h5 {
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  .price {
+    color: #d14d4d;
+    font-weight: 700;
+    font-size: 16px;
+    margin-bottom: 12px;
+  }
+
+  .btn-view {
+    display: inline-block;
+    padding: 8px 18px;
+    background: #d14d4d;
+    color: white;
+    border-radius: 25px;
+    text-decoration: none;
+    transition: 0.3s ease;
+    font-size: 14px;
+  }
+
+  .btn-view:hover {
+    background: #a63636;
+  }
+
+  .btn-disabled {
+    padding: 8px 18px;
+    background: #999;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    font-size: 14px;
+    cursor: not-allowed;
+  }

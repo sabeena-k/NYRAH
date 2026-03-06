@@ -1,3 +1,5 @@
+
+
 <aside class="sidebar">
     <h1 class="brand">NYRAH</h1>
     <ul class="menu">
@@ -16,3 +18,19 @@
 
     </ul>
 </aside>
+<script>
+const links = document.querySelectorAll(".menu li a");
+const currentPath = window.location.pathname;
+
+links.forEach(link => {
+    const linkPath = link.getAttribute("href");
+
+    if (linkPath === "/admin" && currentPath === "/admin") {
+        link.classList.add("active");
+    }
+
+    if (linkPath !== "/admin" && currentPath.startsWith(linkPath)) {
+        link.classList.add("active");
+    }
+});
+</script>

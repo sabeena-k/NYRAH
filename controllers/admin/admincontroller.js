@@ -12,7 +12,6 @@ import {
 const pageerror = async (req, res) => {
   res.render("admin/pageError");
 };
-
 const loadLogin = async (req, res) => {
   try {
     if (req.session.admin) return res.redirect("/admin");
@@ -28,19 +27,22 @@ const login = async (req, res) => {
     const { email, password } = req.body;
 
     const admin = await findAdmin(email);
-    if (!admin) return res.redirect("/admin/login");
+    if (!admin) {
+      return res.render("admin/login", { message: "Email not found" });
+    }
 
     const match = await checkPassword(password, admin.password);
-    if (!match) return res.redirect("/admin/login");
+    if (!match) {
+      return res.render("admin/login", { message: "Password incorrect" });
+    }
 
     req.session.admin = admin._id;
     res.redirect("/admin");
   } catch (error) {
     console.log("Login Failed", error);
-    res.redirect("/admin/pageError");
+    res.render("admin/login", { message: "Something went wrong" });
   }
 };
-
 const loadDashBoard = async (req, res) => {
   try {
     if (!req.session.admin) return res.redirect("/admin/login");

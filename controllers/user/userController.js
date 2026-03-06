@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
-import { findUserById,getNewCollections} from "../../services/user/userService.js"
-import {getProducts,countProducts,getProductById,getRelatedProducts,productByCategory,searchProduct} from "../../services/user/productService.js"
+import { findUserById} from "../../services/user/userService.js"
+import {getProducts,countProducts,getProductById,getRelatedProducts,productByCategory,searchProduct,getNewCollections} from "../../services/user/productService.js"
 import {getAllCategories,homeCategories} from"../../services/user/categoryService.js"
 import Review from'../../models/reviewSchema.js'
 import Category from "../../models/categorySchema.js"
@@ -20,11 +20,14 @@ const loadStartPage=async(req,res)=>{
                  res.status(500).send('Server Error') 
                 } 
                 };
-const loadHomePage = async (req, res) => { 
+
+ const loadHomePage = async (req, res) => { 
   try {
     let user = null;
 
-    if (req.session && req.session.user) {
+    if (req.isAuthenticated()) {
+      user = req.user;
+    } else if (req.session && req.session.user) {
       user = await findUserById(req.session.user);
     }
 
@@ -32,15 +35,16 @@ const loadHomePage = async (req, res) => {
     const limit = 8;
     const skip = (page - 1) * limit;
 
-    const filter = { isBlock: false };
-    if(req.query.category){
-      filter.category=req.query.category;  
-    }
+    const filter = {};
 
-    const products = await getProducts(filter, skip, limit);
+    if (req.query.category) {
+      filter.category = new mongoose.Types.ObjectId(req.query.category);
+    }
+     let sortOption = { createdAt: -1 };
+    const products = await getProducts(filter,sortOption, skip, limit);
     const totalProducts = await countProducts(filter);
     const newCollections = await getNewCollections(4);
-    const categories = await  homeCategories();
+    const categories = await homeCategories();
     res.render("user/home", {
       user,
       products,
@@ -54,7 +58,8 @@ const loadHomePage = async (req, res) => {
   } catch (error) {
     console.error("Home page error", error);
     res.status(500).send("Server Error");
-  }};
+  }
+};
 const about = async (req, res) => {
     res.render('user/about');
 };
@@ -72,32 +77,96 @@ if (req.session.user) {
     const page = parseInt(req.query.page) || 1;
     const limit = 9;
     const skip = (page - 1) * limit;
+    let {
+      category,
+      brand,
+      sort,
+      size,
+      color,
+      priceRange
+    } = req.query;
 
-    const filter = {isBlock: false};
+    const filter = {};
+    let sortOption = {};
 
-    if (req.query.category) {
-      filter.category = new mongoose.Types.ObjectId(req.query.category);
+    if (category) {
+      filter.category = new mongoose.Types.ObjectId(category);
     }
 
-    if (req.query.brand) {
-      filter.brand = new mongoose.Types.ObjectId(req.query.brand);
+    if (brand) {
+      filter.brand = new mongoose.Types.ObjectId(brand);
     }
+    if (size || color) {
+
+  filter.variants = { $elemMatch: {} };
+
+  if (size) {
+    filter.variants.$elemMatch.size = size;
+  }
+
+  if (color) {
+    filter.variants.$elemMatch.color = {
+      $regex: new RegExp(`^${color}$`, "i")
+    };
+  }
+
+}
+    if (priceRange) {
+      const [min, max] = priceRange.split("-");
+      filter.salesPrice = {
+        $gte: Number(min),
+        $lte: Number(max)
+      };
+    }
+     if (sort === "priceLowHigh") {
+      sortOption.salesPrice = 1;
+    }
+    else if (sort === "priceHighLow") {
+      sortOption.salesPrice = -1;
+    }
+    else if (sort === "aToZ") {
+      sortOption.productName = 1;
+    }
+    else if (sort === "zToA") {
+      sortOption.productName = -1;
+    }
+    else if (sort === "newest") {
+      sortOption.createdAt = -1;
+    }
+    else {
+      sortOption.createdAt = -1; // default
+    }
+
 
     const totalProducts = await countProducts(filter);
     const totalPages = Math.ceil(totalProducts / limit);
+    const products = await getProducts(filter,sortOption, skip, limit);
 
-    const products = await getProducts(filter, skip, limit)
+    const newProducts = products.filter(p => p.isNew && p.totalStock > 0);
     const categories = await Category.find();
     const brands = await Brand.find();
 
+     const allProducts = await getProducts();
+
+const sizes = [...new Set(
+  allProducts.flatMap(p => p.variants?.map(v => v.size))
+)];
+
+const colors = [...new Set(
+  allProducts.flatMap(p => p.variants?.map(v => v.color))
+)];
     res.render("user/AllProducts", {
       user,
       products,
+      newProducts,
       categories,
       brands,
+      sizes,
+      colors,
       currentPage: page,
       totalPages,
-      selected: req.query
+      selected: req.query,
+      
     });
 
   } catch (err) {
@@ -108,38 +177,59 @@ if (req.session.user) {
 
 const loadSingleProduct = async (req, res) => {
   try {
-    const user = req.session.user;
+    let user = null;
+    if (req.session?.user) {
+      user = await findUserById(req.session.user);
+    }
+
     const productId = req.params.id;
-    
+
+    // Validate MongoDB ObjectId
     if (!productId.match(/^[0-9a-fA-F]{24}$/)) {
       return res.status(404).render("user/404");
     }
 
-    const product = await getProductById(productId)
-      
-
+    // Fetch product with variants fallback
+    const product = await getProductById(productId);
     if (!product) {
       return res.status(404).render("user/404");
     }
 
-    const relatedProducts = await getRelatedProducts(
-      product.category,
-       product._id);
+    // Calculate stock for display
+    const variants = product.variants || [];
+    let totalStock = variants.reduce((sum, v) => sum + (v.stock || 0), 0);
+    const productHasStock = totalStock > 0;
 
-    let reviews = [];
-    if (typeof Review !== "undefined") {
-      reviews = await Review.find({ product: product._id });
-    }
+    // Collect unique colors
+    const colors = [...new Set(variants.map(v => v.color).filter(c => c))];
 
+    // Collect unique sizes
+    const uniqueSizes = [...new Set(variants.map(v => v.size).filter(s => s))];
+
+    // Default price for display
+    const defaultPrice = variants[0]?.price || product.salesPrice || product.regularPrice || 0;
+
+    // Related products
+    const relatedProducts = await getRelatedProducts(product.category._id, product._id);
+
+    // Reviews
+    const reviews = await Review.find({ product: product._id });
+
+    // Render product detail page
     res.render("user/product-detail", {
-      user,
       product,
+      variants,
+      colors,
+      uniqueSizes,
+      productHasStock,
+      defaultPrice,
       relatedProducts,
-      reviews
+      reviews,
+      user
     });
 
   } catch (error) {
-    console.error("Error loading single product:", error);
+    console.error(error);
     res.status(500).send("Internal Server Error");
   }
 };
@@ -161,6 +251,29 @@ const loadcategory=async(req,res)=>{
 
   } catch (err) {
     console.log("Load categories error:", err);
+    res.redirect("/pageError");
+  }
+};
+ const loadCategoryProduct = async (req, res) => {
+  try {
+
+    let user = null;
+
+    if (req.session?.user) {
+      user = await findUserById(req.session.user);
+    }
+
+    const categoryId = req.params.id;
+
+    const products = await productByCategory(categoryId);
+
+    res.render("user/category", {
+      user,
+      products
+    });
+
+  } catch (error) {
+    console.log("Category products error:", error);
     res.redirect("/pageError");
   }
 };
@@ -201,5 +314,6 @@ export{
     about,
     contact,
     loadProduct,loadSingleProduct,loadcategory,
+    loadCategoryProduct,
     loadNewCollection,searchProducts
 };

@@ -1,0 +1,55 @@
+<%- include('../../views/partials/user/header') %>
+<div class="container mt-5">
+
+<h3 class="text-center mb-4">Category Products</h3>
+
+<div class="row g-4">
+
+<% if(products && products.length > 0){ %>
+
+<% products.forEach(product => { %>
+
+<div class="col-6 col-md-3">
+
+  <div class="card h-100 shadow-sm">
+
+    <img 
+      src="/uploads/productImages/<%= product.productImage[0] %>" 
+      class="card-img-top"
+      style="height:220px;object-fit:cover;"
+    >
+
+    <div class="card-body text-center">
+
+      <h6 class="fw-bold">
+        <%= product.productName %>
+      </h6>
+
+      <p class="text-danger fw-semibold">
+        ₹ <%= product.salesPrice || product.regularPrice %>
+      </p>
+
+      <a href="/product/<%= product._id %>" class="btn btn-dark btn-sm">
+        View Product
+      </a>
+
+    </div>
+
+  </div>
+
+</div>
+
+<% }) %>
+
+<% } else { %>
+
+<div class="col-12 text-center">
+  <p class="text-muted">No products found in this category</p>
+</div>
+
+<% } %>
+
+</div>
+
+</div>
+<%- include('../../views/partials/user/footer') %>

@@ -1,6 +1,8 @@
 import Category from "../../models/categorySchema.js";
 import Products from "../../models/productSchema.js";
 
+
+//category//
 export const getCategoriesPaginated = async (page, limit = 4) => {
   const skip = (page - 1) * limit;
 
@@ -15,6 +17,7 @@ export const getCategoriesPaginated = async (page, limit = 4) => {
   return { categories, totalPages };
 };
 
+//create category//
 export const createCategory = async (name, description,image) => {
   if (!name || !description) {
     throw new Error("Name and Description are required");
@@ -36,6 +39,9 @@ export const createCategory = async (name, description,image) => {
 
   return true;
 };
+
+//update//
+
 export const updateCategory = async (id, name, description) => {
   if (!id || !name || !description) {
     throw new Error("Invalid data");
@@ -44,14 +50,18 @@ export const updateCategory = async (id, name, description) => {
   await Category.findByIdAndUpdate(id, { name, description });
 };
 
+//block//
 export const setCategoryBlockStatus = async (id, status) => {
   await Category.findByIdAndUpdate(id, { isBlocked: status });
 };
+
+//delete//
 export const deleteCategoryById = async (id) => {
   const deleted = await Category.findByIdAndDelete(id);
   if (!deleted) throw new Error("Category not found");
 };
-
+ 
+//apply offer//
 export const applyCategoryOffer = async (categoryId, discount) => {
   if (discount <= 0 || discount >= 90) {
     throw new Error("Invalid discount");
@@ -75,6 +85,7 @@ export const applyCategoryOffer = async (categoryId, discount) => {
   }
 };
 
+//remove//
 export const removeCategoryOffer = async (categoryId) => {
   const category = await Category.findById(categoryId);
   if (!category) throw new Error("Category not found");

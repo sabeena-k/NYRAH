@@ -1,4 +1,4 @@
-import {createUser,findUserByEmail,updateUserPassword,saveResetOtp,verifyResetOtp } from '../../services/user/userService.js';
+import {createUser,findUserByEmail,updateUserPassword,saveResetOtp,verifyResetOtp,isPhoneExists } from '../../services/user/userService.js';
 import nodeMailer from 'nodemailer'
 import bcrypt from 'bcrypt'
 import env from 'dotenv'
@@ -7,6 +7,8 @@ env.config()
 function genarateOtp(){
     return Math.floor(1000+Math.random()*9000).toString();
 }
+
+//otp  verification//
 async function sendVerificationEmail(email,otp){
    try{
     const transporter= nodeMailer.createTransport({
@@ -33,15 +35,7 @@ async function sendVerificationEmail(email,otp){
       return false
    }
 }
-async function securePassword(password){
-    try{
-      const passwordHash=await bcrypt.hash(password,8)
-      return passwordHash;
-    }catch(error){
-   console.error("Error hashing password:", error);
-        throw error;
-    }
-}
+
 const loadSignIn = async (req, res) => {
    try{
     if(!req.session.user){
@@ -108,6 +102,10 @@ const Signup=async(req,res)=>{
         const findUser=await findUserByEmail(email);
         if(findUser){
             return res.render('user/signup',{message:'User with this email already exists'})
+        }
+        const phoneExists = await isPhoneExists(phone);
+        if (phoneExists) {
+            return res.render('user/signup', { message: 'Mobile number already exists' });
         }
         const otp=genarateOtp();
 

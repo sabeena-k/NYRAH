@@ -1,7 +1,9 @@
 import User from "../../models/userSchema.js";
 import Orders from "../../models/orderSchema.js";
 
-export const getCustomers = async (search, page, limit = 3) => {
+//get customer//
+
+export const getCustomers = async (search, page, limit = 5) => {
   const query = {
     isAdmin: false,
     $or: [
@@ -21,6 +23,8 @@ export const getCustomers = async (search, page, limit = 3) => {
     totalPages: Math.ceil(count / limit)
   };
 };
+
+//check block or not//
 export const setCustomerBlockStatus = async (id, status) => {
   if (!id) throw new Error("Invalid user id");
 
@@ -29,6 +33,8 @@ export const setCustomerBlockStatus = async (id, status) => {
     { $set: { isBlocked: status } }
   );
 };
+
+//customer Details//
 export const getCustomerDetails = async (customerId) => {
   const customer = await User.findById(customerId);
   if (!customer) throw new Error("Customer not found");

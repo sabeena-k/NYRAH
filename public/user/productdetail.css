@@ -1,0 +1,121 @@
+
+    body { background: #fff0f2; }
+   .main-img {
+     width: 100%; 
+     height: 420px;
+     object-fit: cover;
+      border-radius: 10px; 
+      box-shadow: 0 0 10px #eee;
+     }
+  .thumb-img {
+     width: 100%;
+      height: 110px;
+       object-fit: cover;
+        border-radius: 8px;
+         cursor: pointer;
+          border: 2px solid transparent;
+           transition: all 0.3s;
+           margin-top: 40px; 
+          }
+  .thumb-img:hover {
+     border-color: #ff6767;
+      transform: scale(1.05);
+     }
+     
+
+
+  .color-btn {
+    border: 2px solid #0e0e0e;
+    border-radius: 10px;
+    width: 70px;
+    height: 36px;
+    margin: 3px;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+    outline: none;
+  }
+  .color-btn.active {
+    background-color: black;
+  
+    color:  #ffffff
+  }
+  .color-btn::after {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 15px; height: 12px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.2);
+    display: none;
+  }
+  .size-btn {
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    padding: 6px 14px;
+    margin: 3px;
+    cursor: pointer;
+    background: #fff;
+    transition: all 0.3s;
+    font-weight: 500;
+  }
+  .size-btn:hover {
+     border-color: #393030; 
+     transform: scale(1.05); 
+    }
+  .size-btn.active {
+    background: #ff4d4f;
+    color: #fff;
+    border-color: #121212;
+    transform: scale(1.1);
+  }
+  #productTabs .nav-link {
+  font-weight: 500;
+  color: #555;
+}
+
+#productTabs .nav-link.active {
+  color: #0b0b0b;
+  background-color: #f8f9fa; 
+  border-color: #cccccd #c1c2c2 #fff;
+}
+
+.tab-content {
+  background: #fff;
+}
+
+.review-item {
+  background: #f9f9f9;
+}
+
+.review-item strong {
+  font-size: 0.95rem;
+}
+
+.review-item .badge {
+  font-size: 0.85rem;
+}
+  .related-product {
+  text-align: center;
+}
+
+.related-img-wrapper {
+  width: 200px;      
+  height: 200px;      
+  margin: 0 auto;
+  overflow: hidden;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8f8f8;
+}
+
+.related-img-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+ 

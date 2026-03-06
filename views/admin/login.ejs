@@ -4,112 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NYRAH Login</title>
-<style>
-
-body {
-    margin: 0;
-    padding: 0;
-    font-family: 'Poppins', sans-serif;
-    background-image: url('/images/bgrond.jpg');
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-.login-container {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    padding: 20px;
-}
-.login-box {
-    background:transparent;
-    backdrop-filter: blur(10px);
-    padding: 40px 35px;
-    border-radius: 20px;
-    max-width: 450px;
-    width: 100%;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-    text-align: center;
-}
-.brand {
-    font-size: 2rem;
-    font-weight: 700;
-    color: #c01832;
-}
-.tagline {
-    margin-top: -10px;
-    margin-bottom: 30px;
-    font-size: 14px;
-    color: #444;
-}
-.input-group {
-    text-align: left;
-    margin-bottom: 15px;
-}
-.input-group label {
-    font-size: 14px;
-    color: #333;
-}
-.input-group input {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #999;
-    border-radius: 8px;
-    margin-top: 5px;
-    outline: none;
-    font-size: 15px;
-}
-.password-wrapper {
-    display: flex;
-    align-items: center;
-}
-.password-wrapper input {
-    flex: 1;
-}
-.eye {
-    margin-left: -30px;
-    cursor: pointer;
-    font-size: 18px;
-    color: #555;
-}
-.forgot {
-    text-align: right;
-    margin-bottom: 20px;
-}
-.forgot a {
-    color: #333;
-    text-decoration: none;
-    font-size: 13px;
-}
-.forgot a:hover {
-    text-decoration: underline;
-}
-.login-btn {
-    width: 100%;
-    padding: 12px;
-    background: #ff6f77;
-    border: none;
-    color: white;
-    font-size: 16px;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-.login-btn:hover {
-    background: #ff4c56;
-}
-@media (max-width: 480px) {
-    .login-box {
-        padding: 25px 20px;
-    }
-
-    .brand {
-        font-size: 1.7rem;
-    }
-}
-</style>
+<link rel="stylesheet" href="/admin/adminLogin.css">
 </head>
 <body>
 
@@ -147,6 +42,13 @@ body {
 
     </div>
 </div>
-
+<script>
+  if (window.history && window.history.pushState) {
+    window.history.pushState(null, null, window.location.href);
+    window.onpopstate = function () {
+      window.location.replace('/admin/login');
+    };
+  }
+</script>
 </body>
 </html>

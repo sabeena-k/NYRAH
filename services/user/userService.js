@@ -2,18 +2,23 @@ import User from '../../models/userSchema.js'
 import bcrypt from 'bcrypt'
 import Product from '../../models/productSchema.js'  
 
+//create a user//
 export const createUser=async({name,email,phone,password})=>{
     const hashedPassword=await bcrypt.hash(password,8);
     const user=new User({name,email,phone,password:hashedPassword});
     return await user.save();
 };
+//find user email//
 export const findUserByEmail=async(email)=>{
     return await User.findOne({email});
 }
 
+//find user//
 export const findUserById = async (id) => {
     return await User.findById(id);
 };
+
+//edit password//
 export const updateUserPassword = async (email, hashedPassword) => {
   return await User.findOneAndUpdate(
     { email },
@@ -24,7 +29,7 @@ export const updateUserPassword = async (email, hashedPassword) => {
     { new: true }
   );
 };
-
+//reset otp save//
 export const saveResetOtp=async(email,otp)=>{
     return await User.findOneAndUpdate(
         { email },
@@ -32,6 +37,8 @@ export const saveResetOtp=async(email,otp)=>{
         { new: true }
     );
 };
+
+// verifyResetOtp //
 export const verifyResetOtp = async (email, enteredOtp) => {
   const user = await User.findOne({ email });
 
@@ -47,12 +54,19 @@ export const verifyResetOtp = async (email, enteredOtp) => {
 
   return { status: "success" };
 };
+
+//new collection//
 export const getNewCollections=async(limit)=>{
     return await Product.find({
         isBlock: false,
-    isNew: true
+   status: "Available"
   })
   .sort({ createdAt: -1 })
   .limit(limit);
 };
 
+//mobile number uniq//
+export const isPhoneExists = async (phone) => {
+    const user = await User.findOne({ phone });
+    return user ? true : false;
+};

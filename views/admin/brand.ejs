@@ -4,248 +4,70 @@
 <title>NYRAH Admin – Brands</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-<style>
-   body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background: #fde0e9;
-}
-
-.layout, .container {
-    display: flex;
-    min-height: 100vh;
-}
-
-.sidebar {
-    width: 240px;
-    background: #ffffff;
-    padding: 20px 15px;
-    box-shadow: 2px 0 10px rgba(0,0,0,0.1);
-    position: fixed;
-    height: 100vh;
-}
-
-.main {
-    margin-left: 260px;
-    padding: 20px;
-    width: calc(100% - 260px);
-    flex: 1;
-    min-width: 0;
-    position: relative;
-}
-.header-bar {
-    background-color: #ffd6e0;
-    padding: 15px 20px;
-    border-radius: 8px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-    margin-top: 25px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-}
-
-.header-bar h2 {
-    margin: 0;
-    font-size: 24px;
-    color: #d81b60;
-}
-
-.header-bar button {
-    background-color: #d81b60;
-    color: #fff;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 6px;
-    cursor: pointer;
-}
-
-.header-bar button:hover {
-    background-color: #b71c4f;
-}
-
-.table-wrap {
-    background: white;
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    margin-top: 15px;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: white;
-}
-
-table th, table td {
-    padding: 12px;
-    border-bottom: 1px solid #ccc;
-    text-align: center;
-    vertical-align: middle;
-}
-
-table th {
-    font-weight: bold;
-}
-
-table img {
-    width: 60px;
-    height: 60px;
-    object-fit: contain;
-    border-radius: 4px;
-}
-
-.actions button {
-    padding: 6px 12px;
-    margin-right: 8px;
-    cursor: pointer;
-}
-
-#modal {
-    display: none;
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0,0,0,0.5);
-    align-items: center;
-    justify-content: center;
-}
-
-#modal .box {
-    background: white;
-    padding: 25px;
-    width: 350px;
-    border-radius: 6px;
-}
-
-.main-profile-btn {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    background: #fff;
-    padding: 4px 8px;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-    cursor: pointer;
-}
-
-.profile-img {
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
-    object-fit: cover;
-}
-.profile-menu {
-    display: none;
-    position: absolute;
-    top: 45px;
-    right: 0;
-    background: #fff;
-    border-radius: 6px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-    flex-direction: column;
-    min-width: 120px;
-}
-
-.profile-menu a {
-    padding: 8px 12px;
-    display: block;
-    text-decoration: none;
-    color: #333;
-}
-
-.profile-menu a:hover {
-    background: #f0f0f0;
-}
-
-
-.menu {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.menu li {
-    margin-bottom: 8px;
-}
-
-.menu li a {
-    text-decoration: none;
-    color: black;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 12px;
-    border-radius: 8px;
-    transition: 0.2s;
-}
-
-.menu li a:hover {
-    background: #fce4ec;
-    color: #d81b60;
-}
-
-.menu li.active a {
-    background: #fce4ec;
-    color: #d81b60;
-}
-
-
-</style>
+<link rel="stylesheet" href="/admin/brand.css">
 </head>
-
 <body>
 
 <div class="container">
-    <%- include('../../views/partials/admin/side')%>
-    
-  <div class="main">
 
-    <%- include("../../views/partials/admin/header")%>
-  <br>
- 
-  <div class="header-bar">
-    <h2>Brands</h2>
-    <button onclick="openAddBrand()">+ Add Brand</button>
-  </div>
+<%- include('../../views/partials/admin/side') %>
 
-  <table>
-    <thead>
-      <tr>
-        <th>Brand</th>
-        <th>Logo</th>
-        <th>Status</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% brands.forEach(b => { %>
-        <tr>
-          <td><%= b.brandName %></td>
-          <td>
-  <% if(b.brandImage){ %>
-   <img src="/uploads/productImages/<%=b.brandImage %>" class="thumb-img"> 
-  <% } else { %> 
-    No image 
-  <% } %>
+<main class="main">
+
+<%- include('../../views/partials/admin/header') %>
+
+<div class="page-content">
+
+<div class="header-bar">
+<h2>Brands</h2>
+<button onclick="openAddBrand()">+ Add Brand</button>
+</div>
+
+<table>
+<thead>
+<tr>
+<th>Brand</th>
+<th>Logo</th>
+<th>Status</th>
+<th>Actions</th>
+</tr>
+</thead>
+
+<tbody>
+<% brands.forEach(b => { %>
+<tr>
+
+<td><%= b.brandName %></td>
+
+<td>
+<% if(b.brandImage){ %>
+<img src="/uploads/productImages/<%= b.brandImage %>" class="thumb-img">
+<% } else { %>
+No image
+<% } %>
 </td>
 
-          <td><%= b.isBlocked ? "Blocked" : "Active" %></td>
-          <td>
-            <button onclick="editBrand('<%= b._id %>', '<%= b.brandName %>')">Edit</button>
-            <button onclick="deleteBrand('<%= b._id %>')">Delete</button>
-          </td>
-        </tr>
-      <% }) %>
-    </tbody>
-  </table>
-  <%- include('../../views/partials/admin/footer')%>
+<td><%= b.isBlocked ? "Blocked" : "Active" %></td>
+
+<td>
+<button onclick="editBrand('<%= b._id %>','<%= b.brandName %>')">Edit</button>
+<button onclick="deleteBrand('<%= b._id %>')">Delete</button>
+</td>
+
+</tr>
+<% }) %>
+</tbody>
+
+</table>
+
 </div>
+
+<%- include('../../views/partials/admin/footer') %>
+
+</main>
+</div>
+
+
 
 <script>
 async function openAddBrand() {

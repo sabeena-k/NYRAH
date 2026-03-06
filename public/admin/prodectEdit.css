@@ -1,0 +1,29 @@
+
+body {
+    background-color: #ffe6e6; 
+}
+
+.form-box {
+     background: #fff0f0; 
+     padding: 20px; 
+     border-radius: 10px;
+     }
+button.cancel {
+     background: white;
+      border: 1px solid #333; 
+    }
+button.add {
+     background: #f44c3a;
+      color: white; 
+    }
+.thumb-img { 
+    width: 80px; 
+    margin-right: 5px; 
+    border-radius: 5px; 
+}
+.image-preview img {
+     width: 100px; 
+     height: 100px; 
+     margin-right: 5px;
+      border-radius: 5px;
+     }
