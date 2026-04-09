@@ -58,9 +58,22 @@ const productAdd = async (req, res) => {
     res.redirect("/admin/products");
   } catch (err) {
     console.log(err);
-    res.redirect("/admin/pageError");
+   let error='Minimum 3 images required';
+   if (err.name === "ValidationError") {
+      error = Object.values(err.errors)
+        .map(e => e.message)
+        .join(", ");
+    }
+
+    const data = await getProductAddPageData();
+
+    res.render("admin/productAdd", {
+      ...data,
+      error: error
+    });
   }
-};
+  };
+
 
 const productEditPage = async (req, res) => {
   try {
@@ -79,7 +92,26 @@ const productEdit = async (req, res) => {
     res.redirect("/admin/products");
   } catch (err) {
     console.log(err);
-    res.redirect("/admin/pageError");
+
+    // Determine the error message
+    let error = "";
+    if (err.message && err.message.includes("Minimum 3 images required")) {
+      error = "Please upload at least 3 images for the product.";
+    } else if (err.name === "ValidationError") {
+      error = Object.values(err.errors)
+        .map(e => e.message)
+        .join(", ");
+    } else {
+      error = "Something went wrong. Please try again.";
+    }
+
+    // Reload edit page with error
+    const data = await getEditPageData(req.params.id);
+
+    res.render("admin/productEdit", {
+      ...data,
+      error
+    });
   }
 };
 const addOffer = async (req, res) => {

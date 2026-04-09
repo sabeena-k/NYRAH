@@ -22,10 +22,10 @@
   <input type="hidden" name="email" value="<%= email %>">
 
   <div class="otp-boxes">
-    <input type="text" name="d1" maxlength="1" required>
-    <input type="text" name="d2" maxlength="1" required>
-    <input type="text" name="d3" maxlength="1" required>
-    <input type="text" name="d4" maxlength="1" required>
+    <input type="text" name="d1" maxlength="1" required inputmode="numeric">
+    <input type="text" name="d2" maxlength="1" required inputmode="numeric"> 
+    <input type="text" name="d3" maxlength="1" required inputmode="numeric">
+    <input type="text" name="d4" maxlength="1" required inputmode="numeric">
   </div>
 
   <div class="resend-section">
@@ -48,9 +48,12 @@
     </div>
 
 </div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-    const resendBtn = document.getElementById("resendBtn");
+  const userEmail = "<%= email %>";
+const resendBtn = document.getElementById("resendBtn");
 const timerEl = document.getElementById("timer");
+const otpInputs = document.querySelectorAll(".otp-boxes input");
 
 let timeLeft = 60;
 let timer;
@@ -72,19 +75,62 @@ function startTimer() {
 }
 
 startTimer();
+otpInputs.forEach((input, index) => {
 
+  //  Only numbers + move next
+  input.addEventListener("input", () => {
+    input.value = input.value.replace(/[^0-9]/g, "");
+
+    if (input.value && index < otpInputs.length - 1) {
+      otpInputs[index + 1].focus();
+    }
+  });
+
+  //  Backspace → previous
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Backspace" && !input.value && index > 0) {
+      otpInputs[index - 1].focus();
+    }
+  });
+
+});
+
+//  Auto focus first box
+otpInputs[0].focus();
+
+//  Paste full OTP
+document.querySelector(".otp-boxes").addEventListener("paste", (e) => {
+  const pasteData = e.clipboardData.getData("text").trim();
+
+  if (/^\d{4}$/.test(pasteData)) {
+    otpInputs.forEach((input, i) => {
+      input.value = pasteData[i];
+    });
+    otpInputs[otpInputs.length - 1].focus();
+  }
+
+  e.preventDefault();
+});
 resendBtn.addEventListener("click", async () => {
   const res = await fetch("/resend-forgot-otp", {
     method: "POST",
-    credentials: "same-origin"
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ email: userEmail })
   });
 
   const data = await res.json();
-  alert(data.message);
 
+Swal.fire({
+  icon: data.success ? "success" : "error",
+  title: data.success ? "Success" : "Error",
+  text: data.message,
+  timer: 2000,
+  showConfirmButton: false
+});
   if (data.success) startTimer();
 });
-
-  </script>
+</script>
 </body>
 </html>

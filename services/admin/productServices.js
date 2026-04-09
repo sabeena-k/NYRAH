@@ -58,7 +58,8 @@ const getProductAddPageData = async () => {
   ];
 
   return { cat, brand, size };
-};const createProduct = async (body, files) => {
+};
+const createProduct = async (body, files) => {
   const images = files.map(f => f.filename);
   const price = Number(body.price);
 
@@ -87,9 +88,12 @@ const getProductAddPageData = async () => {
     regularPrice: price,
     productOffer: 0,
     salesPrice: price,
-    quantity: Number(body.quantity) || 0,
-    size: sizesArray,
-    color: body.color,
+    variants: sizesArray.map(item => ({
+    size: item.size,
+    color: body.color,   // add color here
+    price: item.price,
+    stock: item.stock
+     })),
     productImage: images,
     isNewProduct: body.isNew === "true",
     isBlock: false
@@ -148,18 +152,19 @@ if (Array.isArray(body.size)) {
     stock: Number(body.quantity)
   }];
 }
-
-      product.size = sizes;
-  product.color = body.color;
-  product.regularPrice = Number(body.price);
-  product.quantity = Number(body.quantity) || 0;
-
+product.variants = sizes.map(item => ({
+  size: item.size,
+  color: body.color,
+  price: item.price,
+  stock: item.stock
+}));
   if (product.productOffer > 0) {
     const discount = (product.regularPrice * product.productOffer) / 100;
     product.salesPrice = Math.round(product.regularPrice - discount);
   } else {
     product.salesPrice = product.regularPrice;
   }
+  let updatedImages = body.existingImages ? body.existingImages.split(',').filter(x => x.trim() !== '') : [];
   if (body.croppedImage) {
     const base64Data = body.croppedImage.replace(/^data:image\/\w+;base64,/, "");
     const uploadDir = path.join(process.cwd(), "public/uploads/productImages");
@@ -167,11 +172,12 @@ if (Array.isArray(body.size)) {
 
     const fileName = Date.now() + ".jpg";
     fs.writeFileSync(path.join(uploadDir, fileName), base64Data, "base64");
-    product.productImage[0] = fileName;
-  } 
-  else if (files && files.length > 0) {
-    product.productImage = files.map(f => f.filename);
+    updatedImages.push(fileName);
+  } else if (files && files.length > 0) {
+    updatedImages = updatedImages.concat(files.map(f => f.filename));
   }
+  
+  product.productImage = updatedImages;
 
   return await product.save();
 };

@@ -90,64 +90,103 @@ const loadSignUp = async (req, res) => {
         res.redirect('/pageNotFound');
     }
 }
-const Signup=async(req,res)=>{
-    try{
-      const {name,email,phone,password,cPassword}=req.body;
-      console.log("User email received:", email);
+const Signup = async (req, res) => {
+  try {
+    const { name, email, phone, password, cPassword } = req.body;
 
-        if(password!==cPassword){
-            return res.render('user/signup',{message:'Password do not match'})
-
-        }
-        const findUser=await findUserByEmail(email);
-        if(findUser){
-            return res.render('user/signup',{message:'User with this email already exists'})
-        }
-        const phoneExists = await isPhoneExists(phone);
-        if (phoneExists) {
-            return res.render('user/signup', { message: 'Mobile number already exists' });
-        }
-        const otp=genarateOtp();
-
-        const emailSend=await sendVerificationEmail(email,otp);
-        if(!emailSend){
-            return res.json('Email error')
-        }
-       req.session.userOtp = otp;
-      req.session.signupEmail = email; 
-      req.session.userData = {name,email,phone,password };
-        console.log('OTP send',otp);
-        res.render('user/Verify-otp',{email})
+    //Required fields
+    if (!name || !email || !phone || !password || !cPassword) {
+      return res.render('user/signup', { message: 'All fields are required' });
     }
-    catch(error){
-        console.error('Signup error',error)
-        res.status(500).send('/pageNotFound')
+
+    //Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.render('user/signup', { message: 'Invalid email format' });
     }
-}
+
+    //Password match
+    if (password !== cPassword) {
+      return res.render('user/signup', { message: 'Passwords do not match' });
+    }
+
+    // Phone validation
+    const phoneRegex = /^[0-9]{10}$/;
+    if (!phoneRegex.test(phone)) {
+      return res.render('user/signup', { message: 'Invalid phone number (must be 10 digits)' });
+    }
+
+    //Email exists
+    const existingUser = await findUserByEmail(email);
+    if (existingUser) {
+      return res.render('user/signup', { message: 'Email already exists' });
+    }
+
+    // Phone exists
+    const phoneExists = await isPhoneExists(phone);
+    if (phoneExists) {
+      return res.render('user/signup', { message: 'Mobile number already exists' });
+    }
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+  
+
+    //Generate OTP
+    const otp = genarateOtp();
+
+    const emailSend = await sendVerificationEmail(email, otp);
+    if (!emailSend) {
+      return res.render('user/signup', { message: 'Failed to send OTP' });
+    }
+
+    // Store in session (CLEAN STRUCTURE)
+    req.session.userOtpData = {
+      otp,
+      expiresAt: Date.now() + 1 * 60 * 1000, // 1 min (aligns with front-end timer)
+      user: {
+        name,
+        email,
+        phone,
+       password:hashedPassword
+      }
+    };
+
+    console.log('OTP sent:', otp);
+
+    res.render('user/Verify-otp', { email });
+
+  } catch (error) {
+    console.error('Signup error', error);
+    res.status(500).send('Server Error');
+  }
+};
 const verifyOtp = async (req, res) => {
   try {
     const { otp } = req.body;  
-
-    if (!req.session.userOtp || !req.session.signupEmail) {
+     const otpData=req.session.userOtpData;
+    if (!otpData) {
       return res.json({
         success: false,
         message: "Session expired"
       });
     }
-
-    if (otp !== req.session.userOtp) {
+     if(Date.now()>otpData.expiresAt){
+      return res.json({
+        success:false,
+        message:'OTP Expired'
+      })
+     }
+    if (otp !== otpData.otp) {
       return res.json({
         success: false,
         message: "Invalid OTP"
       });
     }
 
-    await createUser(req.session.userData);
+    await createUser(otpData.user);
 
-    req.session.userOtp = null;
-    req.session.userData = null;
-    req.session.signupEmail = null;
-
+    req.session.userOtpData = null;
+    
     res.json({
       success: true,
       redirectUrl: "/signin"
@@ -163,29 +202,49 @@ const verifyOtp = async (req, res) => {
 };
 const resendOtp = async (req, res) => {
   try {
-    const email = req.session.signupEmail;
+    const otpData = req.session.userOtpData;
 
-    if (!email) {
+    //  Check session properly
+    if (!otpData) {
       return res.json({
         success: false,
         message: "Session expired. Please signup again."
       });
     }
 
-    const otp = genarateOtp();
-    req.session.userOtp = otp;
+    const email = otpData.user.email;
 
+    //  Generate new OTP
+    const otp =genarateOtp();
+
+    //  Send email
     await sendVerificationEmail(email, otp);
 
+    // Update session Without losing user data
+    req.session.userOtpData = {
+      ...otpData,
+      otp,
+      expiresAt: Date.now() + 1 * 60 * 1000
+    };
+
+    // Save session
+    req.session.save();
+
     console.log("Resent OTP:", otp);
-    res.json({ success: true, message: "OTP resent successfully" });
+
+    res.json({
+      success: true,
+      message: "OTP resent successfully"
+    });
 
   } catch (err) {
     console.error(err);
-    res.json({ success: false, message: "Failed to resend OTP" });
+    res.json({
+      success: false,
+      message: "Failed to resend OTP"
+    });
   }
 };
-
 const handleLogout = (req, res) => {
     if (!req.session.user) return res.redirect('/signin');
   res.render('user/logout');
@@ -233,12 +292,13 @@ req.session.save(() => {
 };
 const resendForgotOtp = async (req, res) => {
   try {
-    const email = req.session.resetEmail;
-
+    console.log("🔥 RESEND CALLED");
+ console.log("BODY:", req.body); //
+    const { email } = req.body;
     if (!email) {
       return res.json({
         success: false,
-        message: "Session expired. Please try again"
+        message: "Email missing"
       });
     }
 
@@ -247,13 +307,19 @@ const resendForgotOtp = async (req, res) => {
     await saveResetOtp(email, otp);
     await sendVerificationEmail(email, otp);
 
-    console.log("Resent forgot OTP:", otp);
+    console.log("Resent OTP:", otp);
 
-    res.json({ success: true, message: "OTP resent successfully" });
+    res.json({
+      success: true,
+      message: "OTP resent successfully"
+    });
 
   } catch (err) {
     console.error(err);
-    res.json({ success: false, message: "Failed to resend OTP" });
+    res.json({
+      success: false,
+      message: "Failed to resend OTP"
+    });
   }
 };
 
@@ -270,7 +336,6 @@ const loadOtpPage = async (req, res) => {
     }
 };
 
-
 const passverifyOtp = async (req, res) => {
   try {
     const { email, d1, d2, d3, d4 } = req.body;
@@ -286,7 +351,10 @@ const passverifyOtp = async (req, res) => {
 
     if (result.status === "expired")
       return res.render("user/passVerify", { email, error: "OTP expired" });
-     req.session.resetAllowed = true;
+
+    // ✅ SUCCESS
+    req.session.resetAllowed = true;
+
     res.redirect(`/resetPass?email=${email}`);
 
   } catch (err) {
@@ -294,7 +362,6 @@ const passverifyOtp = async (req, res) => {
     res.redirect("/forgot-password");
   }
 };
-
 const loadResetPasswordPage = (req, res) => {
   if (!req.session.resetAllowed) {
     return res.redirect("/forgot-password");

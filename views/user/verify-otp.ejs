@@ -52,6 +52,7 @@ const resendBtn = document.getElementById("resendBtn");
 const timerDisplay = document.getElementById("timer");
 const otpInputs = document.querySelectorAll(".otp-field");
 
+//  TIMER FUNCTION
 function startTimer() {
   resendBtn.disabled = true;
   resendBtn.style.opacity = "0.5";
@@ -73,28 +74,41 @@ function startTimer() {
 
 startTimer();
 
-resendBtn.addEventListener("click", function () {
-  fetch("/resend-otp", { method: "POST" })
-    .then(res => res.json())
-    .then(data => {
-      if (data.success) {
-        Swal.fire({
-          icon: "success",
-          title: "OTP resent successfully",
-          timer: 1500,
-          showConfirmButton: false
-        });
-        startTimer();
-      } else {
-        Swal.fire({
-          icon: "error",
-          title: "Error",
-          text: data.message
-        });
-      }
+//  RESEND OTP
+resendBtn.addEventListener("click", async () => {
+  try {
+    const res = await fetch("/resend-otp", { method: "POST" });
+    const data = await res.json();
+
+    if (data.success) {
+      Swal.fire({
+        icon: "success",
+        title: "OTP Resent",
+        text: "New OTP sent to your email",
+        timer: 1500,
+        showConfirmButton: false
+      });
+
+      startTimer();
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: data.message
+      });
+    }
+
+  } catch (err) {
+    console.error(err);
+    Swal.fire({
+      icon: "error",
+      title: "Network Error",
+      text: "Please try again"
     });
+  }
 });
 
+//  AUTO FOCUS OTP INPUT
 otpInputs.forEach((input, index) => {
   input.addEventListener("input", () => {
     if (input.value && index < otpInputs.length - 1) {
@@ -103,27 +117,86 @@ otpInputs.forEach((input, index) => {
   });
 });
 
-document.getElementById("otpForm").addEventListener("submit", async e => {
+//  FORM SUBMIT
+document.getElementById("otpForm").addEventListener("submit", async (e) => {
   e.preventDefault();
 
   let otp = "";
   otpInputs.forEach(i => otp += i.value);
 
-  const res = await fetch("/verify-otp", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ otp })
-  });
+  //  Empty OTP check
+  if (otp.length < 4) {
+    return Swal.fire({
+      icon: "warning",
+      title: "Enter OTP",
+      text: "Please enter complete OTP"
+    });
+  }
 
-  const data = await res.json();
+  try {
+    const res = await fetch("/verify-otp", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ otp })
+    });
 
-  if (data.success) {
-    window.location.href = data.redirectUrl;
-  } else {
+    const data = await res.json();
+
+    if (data.success) {
+      Swal.fire({
+        icon: "success",
+        title: "Verified",
+        text: "Account created successfully",
+        timer: 1500,
+        showConfirmButton: false
+      });
+
+      setTimeout(() => {
+        window.location.href = data.redirectUrl;
+      }, 1500);
+
+    } else {
+
+      //  Dynamic error title
+      let title = "Error";
+      const errMsg = (data.message || "").toLowerCase();
+
+      if (errMsg.includes("expired")) {
+        title = "OTP Expired";
+      } else if (errMsg.includes("session")) {
+        title = "Session Expired";
+      } else if (errMsg.includes("invalid")) {
+        title = "Invalid OTP";
+      }
+
+      Swal.fire({
+        icon: "error",
+        title: title,
+        text: data.message
+      });
+
+      //  Redirect if session expired
+      if (errMsg.includes("session")) {
+        setTimeout(() => {
+          window.location.href = "/signup";
+        }, 2000);
+      }
+
+      //  Update timer UI if expired
+      if (errMsg.includes("expired")) {
+        timerDisplay.textContent = "Expired";
+      }
+    }
+
+  } catch (err) {
+    console.error(err);
+
     Swal.fire({
       icon: "error",
-      title: "Invalid OTP",
-      text: data.message
+      title: "Server Error",
+      text: "Please try again later"
     });
   }
 });

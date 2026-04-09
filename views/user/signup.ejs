@@ -18,17 +18,16 @@
         <div class="form-box">
             <h2>Create Account</h2>
             <p>Username</p>
-            <input type="text"class="form-control"name="name"id="name" placeholder="Username"><p>Email id</p>
             <div id="error1"class="error-message"></div>
+            <input type="text"class="form-control"name="name"id="name" placeholder="Username"><p>Email id</p>
+             <div id="error2"class="error-message"></div>
             <input type="email"class="form-control"name="email"id="email" placeholder="Email ID"><p>Mobile Number</p>
-            <div id="error2"class="error-message"></div>
+           <div id="error3"class="error-message"></div>
             <input type="number"class="form-control"name="phone"id="phone" placeholder="Mobile Number"><p>Password</p>
-            <div id="error3"class="error-message"></div>
-            
+             <div id="error4"class="error-message"></div>
             <input type="password"class="form-control"name="password"id="password" placeholder="Password"><p>Confirm password</p>
-            <div id="error4"class="error-message"></div>
+            <div id="error5"class="error-message"></div>
             <input type="password"class="form-control"name="cPassword"id="cPassword" placeholder="Confirm Password">
-               <div id="error5"class="error-message"></div>
                <% if (locals.message && message.length > 0) { %>
               <div class="custom-alert">
             <%= message %>
@@ -90,23 +89,21 @@
          }else{
              error2.style.display='none';
             error2.innerHTML='';
-         }
-        }
-       function phoneValidateChecking(e){
-         const phoneval=phoneId.value;
-        
-          if(!phoneval.trim()===''){
-             error3.style.display='block';
-            error3.innerHTML='Please Enter Valid phone number'
-         }else if(phoneval.length<10||phoneval.length>10){
-             error3.style.display='block';
-            error3.innerHTML='Enter 10 digit';
-         }else{
-           error3.style.display='none';
-           error3.innerHTML=''
-         }
-        }
-               function passwordValidateChecking(e){
+         }}
+        function phoneValidateChecking(e){
+    const phoneval = phoneId.value.trim(); // trim spaces
+    const phoneRegex = /^[0-9]{10}$/;    // generic 10-digit numbers
+    if(!phoneRegex.test(phoneval)){
+        error3.style.display='block';
+        error3.innerHTML='Enter valid 10-digit phone number';
+    } else {
+        error3.style.display='none';
+        error3.innerHTML='';
+    }
+   }
+             
+         
+         function passwordValidateChecking(e){
          const passval=password.value;
          const cpassval=cPassword.value;
          const  alpha=/[a-zA-Z]/

@@ -37,7 +37,8 @@ const addCategory = async (req, res) => {
 };
 const editCategory = async (req, res) => {
   try {
-    await updateCategory(req.params.id, req.body.name, req.body.description);
+    const image = req.file ? req.file.filename : null;
+    await updateCategory(req.params.id, req.body.name, req.body.description, image);
     res.json({ success: true });
   } catch (err) {
     res.json({ success: false, msg: err.message });

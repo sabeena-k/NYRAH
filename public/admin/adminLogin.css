@@ -1,10 +1,21 @@
 
 
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --color-primary: #ffe1e8;
+  --color-primary-dark: #ffb6c1;
+  --color-accent: #e53e5d;
+  --color-accent-hover: #c92f4c;
+  --color-text-dark: #1f2937;
+  --color-bg-light: #fff0f3;
+}
+
 body {
     margin: 0;
     padding: 0;
-    font-family: 'Poppins', sans-serif;
-    background-image: url('/images/bgrond.jpg');
+    font-family: 'Fredoka', sans-serif;
+    background-color: var(--color-bg-light);
     height: 100vh;
     display: flex;
     justify-content: center;
@@ -27,9 +38,10 @@ body {
     text-align: center;
 }
 .brand {
-    font-size: 2rem;
+    font-size: 2.2rem;
+    font-family: 'Fredoka', cursive;
     font-weight: 700;
-    color: #c01832;
+    color: var(--color-accent);
 }
 .tagline {
     margin-top: -10px;
@@ -82,17 +94,20 @@ body {
 .login-btn {
     width: 100%;
     padding: 12px;
-    background: #ff6f77;
+    background: var(--color-accent);
     border: none;
     color: white;
     font-size: 16px;
-    border-radius: 8px;
+    border-radius: 20px;
+    font-weight: 600;
     cursor: pointer;
     transition: 0.3s;
 }
 
 .login-btn:hover {
-    background: #ff4c56;
+    background: var(--color-accent-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(229, 62, 93, 0.4);
 }
 @media (max-width: 480px) {
     .login-box {

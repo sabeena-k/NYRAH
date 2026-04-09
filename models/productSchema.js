@@ -3,24 +3,24 @@ const { Schema } = mongoose;
 
 const variantSchema = new Schema({
   size: {
-     type: String,
-      required: true 
-    },
+    type: String,
+    required: true
+  },
   color: {
-     type: String,
-      required: true 
-    },
-  price: {
-     type: Number, 
-     required: true
-     },
+    type: String,
+    required: true
+  },
+  price: { 
+    type: Number, 
+    required: true,
+    min:0
+   }, 
   stock: {
-     type: Number, 
-     default: 0 
-    },
-  image: String
+    type: Number,
+    required: true,
+    min: 0
+  }
 });
-
 const productSchema = new Schema({
   productName: {
      type: String,
@@ -56,21 +56,26 @@ const productSchema = new Schema({
      type: Number, 
      default: 0
      },
-  productImage: { 
+  productImage: {
     type: [String],
-     default: [] 
-    },
-  variants: [
-    variantSchema
-  ],
-  quantity: { 
-    type: Number,
-     default: 0 
-    },
-  isNewProduct: { 
-    type: Boolean, 
-    default: false 
+    validate: {
+      validator: function (val) {
+        return val.length >= 3;
+      },
+      message: "Minimum 3 images required"
+    }
   },
+
+ variants: {
+    type: [variantSchema],
+    validate: {
+      validator: function (val) {
+        return val.length > 0;
+      },
+      message: "At least one variant required"
+    }
+  },
+
   isBlock: {
      type: Boolean, 
      default: false 

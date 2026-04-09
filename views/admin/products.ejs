@@ -26,116 +26,119 @@
     </div>
 
     <!-- Filters -->
-    <div class="mb-3">
-      <form method="GET" action="/admin/products" class="d-flex gap-2">
-        <select name="category" class="form-select">
-          <option value="">All Categories</option>
-          <% categories.forEach(cat => { %>
-            <option value="<%= cat._id %>" <%= filters.category == cat._id ? "selected" : "" %>>
-              <%= cat.name %>
-            </option>
-          <% }) %>
-        </select>
+ <div class="mb-3">
+  <form method="GET" action="/admin/products" class="d-flex gap-2">
+    <select name="category" class="form-select" style="width:150px;">
+      <option value="">All Categories</option>
+      <% categories.forEach(cat => { %>
+        <option value="<%= cat._id %>" <%= filters.category == cat._id ? "selected" : "" %>>
+          <%= cat.name %>
+        </option>
+      <% }) %>
+    </select>
 
-        <select name="brand" class="form-select">
-          <option value="">All Brands</option>
-          <% brands.forEach(b => { %>
-            <option value="<%= b._id %>" <%= filters.brand == b._id ? "selected" : "" %>>
-              <%= b.brandName %>
-            </option>
-          <% }) %>
-        </select>
+    <select name="brand" class="form-select" style="width:150px;">
+      <option value="">All Brands</option>
+      <% brands.forEach(b => { %>
+        <option value="<%= b._id %>" <%= filters.brand == b._id ? "selected" : "" %>>
+          <%= b.brandName %>
+        </option>
+      <% }) %>
+    </select>
 
-        <select name="status" class="form-select">
-          <option value="">All Status</option>
-          <option value="active" <%= filters.status=="active"?"selected":""%>>Active</option>
-          <option value="blocked" <%= filters.status=="blocked"?"selected":""%>>Blocked</option>
-        </select>
+    <select name="status" class="form-select" style="width:120px;">
+      <option value="">All Status</option>
+      <option value="active" <%= filters.status=="active"?"selected":""%>>Active</option>
+      <option value="blocked" <%= filters.status=="blocked"?"selected":""%>>Blocked</option>
+    </select>
 
-        <button type="submit" class="btn btn-dark">Apply</button>
-       
-  <input type="text" id="searchInput" class="form-control" placeholder="Search products...">
-  <div id="searchResults" class="list-group position-absolute w-100" style="z-index: 1000; display:none;"></div>
+    <button type="submit" class="btn btn-dark">Apply</button>
 
-      </form>
-    </div>
+    <input type="text" id="searchInput" class="form-control" placeholder="Search products..." style="width:200px;">
+    <div id="searchResults" class="list-group position-absolute w-100" style="z-index: 1000; display:none;"></div>
+  </form>
+</div>
 
-    <!-- Products Table -->
-    <table class="table table-striped">
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>ID</th>
-          <th>Brand</th>
-          <th>Category</th>
-          <th>Price</th>
-          <th>Qty</th>
-          <th>Offer</th>
-          <th>Variants</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
+<!-- Products List -->
+<div class="list-group">
+  <% if(products.length === 0){ %>
+    <p class="text-center text-muted">No products found.</p>
+  <% } else { %>
+    <% products.forEach(p => { %>
+      <div class="list-group-item admin-product d-flex align-items-center <%= p.isBlock ? 'blocked':'' %> mb-2">
 
-      <tbody>
-        <% products.forEach(p => { %>
-          <tr>
-            <td><%= p.productName %></td>
-            <td><%= p._id %></td>
-            <td><%= p.brand?.brandName || "-" %></td>
-            <td><%= p.category?.name || "-" %></td>
+        <!-- THUMBNAIL -->
+        <div class="thumb me-3">
+          <img src="/uploads/productImages/<%= p.productImage?.[0] || 'no-image.jpg' %>" alt="<%= p.productName %>" style="width:100px;height:100px;object-fit:cover;border-radius:8px;">
+        </div>
 
-            <td>
-              <% if (p.productOffer > 0) { %>
-                <span style="text-decoration: line-through; color:gray;">₹<%= p.regularPrice %></span><br>
-                ₹<%= p.salesPrice || (p.regularPrice - (p.regularPrice * p.productOffer / 100)) %>
-              <% } else { %>
-                ₹<%= p.regularPrice %>
-              <% } %>
-            </td>
+        <!-- DETAILS -->
+        <div class="product-details flex-grow-1">
+          <h5 class="mb-1"><%= p.productName %></h5>
+          <p class="mb-1 text-muted">Brand: <%= p.brand?.brandName || "-" %> | Category: <%= p.category?.name || "-" %></p>
+          <% let totalQty = 0;
+                   if (p.variants && p.variants.length > 0) {
+                         p.variants.forEach(v => totalQty += v.stock);
+                          } else if (p.size && p.size.length > 0) {
+                            p.size.forEach(s => totalQty += s.stock);
+                               } else {
+                                totalQty = p.quantity || 0;
+                                   }
+                                      %>
 
-            <td><%= p.quantity %></td>
+              <p class="mb-1 text-muted">
+                 Qty: <%= totalQty %> | Variants: <%= p.variants ? p.variants.length : 0 %>
+                </p>
+          <div class="d-flex align-items-center gap-2">
+            <span class="price fw-bold">₹<%= p.salesPrice || p.regularPrice %></span>
+            <% if(p.productOffer>0){ %>
+              <span class="old-price text-muted text-decoration-line-through">₹<%= p.regularPrice %></span>
+              <span class="badge bg-success"><%= p.productOffer %>% OFF</span>
+            <% } else { %>
+              <span class="badge bg-secondary">No Offer</span>
+            <% } %>
+          </div>
+        </div>
 
-            <td>
-              <% if(p.productOffer>0){ %>
-                <span class="badge bg-success"><%= p.productOffer %>% OFF</span>
-              <% } else { %>
-                <span class="badge bg-secondary">No Offer</span>
-              <% } %>
-            </td>
+        <!-- ACTION BUTTONS -->
+        <div class="actions d-flex flex-column gap-1">
+          <a href="/admin/products/edit/<%= p._id %>" class="btn btn-sm btn-primary">Edit</a>
 
-            <td>
-              <a href="/admin/productVariants/<%= p._id %>" class="btn btn-sm btn-outline-secondary">Add Variant</a>
-            </td>
+          <% if(p.isBlock){ %>
+            <form action="/admin/products/unblock/<%= p._id %>" method="POST">
+              <button class="btn btn-success btn-sm">Unblock</button>
+            </form>
+          <% } else { %>
+            <form action="/admin/products/block/<%= p._id %>" method="POST">
+              <button class="btn btn-danger btn-sm">Block</button>
+            </form>
+          <% } %>
 
-            <td>
-              <a href="/admin/products/edit/<%= p._id %>" class="btn btn-sm btn-primary">Edit</a>
+          <a href="/admin/productVariants/<%= p._id %>" class="btn btn-sm btn-outline-secondary">Variants</a>
 
-              <% if(p.isBlock){ %>
-                <form action="/admin/products/unblock/<%= p._id %>" method="POST" class="d-inline">
-                  <button class="btn btn-success btn-sm">Unblock</button>
-                </form>
-              <% } else { %>
-                <form action="/admin/products/block/<%= p._id %>" method="POST" class="d-inline">
-                  <button class="btn btn-danger btn-sm">Block</button>
-                </form>
-              <% } %>
+          <button type="button" class="btn btn-warning btn-sm btn-offer" data-id="<%= p._id %>" data-hasoffer="<%= p.productOffer>0?1:0 %>">
+            <%= p.productOffer>0 ? "Remove Offer" : "Add Offer" %>
+          </button>
+        </div>
 
-              <button type="button"
-                      class="btn btn-warning btn-sm btn-offer"
-                      data-id="<%= p._id %>"
-                      data-hasoffer="<%= p.productOffer>0?1:0 %>">
-                <%= p.productOffer>0 ? "Remove Offer":"Add Offer" %>
-              </button>
-            </td>
-          </tr>
-        <% }) %>
-      </tbody>
-    </table>
+      </div>
+    <% }) %>
+  <% } %>
+</div>
   </main>
   <%- include('../../views/partials/admin/footer')%>
 </main>
 
-
+<div id="offerModal" class="modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); align-items:center; justify-content:center;">
+  <div style="background:white; padding:20px; border-radius:10px; width:300px;">
+    <h5>Add Offer (%)</h5>
+    <input type="number" id="offerInput" placeholder="Enter offer %" min="1" max="99" class="form-control mb-2">
+    <div class="d-flex justify-content-end gap-2">
+      <button id="offerCancelBtn" class="btn btn-secondary">Cancel</button>
+      <button id="offerSaveBtn" class="btn btn-primary">Save</button>
+    </div>
+  </div>
+</div>
 
 <script>
   const offerModal = document.getElementById('offerModal');

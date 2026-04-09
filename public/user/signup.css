@@ -12,7 +12,7 @@ body {
 
 .container {
     display: flex;
-    justify-content:right  ;
+    justify-content:center  ;
     align-items: center;
     width: 100%;
     min-height: 40vh;

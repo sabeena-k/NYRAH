@@ -14,7 +14,7 @@ router.post("/verify-otp",verifyOtp)
 router.post('/resend-otp',resendOtp)
 
 //login google//
-router.get('/auth/google',passport.authenticate('google',{scope:['profile','email']}))
+router.get('/auth/google',passport.authenticate('google',{scope:['profile','email']}));
 router.get('/auth/google/callback',passport.authenticate('google',{failureRedirect:'/signin'}),(req,res)=>{ req.session.user = req.user;req.session.save(() => {res.send(`<script>window.opener.postMessage('google-login-success', window.origin);window.close();</script><p>Login successful! Closing popup...</p>`); });});
 
 //logout//

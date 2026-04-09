@@ -42,7 +42,7 @@ router.get('/customers/:id',adminAuth,viewCustomer);
 //category//
 router.get('/category', adminAuth, categoryInfo);
 router.post('/category', adminAuth,categoryUpload.single("image"),addCategory);
-router.put('/category/:id', adminAuth, editCategory);
+router.put('/category/:id', adminAuth, categoryUpload.single("image"), editCategory);
 router.patch('/category/:id/block', adminAuth, blockCategory);
 router.patch('/category/:id/unblock', adminAuth, unblockCategory);
 router.delete('/category/:id', adminAuth, deleteCategory);
@@ -60,9 +60,8 @@ router.post('/products/block/:id', adminAuth, blockProduct);
 router.post('/products/unblock/:id', adminAuth, unblockProduct);
 router.post('/products/add-offer/:id', adminAuth, addOffer);
 router.post('/products/remove-offer/:id', adminAuth, removeOffer);
-router.get('/productVariants/:id',loadProductVariants)
 router.get('/productVariants/:id', adminAuth, loadProductVariants);
-router.get('/products/search', searchProducts);
+router.get('/products/search', adminAuth, searchProducts);
 
 //variant//
 router.post('/productVariants/:id/add', adminAuth, upload.single('image'), addVariant);

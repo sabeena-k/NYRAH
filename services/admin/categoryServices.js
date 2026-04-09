@@ -42,12 +42,24 @@ export const createCategory = async (name, description,image) => {
 
 //update//
 
-export const updateCategory = async (id, name, description) => {
+export const updateCategory = async (id, name, description, image) => {
   if (!id || !name || !description) {
     throw new Error("Invalid data");
   }
 
-  await Category.findByIdAndUpdate(id, { name, description });
+  const exists = await Category.findOne({
+    name: { $regex: `^${name}$`, $options: "i" },
+    _id: { $ne: id }
+  });
+
+  if (exists) throw new Error("Category already exists");
+
+  const updateData = { name, description };
+  if (image) {
+    updateData.image = image;
+  }
+
+  await Category.findByIdAndUpdate(id, updateData);
 };
 
 //block//

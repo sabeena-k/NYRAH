@@ -119,13 +119,15 @@
   </div>
 
  <!-- Related Products -->
-<% if(relatedProducts && relatedProducts.length>0){ %>
+<% if(relatedProducts && relatedProducts.length > 0){ %>
   <h4 class="mt-5">You may also like</h4>
   <div class="row g-3">
     <% relatedProducts.forEach(p => { %>
       <div class="col-md-3 related-product text-center">
         <div class="related-img-wrapper">
-          <img src="/uploads/productImages/<%= p.productImage[0] %>" alt="<%= p.productName %>">
+          <a href="/product/<%= p._id %>"> 
+            <img src="/uploads/productImages/<%= p.productImage[0] %>" alt="<%= p.productName %>">
+          </a>
         </div>
         <p class="mb-0"><%= p.productName %></p>
         <p class="fw-bold">$<%= p.salesPrice || p.regularPrice %></p>

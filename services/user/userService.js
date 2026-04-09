@@ -3,9 +3,14 @@ import bcrypt from 'bcrypt'
 import Product from '../../models/productSchema.js'  
 
 //create a user//
-export const createUser=async({name,email,phone,password})=>{
-    const hashedPassword=await bcrypt.hash(password,8);
-    const user=new User({name,email,phone,password:hashedPassword});
+export const createUser = async ({ name, email, phone, password }) => {
+    const user = new User({
+        name,
+        email,
+        phone,
+        password 
+    });
+
     return await user.save();
 };
 //find user email//

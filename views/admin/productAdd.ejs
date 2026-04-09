@@ -27,9 +27,9 @@
           <input type="text" name="name" placeholder="Enter product name" required>
         </div>
         <div class="input-box col-md-6">
-          <label>Product ID (SKU)</label>
-          <input type="text" name="productId" placeholder="SKU-001" required>
-        </div>
+  <label>Product ID (SKU)</label>
+  <input type="text" name="productId" value="SKU-<%= Date.now() %>" readonly>
+</div>
       </div>
 
       <div class="row">
@@ -51,35 +51,31 @@
       <div class="row">
         <div class="input-box col-md-6">
           <label>Category</label>
-          <select name="category" required>
-            <% cat.forEach(c => { %>
-              <option value="<%= c._id %>"><%= c.name %></option>
-            <% }) %>
-          </select>
+<select name="category" required>
+  <% cat.forEach(c => { %>
+    <option value="<%= c._id %>"><%= c.name %></option>
+  <% }) %>
+</select>
         </div>
 
         <div class="input-box col-md-6">
-          <label>Brand</label>
-          <select name="brand" required>
-            <% brand.forEach(b => { %>
-              <option value="<%= b._id %>"><%= b.brandName %></option>
-            <% }) %>
-          </select>
+         <label>Brand</label>
+<select name="brand" required>
+  <% brand.forEach(b => { %>
+    <option value="<%= b._id %>"><%= b.brandName %></option>
+  <% }) %>
+</select>
         </div>
       </div>
 
       <div class="row">
         <div class="input-box col-md-6">
-          <label>Available Sizes</label>
-          <select name="size" class="form-select" required>
-            <% if(size && size.length > 0) { %>
-              <% size.forEach(s => { %>
-                <option value="<%= s %>"><%= s %></option>
-              <% }) %>
-            <% } else { %>
-              <option value="">No sizes available</option>
-            <% } %>
-          </select>
+          <label>Size</label>
+<select name="size" required>
+  <% size.forEach(s => { %>
+    <option value="<%= s %>"><%= s %></option>
+  <% }) %>
+</select>
         </div>
 
         <div class="input-box col-md-3">
@@ -189,13 +185,38 @@ closeModal.addEventListener("click", () => {
 document.querySelector(".product-form").addEventListener("submit", function(e) {
     const price = Number(this.price.value);
     const offer = Number(this.offerPrice.value);
-    if(offer && offer >= price){
+
+    // Price validation
+    if (!price || price <= 0) {
         e.preventDefault();
-        Swal.fire('Error', 'Offer price must be less than regular price!', 'error');
+        Swal.fire({
+            icon: "error",
+            title: "Invalid Price",
+            text: "Price must be greater than 0"
+        });
+        return;
     }
-    if(croppedFiles.length === 0 && fileInput.files.length === 0){
+
+    // Offer price cannot be greater than price
+    if (offer > price) {
         e.preventDefault();
-        Swal.fire('Error', 'Please upload and crop at least one image!', 'error');
+        Swal.fire({
+            icon: "error",
+            title: "Invalid Offer Price",
+            text: "Offer price cannot be greater than regular price"
+        });
+        return;
+    }
+
+    // ✅ New check: require minimum 3 images
+    if (!fileInput.files || fileInput.files.length < 3) {
+        e.preventDefault();
+        Swal.fire({
+            icon: "error",
+            title: "Upload Error",
+            text: "Please upload at least 3 images for the product."
+        });
+        return;
     }
 });
 </script>

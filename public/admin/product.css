@@ -11,200 +11,59 @@
      width: 90%;
      margin-top: 35px;
     }
-
-.top-bar {
+.admin-product {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 15px;
-  flex-wrap: nowrap;
-  margin-bottom: 20px;
-}
-.top-bar h2 {
-  margin: 0;
-  white-space: nowrap;
-}
-    
-.search-filter {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.search-box {
-  display: flex;
-  align-items: center;
-  border: 2px solid #ddd;
-  padding: 8px 14px;
-  border-radius: 10px;
-  background: #fff;
-  width: 250px;
-}
-
-.search-box i {
-  color: #777;
-  margin-right: 8px;
-  font-size: 18px;
-}
-
-.search-box input {
-  border: none;
-  outline: none;
-  width: 180px;
-}
-.filter-dropdown {
-  position: relative;
-}
-.filter-btn {
-  background-color: #343a40;
-  color: #fff;
-  padding: 8px 15px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-.filter-content {
-  display: none;
-  position: absolute;
-  top: 100%;
-  left: 0;
-  background-color: #fff;
-  min-width: 250px;
   padding: 15px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-  border-radius: 5px;
-  z-index: 1000;
+  border-radius: 10px;
+  background: #f8f8f8;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
-.filter-dropdown.active .filter-content {
-  display: block;
+
+.admin-product:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 10px rgba(0,0,0,0.1);
 }
-.filter-content select {
-  width: 100%;
-  padding: 6px 10px;
-  margin-bottom: 10px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
+
+.admin-product.blocked {
+  opacity: 0.6;
 }
-.filter-buttons {
+
+.admin-product .thumb img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.admin-product .product-details {
+  flex-grow: 1;
+  margin-left: 15px;
+}
+
+.admin-product .actions {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 5px;
 }
 
-.filter-buttons .btn-dark {
-  background-color: #343a40;
-  color: #fff;
-  border: none;
-  padding: 6px 10px;
-  border-radius: 5px;
+.admin-product .actions a,
+.admin-product .actions button {
+  font-size: 13px;
 }
 
-.filter-buttons .btn-secondary {
-  background-color: #6c757d;
-  color: #fff;
-  border: none;
-  padding: 6px 10px;
-  border-radius: 5px;
-}
-
-    .btn-new {
-      background: #ff2e78;
-  color: #fff;
-  padding: 8px 16px;
-  border-radius: 6px;
-  text-decoration: none;
-  white-space: nowrap;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background: #fff;
-    }
-
-    th, td {
-      padding: 10px;
-      border: 1px solid #ddd;
-      text-align: center;
-    }
-
-    thead {
-      background: #f8f0f0;
-    }
-
-    .btn-edit {
-      background: #2ba84a;
-      padding: 6px 10px;
-      color: #fff;
-      border-radius: 5px;
-      text-decoration: none;
-    }
-
-    .btn-delete {
-      background: #e63946;
-      padding: 6px 10px;
-      color: #fff;
-      border-radius: 5px;
-      border: none;
-      cursor: pointer;
-    }
-
-    .btn-offer {
-      background: #000;
-      padding: 6px 12px;
-      color: #fff;
-      border-radius: 5px;
-      border: none;
-      cursor: pointer;
-    }
-
-    .badge {
-      padding: 4px 8px;
-      border-radius: 6px;
-      font-size: 12px;
-    }
-
-    .bg-success {
-      background: green;
-      color: #fff;
-    }
-
-    .bg-secondary {
-      background: gray;
-      color: #fff;
-    }
-    .action-btn {
-  margin-left: 5px;
-  border-radius: 6px;
-  padding: 4px 10px;
-  font-weight: 500;
-}
-
-.btn-edit {
-  background-color: #198754;
-  color: white;
-  padding: 4px 10px;
-  border-radius: 6px;
-  text-decoration: none;
-  font-size: 14px;
-  margin-right: 5px;
-}
-
-.btn-edit:hover {
-  background-color: #157347;
-  color: white;
-}
-
-.btn-offer {
-  background-color: black;
-  color: white;
-  padding: 4px 10px;
-  border-radius: 6px;
-  border: none;
-  margin-left: 5px;
-}
-
-.btn-offer:hover {
-  background-color: #333;
+@media(max-width:768px){
+  .admin-product {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .admin-product .thumb img {
+    width: 100%;
+    height: auto;
+  }
+  .admin-product .actions {
+    flex-direction: row;
+    gap: 5px;
+    margin-top: 10px;
+  }
 }

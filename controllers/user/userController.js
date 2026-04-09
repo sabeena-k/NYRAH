@@ -1,10 +1,10 @@
 import mongoose from "mongoose";
 import { findUserById} from "../../services/user/userService.js"
-import {getProducts,countProducts,getProductById,getRelatedProducts,productByCategory,searchProduct,getNewCollections} from "../../services/user/productService.js"
+import {getProducts,countProducts,getProductById,getRelatedProducts,productByCategory,searchProduct,getNewCollections,getColors,getSizes} from "../../services/user/productService.js"
 import {getAllCategories,homeCategories} from"../../services/user/categoryService.js"
 import Review from'../../models/reviewSchema.js'
 import Category from "../../models/categorySchema.js"
-import Brand from "../../models/brandSchema.js"
+import{getAllBrands}from'../../services/user/brandService.js'
 
 const pageNotFound = (req, res) => {
      res.status(404).render('user/404');
@@ -21,7 +21,7 @@ const loadStartPage=async(req,res)=>{
                 } 
                 };
 
- const loadHomePage = async (req, res) => { 
+const loadHomePage = async (req, res) => { 
   try {
     let user = null;
 
@@ -70,47 +70,35 @@ const contact = async (req, res) => {
 
 const loadProduct = async (req, res) => {
   try {
-   let user = null;
-if (req.session.user) {
-  user = await findUserById(req.session.user._id || req.session.user);
-}
+    const user = req.session?.user
+      ? await findUserById(req.session.user)
+      : null;
+
     const page = parseInt(req.query.page) || 1;
     const limit = 9;
     const skip = (page - 1) * limit;
-    let {
-      category,
-      brand,
-      sort,
-      size,
-      color,
-      priceRange
-    } = req.query;
+
+    const { category, brand, sort, size, color, priceRange, search } = req.query;
 
     const filter = {};
-    let sortOption = {};
 
-    if (category) {
-      filter.category = new mongoose.Types.ObjectId(category);
+    if (search) {
+      filter.productName = {
+        $regex: search.trim(),
+        $options: "i"
+      };
     }
 
-    if (brand) {
-      filter.brand = new mongoose.Types.ObjectId(brand);
-    }
+    if (category) filter.category = category;
+    if (brand) filter.brand = brand;
+
     if (size || color) {
+      filter.variants = { $elemMatch: {} };
 
-  filter.variants = { $elemMatch: {} };
+      if (size) filter.variants.$elemMatch.size = size;
+      if (color) filter.variants.$elemMatch.color = color;
+    }
 
-  if (size) {
-    filter.variants.$elemMatch.size = size;
-  }
-
-  if (color) {
-    filter.variants.$elemMatch.color = {
-      $regex: new RegExp(`^${color}$`, "i")
-    };
-  }
-
-}
     if (priceRange) {
       const [min, max] = priceRange.split("-");
       filter.salesPrice = {
@@ -118,59 +106,48 @@ if (req.session.user) {
         $lte: Number(max)
       };
     }
-     if (sort === "priceLowHigh") {
-      sortOption.salesPrice = 1;
-    }
-    else if (sort === "priceHighLow") {
-      sortOption.salesPrice = -1;
-    }
-    else if (sort === "aToZ") {
-      sortOption.productName = 1;
-    }
-    else if (sort === "zToA") {
-      sortOption.productName = -1;
-    }
-    else if (sort === "newest") {
-      sortOption.createdAt = -1;
-    }
-    else {
-      sortOption.createdAt = -1; // default
-    }
+    const sortMap = {
+      priceLowHigh: { salesPrice: 1 },
+      priceHighLow: { salesPrice: -1 },
+      aToZ: { productName: 1 },
+      zToA: { productName: -1 },
+      newest: { createdAt: -1 }
+    };
 
+    const sortOption = sortMap[sort] || { createdAt: -1 };
 
-    const totalProducts = await countProducts(filter);
-    const totalPages = Math.ceil(totalProducts / limit);
-    const products = await getProducts(filter,sortOption, skip, limit);
+   
+    const [
+      products,
+      totalProducts,
+      categories,
+      brands,
+      sizes,
+      colors
+    ] = await Promise.all([
+      getProducts(filter, sortOption, skip, limit),
+      countProducts(filter),
+      getAllCategories(),   
+      getAllBrands(),       
+      getSizes(),          
+      getColors()          
+      
+    ]);
 
-    const newProducts = products.filter(p => p.isNew && p.totalStock > 0);
-    const categories = await Category.find();
-    const brands = await Brand.find();
-
-     const allProducts = await getProducts();
-
-const sizes = [...new Set(
-  allProducts.flatMap(p => p.variants?.map(v => v.size))
-)];
-
-const colors = [...new Set(
-  allProducts.flatMap(p => p.variants?.map(v => v.color))
-)];
     res.render("user/AllProducts", {
       user,
       products,
-      newProducts,
       categories,
       brands,
       sizes,
       colors,
       currentPage: page,
-      totalPages,
-      selected: req.query,
-      
+      totalPages: Math.ceil(totalProducts / limit),
+      selected: req.query
     });
 
-  } catch (err) {
-    console.log(err);
+  } catch (error) {
+    console.error("Load Product Error:", error);
     res.status(500).send("Internal Server Error");
   }
 };
@@ -184,38 +161,31 @@ const loadSingleProduct = async (req, res) => {
 
     const productId = req.params.id;
 
-    // Validate MongoDB ObjectId
     if (!productId.match(/^[0-9a-fA-F]{24}$/)) {
       return res.status(404).render("user/404");
     }
 
-    // Fetch product with variants fallback
     const product = await getProductById(productId);
     if (!product) {
       return res.status(404).render("user/404");
     }
 
-    // Calculate stock for display
     const variants = product.variants || [];
     let totalStock = variants.reduce((sum, v) => sum + (v.stock || 0), 0);
     const productHasStock = totalStock > 0;
 
-    // Collect unique colors
     const colors = [...new Set(variants.map(v => v.color).filter(c => c))];
 
-    // Collect unique sizes
+    
     const uniqueSizes = [...new Set(variants.map(v => v.size).filter(s => s))];
 
-    // Default price for display
     const defaultPrice = variants[0]?.price || product.salesPrice || product.regularPrice || 0;
 
-    // Related products
     const relatedProducts = await getRelatedProducts(product.category._id, product._id);
 
-    // Reviews
     const reviews = await Review.find({ product: product._id });
 
-    // Render product detail page
+  
     res.render("user/product-detail", {
       product,
       variants,
@@ -277,18 +247,18 @@ const loadcategory=async(req,res)=>{
     res.redirect("/pageError");
   }
 };
-const loadNewCollection= async (req, res) => {
+const loadNewCollection = async (req, res) => {
   try {
     let user = null;
-
     if (req.session?.user) {
-      user = await findUserById(req.session.user);}
+      user = await findUserById(req.session.user);
+    }
 
-    const products = await getNewCollections(10); 
+    const newArrivals = await getNewCollections(10); 
     res.render("user/newArrivals", {
-       products,
+       newArrivals,
        user
-       });
+    });
   } catch (err) {
     console.error(err);
     res.status(500).send("Server Error");

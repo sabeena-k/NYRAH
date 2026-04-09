@@ -6,9 +6,19 @@
 <title>Edit Product - NYRAH</title>
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-<link href="https://cdn.jsdelivr.net/npm/cropperjs@1.5.13/dist/cropper.min.css" rel="stylesheet"/>
 <link rel="stylesheet" href="/admin/dashboard.css">
 <link rel="stylesheet" href="/admin/prodectEdit.css">
+
+<style>
+body { background-color: #ffe6e6; }
+.form-box { background: #fff0f0; padding: 20px; border-radius: 10px; }
+button.cancel { background: white; border: 1px solid #333; }
+button.add { background: #f44c3a; color: white; }
+.thumb-img { width: 80px; margin-right: 5px; border-radius: 5px; }
+.image-preview img { width: 100px; height: 100px; margin-right: 5px; border-radius: 5px; }
+.thumb-img:hover { opacity: 0.7; }
+.delete-btn { position: absolute; top: 0; right: 0; background: rgb(235, 229, 229); color: worrgb(9, 9, 9); border: none; border-radius: 50%; width: 20px; height: 20px; cursor: pointer; }
+</style>
 </head>
 
 <body>
@@ -21,16 +31,22 @@
     <div class="form-box">
       <form class="product-form" method="POST" action="/admin/products/edit/<%= product._id %>" enctype="multipart/form-data">
 
+        <!-- Existing Images -->
         <div class="mb-3">
           <label>Current Images</label><br>
-          <% product.productImage.forEach(img => { %>
-            <img src="/uploads/productImages/<%= img %>" class="thumb-img">
+          <% product.productImage.forEach((img) => { %>
+            <div style="display:inline-block; position:relative; margin:5px;">
+              <img src="/uploads/productImages/<%= img %>" class="thumb-img">
+              <button type="button" class="delete-btn" onclick="removeImage('<%= img %>')">&times;</button>
+            </div>
           <% }) %>
+          <input type="hidden" name="existingImages" id="existingImages" value="<%= product.productImage.join(',') %>">
         </div>
 
+        <!-- Add New Images -->
         <div class="mb-3">
-          <label>Add New Image</label>
-          <input type="file" id="imageInput" accept="image/*" class="form-control">
+          <label>Add New Images</label>
+          <input type="file" id="imageInput" name="images" accept="image/*" multiple class="form-control">
           <div id="preview" class="image-preview mt-2"></div>
         </div>
 
@@ -66,10 +82,9 @@
         <div class="row mt-3">
           <div class="col-md-6">
             <label>Size</label>
-            <% const sizeExtra = { "6 Month":0, "6-12 Month":50, "1-2 Years":100, "2-3 Years":150, "3-4 Years":200, "4-5 Years":250, "5-6 Years":300, "6-7 Years":350, "7-8 Years":400, "8-9 Years":450, "9-10 Years":500 }; %>
             <select name="size" id="sizeSelect" class="form-control">
               <% sizes.forEach(s => { %>
-                <option value="<%= s %>" data-extra="<%= sizeExtra[s] || 0 %>" <%= product.size && product.size.some(sz => sz.size === s) ? "selected" : "" %> >
+                <option value="<%= s %>" <%= product.size && product.size.some(sz => sz.size === s) ? "selected" : "" %> >
                   <%= s %>
                 </option>
               <% }) %>
@@ -85,7 +100,7 @@
           </div>
         </div>
 
-        <div class="row mb-3">
+        <div class="row mb-3 mt-3">
           <div class="col">
             <label>Price</label>
             <input type="number" name="price" id="priceInput" class="form-control" value="<%= product.regularPrice %>" required>
@@ -111,36 +126,58 @@
   </main>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/cropperjs@1.5.13/dist/cropper.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
 <script>
 const priceInput = document.getElementById("priceInput");
 const offerInput = document.getElementById("offerInput");
+const existingImagesInput = document.getElementById("existingImages");
+let existingImages = existingImagesInput.value ? existingImagesInput.value.split(",") : [];
 
-document.querySelector(".product-form").addEventListener("submit", e=>{
-  if(Number(offerInput.value)>=Number(priceInput.value)){
-    e.preventDefault();
-    Swal.fire("Error","Offer price must be less than regular price","error");
-  }
-});
+// Delete existing image
+function removeImage(imgName){
+  existingImages = existingImages.filter(i => i !== imgName);
+  existingImagesInput.value = existingImages.join(",");
+  const imgDiv = event.target.parentNode;
+  imgDiv.remove();
+}
 
-// Image preview
+// New image preview
 const imageInput = document.getElementById("imageInput");
 const preview = document.getElementById("preview");
 
-imageInput.addEventListener("change", e=>{
-  preview.innerHTML="";
-  Array.from(e.target.files).forEach(file=>{
+imageInput.addEventListener("change", e => {
+  preview.innerHTML = "";
+  Array.from(e.target.files).forEach(file => {
     const reader = new FileReader();
-    reader.onload=()=>{
+    reader.onload = () => {
       const img = document.createElement("img");
       img.src = reader.result;
-      img.style.width="100px"; img.style.height="100px"; img.style.marginRight="5px";
+      img.style.width = "100px";
+      img.style.height = "100px";
+      img.style.marginRight = "5px";
+      img.style.borderRadius = "5px";
       preview.appendChild(img);
     };
     reader.readAsDataURL(file);
   });
+});
+
+// Form validation
+document.querySelector(".product-form").addEventListener("submit", e=>{
+  const newImagesLength = document.getElementById("imageInput").files.length;
+  const existingImagesVal = document.getElementById("existingImages").value;
+  const existingImagesLength = existingImagesVal ? existingImagesVal.split(",").filter(x => x.trim()).length : 0;
+  
+  if (existingImagesLength + newImagesLength < 3) {
+    e.preventDefault();
+    Swal.fire("Error", "Please ensure the product has at least 3 images.", "error");
+    return;
+  }
+
+  if(Number(offerInput.value) > Number(priceInput.value)){
+    e.preventDefault();
+    Swal.fire("Error","Offer price must not be greater than regular price","error");
+  }
 });
 </script>
 

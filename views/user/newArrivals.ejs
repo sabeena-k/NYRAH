@@ -1,51 +1,45 @@
 <%- include("../partials/user/header") %>
 <link rel="stylesheet" href="/user/newarr.css">
+
 <div class="container my-5">
-
-  <h2 class="section-title text-center mb-5">✨ New Arrivals ✨</h2>
-
-  <div class="product-grid">
-    <% products.forEach(function(product) { %>
-
-      <% 
-        // Calculate stock safely
-        let hasStock = 0;
-        if(product.variants && product.variants.length > 0){
-          hasStock = product.variants.reduce(function(sum, v){ return sum + (v.stock || 0); }, 0);
-        } else {
-          hasStock = product.quantity || 0;
-        }
-      %>
-
-      <div class="product-card <%= product.isBlock || hasStock <= 0 ? 'blocked' : '' %>">
-
-        <div class="image-wrapper">
-
-          <% if(product.isBlock){ %>
-            <span class="badge status bg-danger">Currently Unavailable</span>
-          <% } else if(hasStock <= 0){ %>
-            <span class="badge status bg-warning text-dark">Out of Stock</span>
-          <% } %>
-
-          <img src="/uploads/productImages/<%= product.productImage && product.productImage[0] ? product.productImage[0] : 'no-image.jpg' %>">
-        </div>
-
-        <div class="card-content">
-          <h5><%= product.productName %></h5>
-          <p class="price">₹<%= product.salesPrice || product.price %></p>
-
-          <% if(!product.isBlock && hasStock > 0){ %>
-            <a href="/product/<%= product._id %>" class="btn-view">View Details</a>
-          <% } else { %>
-            <button class="btn-disabled" disabled>Unavailable</button>
-          <% } %>
-
-        </div>
-      </div>
-
-    <% }); %>
+  <div class="text-center mb-5">
+    <h2 class="section-title">✨ New Arrivals ✨</h2>
   </div>
-
+  <div class="product-grid">
+    <% if(newArrivals && newArrivals.length > 0){ %>
+      <% newArrivals.forEach(product => { %>
+        <% 
+          let hasStock = 0;
+          if(product.variants && product.variants.length > 0){
+            hasStock = product.variants.reduce((sum, v) => sum + (v.stock || 0), 0);
+          } else {
+            hasStock = product.quantity || 0;
+          }
+        %>
+        <div class="product-card <%= product.isBlock || hasStock <= 0 ? 'blocked' : '' %>">
+          <div class="image-wrapper">
+            <% if(product.isBlock){ %>
+              <span class="badge status bg-danger">Currently Unavailable</span>
+            <% } else if(hasStock <= 0){ %>
+              <span class="badge status bg-warning text-dark">Out of Stock</span>
+            <% } %>
+            <img src="/uploads/productImages/<%= product.productImage && product.productImage[0] ? product.productImage[0] : 'no-image.jpg' %>">
+          </div>
+          <div class="card-content">
+            <h5><%= product.productName %></h5>
+            <p class="price">₹<%= product.salesPrice || product.price %></p>
+            <% if(!product.isBlock && hasStock > 0){ %>
+              <a href="/product/<%= product._id %>" class="btn-view">View Details</a>
+            <% } else { %>
+              <button class="btn-disabled" disabled>Unavailable</button>
+            <% } %>
+          </div>
+        </div>
+      <% }) %>
+    <% } else { %>
+      <p class="text-center text-muted">No New Arrivals Found</p>
+    <% } %>
+  </div>
 </div>
 
 <%- include("../partials/user/footer") %>

@@ -18,14 +18,11 @@ export const countProducts = async (filter) => {
 
 //view new collections//
 export const getNewCollections = async (limit = 4) => {
-  return await Product.find({isNewProduct: true })
-    .populate("category")
-    .populate("brand")
-    .sort({ createdAt: -1 })
+  return await Product.find({ isBlock: false })
+    .sort({ createdAt: -1 }) // latest
     .limit(limit)
     .lean();
 };
-
 // Get product by ID//
 export const getProductById = async (productId) => {
   return await Product.findById(productId)
@@ -35,7 +32,13 @@ export const getProductById = async (productId) => {
     
 
 };
+export const getSizes = async () => {
+  return await Product.distinct("variants.size");
+};
 
+export const getColors = async () => {
+  return await Product.distinct("variants.color");
+};
 // Get related products by category//
 export const getRelatedProducts = async (categoryId, currentProductId) => {
   return await Product.find({
