@@ -6,6 +6,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 import session from 'express-session'
 import dotenv from 'dotenv'
+dotenv.config()
 import passport from'./config/passport.js'
 import db from"./config/db.js"
 
@@ -13,7 +14,7 @@ import userRouter from'./routes/userRoute.js'
 import authRouter from'./routes/authRoute.js'
 import adminRouter from'./routes/adminRoute.js'
 import { pageNotFound } from'./controllers/user/userController.js'
-
+import { errorHandler } from './middlewares/errorHandler.js';
 
 db();
 
@@ -30,17 +31,20 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
 
-
-   
+if (!process.env.SESSION_SECRET) {
+  throw new Error("SESSION_SECRET is required in .env");
+}
 app.use(session({
-    secret: process.env.SESSION_SECRET || 'mysecret',
-    resave: false,
-    saveUninitialized: false,
-    cookie: { secure: false }
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  cookie: { secure: process.env.NODE_ENV === 'production' }
 }));
 
 app.use((req, res, next) => {
     res.locals.user = req.session.user || null;
+  res.locals.admin = req.session.admin || null;
+  res.locals.isAdmin = !!req.session.admin;
     next();
 });
 app.use((req, res, next) => {
@@ -58,8 +62,8 @@ app.use(passport.session());
 app.use('/', authRouter); 
 app.use('/', userRouter); 
 app.use('/admin', adminRouter); 
-
 app.use(pageNotFound);  
+app.use(errorHandler);
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
 

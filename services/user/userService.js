@@ -20,7 +20,7 @@ export const findUserByEmail=async(email)=>{
 
 //find user//
 export const findUserById = async (id) => {
-    return await User.findById(id);
+  return await User.findById(id);
 };
 
 //edit password//
@@ -60,15 +60,6 @@ export const verifyResetOtp = async (email, enteredOtp) => {
   return { status: "success" };
 };
 
-//new collection//
-export const getNewCollections=async(limit)=>{
-    return await Product.find({
-        isBlock: false,
-   status: "Available"
-  })
-  .sort({ createdAt: -1 })
-  .limit(limit);
-};
 
 //mobile number uniq//
 export const isPhoneExists = async (phone) => {

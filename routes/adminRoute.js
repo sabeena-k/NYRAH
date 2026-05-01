@@ -1,7 +1,7 @@
 import express from'express'
 const router=express.Router();
 import { upload } from "../middlewares/multer.js"
-import {loadLogin,login,loadDashBoard,pageerror,logout, ForgetPassword,sendOTP, loadOtpPage, verifyOTP,resetPassword}from'../controllers/admin/admincontroller.js'
+import {loadLogin,login,loadDashBoard,pageerror,adminLogout, ForgetPassword,sendOTP, loadOtpPage, verifyOTP,resetPassword}from'../controllers/admin/admincontroller.js'
 import{adminAuth}from'../middlewares/auth.js'
 import {customerInfo,customerBlocked, customerUnBlocked,viewCustomer} from"../controllers/admin/customerController.js"
 import { categoryInfo, addCategory, editCategory, deleteCategory,blockCategory,unblockCategory,addCatOffer,removeCatOffer}from'../controllers/admin/categoryController.js'
@@ -22,7 +22,7 @@ router.post('/login',login)
 router.get('/',adminAuth,loadDashBoard)
 
 //logOut//
-router.get('/logout',logout)
+router.get('/logout',adminLogout)
 
 //password & Otp//
 router.get('/forgot-password', ForgetPassword);

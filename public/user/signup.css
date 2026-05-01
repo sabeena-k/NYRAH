@@ -2,149 +2,137 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: Arial, sans-serif;
 }
 
-body {
-    background: #fff;
+body{
+    background-image: url('../images/select.jpg');
+    background-size: cover;       /* fills entire screen */
+    background-position: center;  /* center the image */
+    background-repeat: no-repeat; /* stop tiling */
+    
     min-height: 100vh;
+    display: grid;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow-x: hidden;
 }
 
 .container {
     display: flex;
-    justify-content:center  ;
+    justify-content: center;
     align-items: center;
     width: 100%;
-    min-height: 40vh;
-    background-image: url('/images/sup.webp');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    padding: 10px;
+    min-height: 100vh;
+    padding: 20px;
 }
 
-
 .right-side {
-    flex: 1 1 0;        
-    max-width: 900px;  
+    width: 100%;
+    max-width: 500px;  
     display: flex;
-    justify-content:center;
+    justify-content: center;
 }
 
 .form-box {
-    background: transparent;
-    padding: 30px 20px;
-    border-radius: 12px;
-    width: 400px;
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+    background: var(--color-glass-bg);
+    backdrop-filter: blur(12px);
+    border: 2px solid var(--color-glass-border);
+    padding: 40px 30px;
+    border-radius: 30px;
+    width: 100%;
+    position: relative;
+    z-index: 10;
 }
 
-.form-box h2 {
+.logo {
+    font-family: 'Fredoka', cursive;
+    font-size: 38px;
+    font-weight: 700;
+    color: var(--color-accent);
+    margin-bottom: 5px;
     text-align: center;
-    margin-bottom: 25px;
-    color: #b10000;
-    font-size: 32px;
-    letter-spacing: 1px;
+    letter-spacing: 2px;
 }
-
 
 .form-box input {
     width: 100%;
-    margin: 12px 0;
-    padding: 14px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
+    margin: 8px 0 15px 0;
+    padding: 14px 20px;
+    border: 2px solid #eee;
+    border-radius: 50px;
+    background: rgba(255, 255, 255, 0.8);
+    transition: all 0.3s ease;
+    font-family: 'Outfit', sans-serif;
+    font-size: 15px;
 }
 
-
-.policy {
-    display: flex;
-    align-items: center;
-    font-size: 13px;
-    margin: 8px 0;
+.form-box input:focus {
+    border-color: var(--color-accent);
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(229, 62, 93, 0.1);
+    outline: none;
 }
+
 .custom-alert {
-    color: #b30000;           
-    background-color: #ffcccc; 
-    padding: 10px;
-    border-radius: 6px;
-    width: 70%;
+    color: #e53e5d;           
+    background-color: #ffe1e8; 
+    padding: 12px;
+    border-radius: 12px;
+    width: 100%;
     text-align: center;
-    margin-left: 50px;
+    font-weight: 500;
+    border: 1px solid #ffb6c1;
 }
-
 
 .signup-btn {
     width: 100%;
-    padding: 14px;
-    background: #e60000;
-    border: none;
-    border-radius: 8px;
-    color: white;
-    font-size: 16px;
-    cursor: pointer;
-    margin-top: 10px;
+    padding: 15px;
+    font-size: 18px;
+    letter-spacing: 1px;
 }
-
-.signup-btn:hover {
-    background: #c10000;
-}
-
 
 .login-text {
     text-align: center;
-    margin: 15px 0;
+    font-size: 15px;
+    color: var(--color-text-muted);
 }
-
-.login-text a {
-    color: #0056ff;
-    text-decoration: none;
-}
-
 
 .social-icons {
     display: flex;
-    justify-content: center;
     gap: 15px;
-    margin-top: 15px;
+    justify-content: center;
+    align-items: center;
 }
 
 .social-icons img {
-    width: 28px;
-    height: 28px;
-    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    transition: 0.3s;
 }
+
+.social-icons img:hover {
+    transform: scale(1.2);
+}
+
 
 
 .error-message {
-    color: #a20202;
-    font-size: 16px;
+    color: var(--color-accent);
+    font-size: 13px;
     display: none;
+    margin-top: -10px;
+    margin-bottom: 5px;
+    margin-left: 10px;
+    font-weight: 500;
 }
-
-
-@media (max-width: 1000px) {
-    .right-side {
-        max-width: 80%; 
-    }
-
-    .form-box {
-        padding: 40px 25px;
-    }
-}
-
 
 @media (max-width: 600px) {
-    .right-side {
-        width: 100%;
-        max-width: 100%;
-    }
-
     .form-box {
         padding: 30px 20px;
+        border-radius: 20px;
     }
-
-    .form-box h2 {
-        font-size: 26px;
+    .logo {
+        font-size: 32px;
     }
 }

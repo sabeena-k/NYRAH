@@ -21,7 +21,6 @@ const loadLogin = async (req, res) => {
     res.redirect("/admin/pageError");
   }
 };
-
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -36,8 +35,17 @@ const login = async (req, res) => {
       return res.render("admin/login", { message: "Password incorrect" });
     }
 
-    req.session.admin = admin._id;
-    res.redirect("/admin");
+    // ✅ Just set the admin key, don't regenerate
+    req.session.admin = {
+      id: admin._id,
+      role: "admin"
+    };
+
+    req.session.save((err) => {
+      if (err) return res.render("admin/login", { message: "Session error" });
+      res.redirect("/admin");
+    });
+
   } catch (error) {
     console.log("Login Failed", error);
     res.render("admin/login", { message: "Something went wrong" });
@@ -45,7 +53,6 @@ const login = async (req, res) => {
 };
 const loadDashBoard = async (req, res) => {
   try {
-    if (!req.session.admin) return res.redirect("/admin/login");
     res.render("admin/dashboard", { page: "dashboard" });
   } catch (error) {
     console.log(error);
@@ -53,18 +60,13 @@ const loadDashBoard = async (req, res) => {
   }
 };
 
-const logout = async (req, res) => {
-  try {
-    req.session.destroy(() => {
-      res.clearCookie("connect.sid");
-      res.redirect("/admin/login");
-    });
-  } catch (error) {
-    console.log(error);
-    res.redirect("/admin/pageError");
-  }
+const adminLogout = async (req, res) => {
+  req.session.admin = null;
+  req.session.save((err) => {
+    if (err) console.error('Session save error:', err);
+    res.redirect('/admin/login');
+  });
 };
-
 const ForgetPassword = async (req, res) => {
   res.render("admin/adminForgotPass", { error: null, success: null });
 };
@@ -84,7 +86,7 @@ const sendOTP = async (req, res) => {
 
     const otp = generateOTP();
 
-    req.session.otp = otp;
+    req.session.otp = String(otp);
     req.session.adminEmail = email;
     req.session.otpExpires = Date.now() + 10 * 60 * 1000;
 console.log("Generated OTP:", otp);
@@ -110,6 +112,14 @@ const loadOtpPage = (req, res) => {
 const verifyOTP = (req, res) => {
   const { otp } = req.body;
 
+
+   if (!req.session.otp || !req.session.otpExpires) {
+    return res.render("admin/adminOtpPage", {
+      error: "Session expired. Please request a new OTP.",
+      success: null,
+    });
+  }
+
   if (Date.now() > req.session.otpExpires) {
     return res.render("admin/adminOtpPage", {
       error: "OTP expired",
@@ -117,7 +127,7 @@ const verifyOTP = (req, res) => {
     });
   }
 
-  if (parseInt(otp) !== req.session.otp) {
+  if (otp.trim() !== req.session.otp) { 
     return res.render("admin/adminOtpPage", {
       error: "Invalid OTP",
       success: null,
@@ -157,7 +167,7 @@ export {
   login,
   loadDashBoard,
   pageerror,
-  logout,
+  adminLogout,
   ForgetPassword,
   sendOTP,
   loadOtpPage,

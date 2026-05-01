@@ -65,7 +65,15 @@ const productSchema = new Schema({
       message: "Minimum 3 images required"
     }
   },
-
+isNewProduct: {
+  type: Boolean,
+  default: false
+},
+status: {
+  type: String,
+  enum: ["Available", "Out of Stock"],
+  default: "Available"
+},
  variants: {
     type: [variantSchema],
     validate: {

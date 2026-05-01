@@ -1,6 +1,6 @@
 import express from 'express'
 const router=express.Router()
-import {loadSignUp,loadSignIn,Signup,verifyOtp,resendOtp,SignIn,handleLogout,logout,sendOtp,passverifyOtp,resendForgotOtp,resetPassword,loadForgotPassword,loadOtpPage,loadResetPasswordPage}from'../controllers/user/authController.js'
+import {loadSignUp,loadSignIn,Signup,verifyOtp,resendOtp,SignIn,googleCallback,handleLogout,userLogout,sendOtp,passverifyOtp,resendForgotOtp,resetPassword,loadForgotPassword,loadOtpPage,loadResetPasswordPage}from'../controllers/user/authController.js'
 import passport from'../config/passport.js'
 
 
@@ -15,11 +15,11 @@ router.post('/resend-otp',resendOtp)
 
 //login google//
 router.get('/auth/google',passport.authenticate('google',{scope:['profile','email']}));
-router.get('/auth/google/callback',passport.authenticate('google',{failureRedirect:'/signin'}),(req,res)=>{ req.session.user = req.user;req.session.save(() => {res.send(`<script>window.opener.postMessage('google-login-success', window.origin);window.close();</script><p>Login successful! Closing popup...</p>`); });});
-
+router.get('/auth/google/callback',passport.authenticate('google',{failureRedirect:'/signin'}),googleCallback  
+);
 //logout//
 router.get('/logout',handleLogout)
-router.post("/logout",logout);
+router.post("/logout",userLogout);
 
 //forgotPass//
 router.get("/forgot-password", loadForgotPassword)

@@ -270,7 +270,7 @@ const deleteVariantService = async (productId, variantId) => {
   const product = await Products.findById(productId);
   if (!product) return null;
 
-  product.variants.id(variantId).remove();
+product.variants.id(variantId).deleteOne();
   return await product.save();
 };
 export {

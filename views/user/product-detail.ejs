@@ -11,8 +11,11 @@
 <body>
 <%- include('../../views/partials/user/header') %>
 
-<div class="container py-5">
-  <div class="row gx-5">
+<div class="container py-5 position-relative">
+  <!-- Playful Background Blobs -->
+  <div class="position-absolute cute-blob bg-primary opacity-25" style="top: -50px; right: -50px; width: 300px; height: 300px; z-index: -1;"></div>
+  
+  <div class="row gx-5 bg-white p-4 p-md-5 rounded-5 shadow-sm" style="border: 2px dashed var(--color-primary-dark);">
     <!-- LEFT: Images -->
     <div class="col-md-6 position-relative">
       <% if(product.productOffer > 0){ %>
@@ -31,8 +34,8 @@
     </div>
 
     <!-- RIGHT: Product Info -->
-    <div class="col-md-6">
-      <h2 class="fw-bold"><%= product.productName %></h2>
+    <div class="col-md-6 d-flex flex-column justify-content-center">
+      <h2 class="fw-bold mb-3" style="font-family: 'Fredoka', sans-serif; color: var(--color-text-dark);"><%= product.productName %></h2>
 
       <% 
         const variants = product.variants || [];
@@ -42,7 +45,7 @@
       %>
 
       <!-- Price & Ratings -->
-      <p class="fw-bold fs-4"> ₹<span id="price"><%= defaultPrice %></span></p>
+      <p class="fw-bold fs-3 text-premium mb-4"> ₹<span id="price"><%= defaultPrice %></span></p>
      
 
       <!-- Variants -->
@@ -71,15 +74,24 @@
       <input type="hidden" id="selectedSize" value="<%= variants[0]?.size || '' %>">
 
       <!-- Stock & Buttons -->
-      <p><%= productHasStock ? 'In Stock' : 'Out of Stock' %></p>
-      <div class="d-flex gap-3 mb-4">
-        <button class="btn btn-outline-danger px-4">Add to Wishlist</button>
-        <% if(productHasStock && !product.isBlock){ %>
-          <button class="btn btn-dark px-4" id="addToCartBtn">Add to Cart</button>
-        <% } else if(product.isBlock){ %>
-          <button class="btn btn-secondary px-4" disabled>Currently Unavailable</button>
+      <p class="mb-4">
+        <% if(productHasStock) { %>
+          <span class="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill"><i class="bi bi-check-circle me-1"></i> In Stock</span>
         <% } else { %>
-          <button class="btn btn-warning px-4" disabled>Out of Stock</button>
+          <span class="badge bg-danger bg-opacity-10 text-danger px-3 py-2 rounded-pill"><i class="bi bi-x-circle me-1"></i> Out of Stock</span>
+        <% } %>
+      </p>
+
+      <div class="d-flex gap-3 mb-5">
+        <button class="btn btn-outline-premium px-4 d-flex align-items-center gap-2" onclick="toggleWishlist(this)" data-id="<%= product._id %>">
+          <i class="bi bi-heart"></i> Wishlist
+        </button>
+        <% if(productHasStock && !product.isBlock){ %>
+          <button class="btn btn-premium px-5" id="addToCartBtn"><i class="bi bi-bag me-2"></i>Add to Cart</button>
+        <% } else if(product.isBlock){ %>
+          <button class="btn btn-danger px-5 rounded-pill">Currently Unavailable</button>
+        <% } else { %>
+          <button class="btn btn-warning px-5 rounded-pill text-dark" disabled>Out of Stock</button>
         <% } %>
       </div>
 
@@ -120,17 +132,19 @@
 
  <!-- Related Products -->
 <% if(relatedProducts && relatedProducts.length > 0){ %>
-  <h4 class="mt-5">You may also like</h4>
-  <div class="row g-3">
+  <div class="text-center mt-5 mb-4">
+    <h3 class="section-title">You may also like</h3>
+  </div>
+  <div class="row g-4">
     <% relatedProducts.forEach(p => { %>
-      <div class="col-md-3 related-product text-center">
-        <div class="related-img-wrapper">
-          <a href="/product/<%= p._id %>"> 
+      <div class="col-lg-3 col-md-4 col-6 related-product text-center">
+        <div class="related-img-wrapper position-relative">
+          <a href="/product/<%= p._id %>" class="d-block h-100"> 
             <img src="/uploads/productImages/<%= p.productImage[0] %>" alt="<%= p.productName %>">
           </a>
         </div>
-        <p class="mb-0"><%= p.productName %></p>
-        <p class="fw-bold">$<%= p.salesPrice || p.regularPrice %></p>
+        <h6 class="mb-1 text-truncate" style="font-family: 'Fredoka', sans-serif;"><%= p.productName %></h6>
+        <p class="fw-bold text-premium mb-0">₹<%= p.salesPrice || p.regularPrice %></p>
       </div>
     <% }) %>
   </div>
@@ -162,8 +176,27 @@
       method:"POST",
       headers:{ "Content-Type":"application/json" },
       body: JSON.stringify({ productId: "<%= product._id %>", size:selectedSize, color:selectedColor })
-    }).then(r=>r.json()).then(data=>{alert(data.message);}).catch(err=>console.error(err));
+    }).then(r=>r.json()).then(data=>{
+      Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: data.success ? 'success' : 'error',
+        title: data.message,
+        showConfirmButton: false,
+        timer: 3000
+      });
+    }).catch(err=>console.error(err));
   });
+
+  function toggleWishlist(btn){
+    let icon = btn.querySelector("i");
+    if(icon.classList.contains("bi-heart")){
+      icon.classList.replace("bi-heart", "bi-heart-fill");
+    } else {
+      icon.classList.replace("bi-heart-fill", "bi-heart");
+    }
+    fetch("/wishlist/add/" + btn.dataset.id).catch(err => console.log(err));
+  }
 </script>
 </body>
 </html>

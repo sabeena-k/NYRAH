@@ -3,45 +3,61 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/user/home.css" />
     <link rel="stylesheet" href="/user/signup.css" />
     <title>NYRAH Signup</title>
 </head>
 
 <body>
 
-<div class="container">
+<div class="container position-relative z-1">
 
-    <form id="signupform"method="post"action="/signup" >
+    <form id="signupform" method="post" action="/signup">
 
     <div class="right-side">
         
-        <div class="form-box">
-            <h2>Create Account</h2>
-            <p>Username</p>
-            <div id="error1"class="error-message"></div>
-            <input type="text"class="form-control"name="name"id="name" placeholder="Username"><p>Email id</p>
-             <div id="error2"class="error-message"></div>
-            <input type="email"class="form-control"name="email"id="email" placeholder="Email ID"><p>Mobile Number</p>
-           <div id="error3"class="error-message"></div>
-            <input type="number"class="form-control"name="phone"id="phone" placeholder="Mobile Number"><p>Password</p>
-             <div id="error4"class="error-message"></div>
-            <input type="password"class="form-control"name="password"id="password" placeholder="Password"><p>Confirm password</p>
-            <div id="error5"class="error-message"></div>
-            <input type="password"class="form-control"name="cPassword"id="cPassword" placeholder="Confirm Password">
-               <% if (locals.message && message.length > 0) { %>
-              <div class="custom-alert">
-            <%= message %>
-               </div>
-              <% } %>
+        <div class="form-box shadow-lg">
+            <h2 class="logo">NYRAH</h2>
+            <p class="text-center text-muted mb-4">Create your account</p>
+
+            <div id="error1" class="error-message"></div>
+            <input type="text" class="form-control focus-ring-none" name="name" id="name" placeholder="Username">
+            
+            <div id="error2" class="error-message"></div>
+            <input type="email" class="form-control focus-ring-none" name="email" id="email" placeholder="Email Address">
+            
+            <div id="error3" class="error-message"></div>
+            <input type="number" class="form-control focus-ring-none" name="phone" id="phone" placeholder="Mobile Number">
+            
+            <div id="error4" class="error-message"></div>
+            <input type="password" class="form-control focus-ring-none" name="password" id="password" placeholder="Password">
+            
+            <div id="error5" class="error-message"></div>
+            <input type="password" class="form-control focus-ring-none" name="cPassword" id="cPassword" placeholder="Confirm Password">
+            
+            <% if (locals.message && message.length > 0) { %>
+              <div class="custom-alert mt-3">
+                <%= message %>
+              </div>
+            <% } %>
            
-            <button type="submit" class="signup-btn">Sign up</button>
+            <button type="submit" class="signup-btn btn-premium shadow-sm mt-4">Sign Up</button>
 
-            <p class="login-text">Already have an account? <a href="/signin"style="color:purple;">Log-in</a></p>
-
+            <p class="login-text mt-4">Already have an account? <a href="/signin" class="text-premium fw-bold" style="text-decoration:none;">Sign In</a></p>
+              <br>
             <div class="social-icons">
-                <img src="https://img.icons8.com/color/48/google-logo.png">
-                <img src="images/face.png">
-                <img src="images/insta.png">
+                <a href="/auth/google" class="google-btn shadow-sm" style="text-decoration:none;">
+                    <img src="https://img.icons8.com/color/48/google-logo.png" alt="Google">
+                </a>
+                 <a href="/auth/facebook" class="facebook-btn shadow-sm" style="text-decoration:none;">
+        <img src="https://img.icons8.com/color/48/facebook-new.png" alt="Facebook">
+    </a>
+    <a href="/auth/instagram" class="instagram-btn shadow-sm" style="text-decoration:none;">
+        <img src="https://img.icons8.com/color/48/instagram-new.png" alt="Instagram">
+    </a>
             </div>
         </div>
        

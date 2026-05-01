@@ -3,12 +3,16 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/user/home.css" />
 <link rel="stylesheet" href="/user/signin.css" />
-<title> NYRAH Login</title>
+<title>NYRAH Login</title>
 </head>
 <body>
-
-<div class="outer-box">
+ 
+<div class="outer-box shadow-lg">
     <div class="login-container">
     
 
@@ -18,41 +22,36 @@
             <h2 class="logo">NYRAH</h2>
 
             <div class="center-box">
-               
+               <button id="googleLoginBtn" class="google-btn shadow-sm">
+                <img src="https://img.icons8.com/color/48/google-logo.png" />
+                <span>Continue with Google</span>
+              </button>
+              <p id="errorMsg" style="color:var(--color-accent); display:none;"></p>
+            </div>
 
-   <button id="googleLoginBtn" class="google-btn">
-    <img src="https://img.icons8.com/color/48/google-logo.png" />
-    <span>Login with Google</span>
-  </button>
+            <p class="or"><span>or</span></p>
+
+            <form id="loginForm" method="POST" action="/signin">
+              <input class="input focus-ring-none" type="email" name="email" placeholder="Email Address">
+              <input class="input focus-ring-none" type="password" name="password" placeholder="Password">
+              
+              <div id="error2" class="error-message"></div>
+
+              <% if (locals.message && message.length > 0) { %>
+                  <div class="custom-alert">
+                      <%= message %>
+                  </div>
+              <% } %>
+
+              <button type="submit" class="login-btn btn-premium shadow-sm">Sign In</button><br>
+
+              <a href="/forgot-password" class="forgot-link">Forgot Password?</a>
+
+              <div class="bottom-link mt-4">
+                  <span>New to NYRAH? </span> 
+                  <a href="/signup" class="text-premium fw-bold" style="text-decoration:none;">Create an account</a>
               </div>
-
-                
-                
-
-            <p class="or">or</p>
-              <form id="loginForm" method="POST" action="/signin">
-    <input class="input"type="email" name="email" placeholder="Email">
-    <input class="input"type="password" name="password" placeholder="Password">
-    
-    <div id="error2" class="error-message"></div>
-
-    <% if (locals.message && message.length > 0) { %>
-        <div class="custom-alert">
-            <%= message %>
-        </div>
-    <% } %>
-
-    <button type="submit" class="login-btn">Login</button><br>
-
-    <a href="/forgot-password "style="text-decoration:none ;color: #000;">Forgot Password</a>
-
-    
-
-    <div class="bottom-link">
-        <span>New user : </span> 
-        <a href="/signup"style="text-decoration:none ;">Sign up</a>
-    </div>
-</form>
+            </form>
 
         </div>
         <div class="right-box">
@@ -64,26 +63,43 @@
 
 </body>
 <script>
-      if (performance.getEntriesByType("navigation")[0].type === "back_forward") {
-    location.reload(true);
+
+if (performance.getEntriesByType("navigation")[0].type === "back_forward") {
+  location.reload(true);
+}
+
+history.pushState(null, null, location.href);
+window.onpopstate = function () {
+  history.go(1);
+};
+
+const params = new URLSearchParams(window.location.search);
+
+if (params.get("msg") === "account_created") {
+  const box = document.getElementById("successMsg");
+  box.textContent = "Account created successfully!";
+
+  document.addEventListener("click", () => {
+    box.style.display = "none";
+  }, { once: true });
+}
+
+// 🔥 MOVE THIS OUTSIDE
+window.addEventListener("message", (event) => {
+
+  if (event.data === "google-login-success") {
+    window.location.reload();
   }
 
-  history.pushState(null, null, location.href);
-  window.onpopstate = function () {
-    history.go(1);
-  };
-    const params = new URLSearchParams(window.location.search);
+  if (event.data === "google-login-blocked") {
+    const errorBox = document.getElementById("errorMsg");
+    errorBox.textContent = "User is blocked by admin";
+    errorBox.style.display = "block";
+  }
 
-    if (params.get("msg") === "account_created") {
-        const box = document.getElementById("successMsg");
-        box.textContent = "Account created successfully!";
+});
 
-        
-        document.addEventListener("click", () => {
-            box.style.display = "none";
-        }, { once: true });  
-    }
-    const loginBtn = document.getElementById("googleLoginBtn");
+const loginBtn = document.getElementById("googleLoginBtn");
 
 loginBtn.addEventListener("click", () => {
   const width = 500;
@@ -91,20 +107,10 @@ loginBtn.addEventListener("click", () => {
   const left = (screen.width - width) / 2;
   const top = (screen.height - height) / 2;
 
-  const popup = window.open(
-    "/auth/google", 
-    "Google Login", 
+  window.open(
+    "/auth/google",
+    "Google Login",
     `width=${width},height=${height},top=${top},left=${left}`
   );
-
-  window.addEventListener("message", (event) => {
-    if (event.data === "google-login-success") {
-     
-      window.location.reload();
-    }
-  }, { once: true });
 });
 </script>
-
-
-</html>

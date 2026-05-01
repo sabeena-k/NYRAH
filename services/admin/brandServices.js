@@ -12,7 +12,7 @@ export const createBrand = async (brandName, file) => {
   const newBrand = new Brand({
     brandName,
     brandImage,
-    isBlocked: false
+    isBlock: false
   });
 
   await newBrand.save();

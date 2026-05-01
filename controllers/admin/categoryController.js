@@ -62,7 +62,7 @@ const blockCategory = async (req, res) => {
 };
  const deleteCategory = async (req, res) => {
   try {
-    await deleteCategoryById(req.body.id);
+    await deleteCategoryById(req.params.id);
     res.json({ success: true });
   } catch (err) {
     res.json({ success: false, msg: err.message });

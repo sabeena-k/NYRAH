@@ -74,10 +74,24 @@ tr:hover {
          justify-content: center;
          align-items: center; }
 .modal-content {
+     position: relative;
      background: white; 
      width: 350px; 
      padding: 25px; 
      border-radius: 8px; }
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    cursor: pointer;
+    line-height: 1;
+}
+.close-btn:hover {
+    color: #e51c23;
+}
 .modal-content h3 {
      margin-top: 0; }
 .modal-content input {

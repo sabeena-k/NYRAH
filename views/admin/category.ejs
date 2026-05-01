@@ -44,11 +44,11 @@
               N/A
             <% } %>
           </td>
-<td><%= c.isBlocked ? "Blocked" : "Active" %></td>
+<td><%= c.isBlock ? "Blocked" : "Active" %></td>
 <td>
 <button class="action-btn edit-btn" onclick="openEdit('<%= c._id %>', '<%= c.name %>', '<%= c.description %>')">Edit</button>
 <button class="action-btn offer-btn" onclick="openOffer('<%= c._id %>', '<%= c.name %>')">Add Offer</button>
-<% if (!c.isBlocked) { %>
+<% if (!c.isBlock) { %>
 <button class="action-btn block-btn" onclick="confirmBlock('<%= c._id %>')">Block</button>
 <% } else { %>
 <button class="action-btn unblock-btn" onclick="confirmUnblock('<%= c._id %>')">Unblock</button>
@@ -64,6 +64,7 @@
 </div>
 <div class="modal" id="addModal">
 <div class="modal-content">
+<span class="close-btn" onclick="closeModal('addModal')">&times;</span>
 <h3>Add Category</h3>
 <form onsubmit="event.preventDefault(); saveCategory()">
 <input type="text" id="addName" placeholder="Category Name" required>
@@ -75,15 +76,19 @@
 </div>
 <div class="modal" id="editModal">
 <div class="modal-content">
+<span class="close-btn" onclick="closeModal('editModal')">&times;</span>
 <h3>Edit Category</h3>
 <input type="hidden" id="editId">
 <input type="text" id="editName" required>
 <input type="text" id="editDesc" required>
+<label style="font-size: 14px; margin-bottom: 5px; display: block; text-align: left;">Update Image (Optional)</label>
+<input type="file" id="editImage" accept="image/*">
 <button class="save-btn" onclick="saveEditCategory()">Update</button>
 </div>
 </div>
 <div class="modal" id="offerModal">
 <div class="modal-content">
+<span class="close-btn" onclick="closeModal('offerModal')">&times;</span>
 <h3 id="offerTitle">Add Offer</h3>
 <input type="hidden" id="offerCategoryId">
 <input type="number" id="offerPercent" placeholder="Offer Percentage (%)" required>
@@ -93,6 +98,8 @@
 <script>
 function openAdd(){
     document.getElementById('addModal').style.display="flex"}
+function closeModal(id){
+    document.getElementById(id).style.display="none"}
 function openEdit(id,name,desc){
     document.getElementById('editId').value=id;
     document.getElementById('editName').value=name;
@@ -144,22 +151,48 @@ console.log("Image:", image);
   });
 }
 function saveEditCategory(){
-    const id=document.getElementById('editId').value;const name=document.getElementById('editName').value.trim();
-    
+    const id=document.getElementById('editId').value;
+    const name=document.getElementById('editName').value.trim();
     const description=document.getElementById('editDesc').value.trim();
-    if(!name||!description){Swal.fire("Error","All fields required","error");
-    return
+    const imageInput=document.getElementById('editImage');
+    const image = imageInput.files[0];
+    
+    if(!name||!description){
+        Swal.fire("Error","All fields required","error");
+        return;
+    }
+    
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("description", description);
+    if(image) formData.append("image", image);
+
+    fetch(`/admin/category/${id}`,{
+        method:"PUT",
+        body:formData
+    })
+    .then(res=>res.json())
+    .then(data=>{
+        if(data.success){
+            Swal.fire("Updated!","Category updated successfully","success").then(()=>location.reload());
+        }else{
+            Swal.fire("Error",data.msg,"error");
+        }
+    });
 }
-fetch(`/admin/category/${id}`,{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({name,description})})
-.then(res=>res.json()).then(data=>{if(data.success)Swal.fire("Updated!","Category updated successfully","success")
-.then(()=>location.reload());else Swal.fire("Error",data.msg,"error")})}
 function confirmDelete(id){
     Swal.fire({title:'Are you sure?',text:"Delete this category?",icon:'warning',showCancelButton:true,confirmButtonText:'Yes, delete!'})
     .then(result=>{
-        if(result.isConfirmed){fetch("/admin/category/delete",{method:"DELETE",headers:{"Content-Type":"application/json"},body:JSON.stringify({id})})
-        .then(res=>res.json()).then(data=>{
-    if(data.success)Swal.fire('Deleted!','Category deleted','success')
-    .then(()=>location.reload());else Swal.fire('Error','Delete failed','error')})}})}
+        if(result.isConfirmed){
+            fetch(`/admin/category/${id}`,{method:"DELETE"})
+            .then(res=>res.json())
+            .then(data=>{
+                if(data.success)Swal.fire('Deleted!','Category deleted','success').then(()=>location.reload());
+                else Swal.fire('Error','Delete failed','error');
+            });
+        }
+    });
+}
 function saveOffer(){
     const categoryId=document.getElementById("offerCategoryId").value;
     const discount=Number(document.getElementById("offerPercent").value);

@@ -17,7 +17,7 @@ export const countProducts = async (filter) => {
 };
 
 //view new collections//
-export const getNewCollections = async (limit = 4) => {
+export const getNewCollections = async (limit = 8) => {
   return await Product.find({ isBlock: false })
     .sort({ createdAt: -1 }) // latest
     .limit(limit)
@@ -77,7 +77,7 @@ export const productByCategory = async (categoryId) => {
 };
 
 // Search products by name//
-export const searchProduct = async (query, limit = 10) => {
+export const searchProduct = async (query, limit = 4) => {
   const regex = new RegExp(query, "i");
   return await Product.find({ productName: regex})
     .limit(limit)

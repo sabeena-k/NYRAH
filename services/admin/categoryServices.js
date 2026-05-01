@@ -64,7 +64,7 @@ export const updateCategory = async (id, name, description, image) => {
 
 //block//
 export const setCategoryBlockStatus = async (id, status) => {
-  await Category.findByIdAndUpdate(id, { isBlocked: status });
+  await Category.findByIdAndUpdate(id, { isBlock: status });
 };
 
 //delete//

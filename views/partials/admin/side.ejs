@@ -80,7 +80,7 @@
     box-shadow: 0 0 8px rgba(229, 62, 93, 0.3) !important;
   }
 </style>
-
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <aside class="sidebar">
     <h1 class="brand">NYRAH</h1>
     <ul class="menu">
@@ -95,7 +95,8 @@
         <li><a href="/admin/coupon"><i class="bi bi-percent"></i> Coupon</a></li>
         <li><a href="/admin/refund"><i class="bi bi-arrow-repeat"></i> Refund</a></li>
         <li><a href="/admin/banners"><i class="bi bi-image"></i> Banners</a></li>
-        <li><a href="/admin/logout"><i class="bi bi-box-arrow-right"></i> Sign Out</a></li>
+        <li><a href="/admin/logout"><i class="bi bi-box-arrow-right"></i> Sign Out</a>
+        </li>
 
     </ul>
 </aside>
@@ -113,5 +114,22 @@ links.forEach(link => {
     if (linkPath !== "/admin" && currentPath.startsWith(linkPath)) {
         link.classList.add("active");
     }
+});
+document.getElementById("logoutBtn").addEventListener("click", function (e) {
+  e.preventDefault(); // stop default link
+
+  Swal.fire({
+    title: "Are you sure?",
+    text: "You will be logged out!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes, logout"
+  }).then((result) => {
+    if (result.isConfirmed) {
+      window.location.href = "/admin/logout"; // redirect after confirm
+    }
+  });
 });
 </script>

@@ -9,51 +9,32 @@ import{getAllBrands}from'../../services/user/brandService.js'
 const pageNotFound = (req, res) => {
      res.status(404).render('user/404');
      }; 
-const loadStartPage=async(req,res)=>{
-     try{
-         if(req.session&&req.session.user){
-             return res.redirect("/home") 
-            } 
-             return res.render("user/start",{user:null}); 
-            }catch(error){
-                 console.log('Error on loading')
-                 res.status(500).send('Server Error') 
-                } 
-                };
 
-const loadHomePage = async (req, res) => { 
+const loadStartPage = async (req, res) => {
+  try {
+    if ((req.session && req.session.user) || req.isAuthenticated()) {
+      return res.redirect("/home");
+    }
+    return res.render("user/start", { user: null });
+  } catch (error) {
+    console.log('Error on loading');
+    res.status(500).send('Server Error');
+  }
+};
+const loadHomePage = async (req, res) => {
   try {
     let user = null;
 
-    if (req.isAuthenticated()) {
+     if (req.isAuthenticated()) {
       user = req.user;
-    } else if (req.session && req.session.user) {
-      user = await findUserById(req.session.user);
+    } else if (req.session?.user?.id) {
+      user = await findUserById(req.session.user.id); // ✅ pass .id not whole object
     }
 
-    const page = Number(req.query.page) || 1;
-    const limit = 8;
-    const skip = (page - 1) * limit;
+    const categories = await homeCategories(); 
+    const newCollections = await getNewCollections(10); 
 
-    const filter = {};
-
-    if (req.query.category) {
-      filter.category = new mongoose.Types.ObjectId(req.query.category);
-    }
-     let sortOption = { createdAt: -1 };
-    const products = await getProducts(filter,sortOption, skip, limit);
-    const totalProducts = await countProducts(filter);
-    const newCollections = await getNewCollections(4);
-    const categories = await homeCategories();
-    res.render("user/home", {
-      user,
-      products,
-      currentPage: page,
-      totalPages: Math.ceil(totalProducts / limit),
-      newCollections,
-      categories,
-      selectedCategory: req.query.category || null,
-    });
+    res.render("user/home", { user, categories, newCollections });
 
   } catch (error) {
     console.error("Home page error", error);
@@ -71,11 +52,11 @@ const contact = async (req, res) => {
 const loadProduct = async (req, res) => {
   try {
     const user = req.session?.user
-      ? await findUserById(req.session.user)
+      ?  await findUserById(req.session.user.id)
       : null;
 
     const page = parseInt(req.query.page) || 1;
-    const limit = 9;
+    const limit = 6;
     const skip = (page - 1) * limit;
 
     const { category, brand, sort, size, color, priceRange, search } = req.query;
@@ -156,7 +137,7 @@ const loadSingleProduct = async (req, res) => {
   try {
     let user = null;
     if (req.session?.user) {
-      user = await findUserById(req.session.user);
+      user = await findUserById(req.session.user.id);
     }
 
     const productId = req.params.id;
@@ -181,8 +162,11 @@ const loadSingleProduct = async (req, res) => {
 
     const defaultPrice = variants[0]?.price || product.salesPrice || product.regularPrice || 0;
 
-    const relatedProducts = await getRelatedProducts(product.category._id, product._id);
+    const categoryId = product.category?._id;
 
+    const relatedProducts = categoryId
+  ? await getRelatedProducts(categoryId, product._id)
+  : [];
     const reviews = await Review.find({ product: product._id });
 
   
@@ -209,7 +193,7 @@ const loadcategory=async(req,res)=>{
     let user = null;
 
     if (req.session?.user) {
-      user = await findUserById(req.session.user);
+      user = await findUserById(req.session.user.id);
     }
 
     const categories = await getAllCategories(); 
@@ -230,7 +214,7 @@ const loadcategory=async(req,res)=>{
     let user = null;
 
     if (req.session?.user) {
-      user = await findUserById(req.session.user);
+      user = await findUserById(req.session.user.id);
     }
 
     const categoryId = req.params.id;
@@ -251,7 +235,7 @@ const loadNewCollection = async (req, res) => {
   try {
     let user = null;
     if (req.session?.user) {
-      user = await findUserById(req.session.user);
+      user = await findUserById(req.session.user.id);
     }
 
     const newArrivals = await getNewCollections(10); 

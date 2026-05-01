@@ -9,6 +9,7 @@
 <link href="https://cdn.jsdelivr.net/npm/cropperjs@1.5.13/dist/cropper.min.css" rel="stylesheet"/>
 <link rel="stylesheet" href="/admin/dashboard.css">
 <link rel="stylesheet" href="/admin/poductAdd.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
     <div> <%- include('../../views/partials/admin/side') %></div>
@@ -22,117 +23,117 @@
     <form class="product-form" method="POST" action="/admin/products/add" enctype="multipart/form-data">
 
       <div class="row">
-        <div class="input-box col-md-6">
-          <label>Product Name</label>
-          <input type="text" name="name" placeholder="Enter product name" required>
-        </div>
-        <div class="input-box col-md-6">
-  <label>Product ID (SKU)</label>
-  <input type="text" name="productId" value="SKU-<%= Date.now() %>" readonly>
+<div class="input-box col-md-6">
+<label>Product Name</label>
+<small class="error-msg"></small>
+<input type="text" name="name">
 </div>
-      </div>
 
-      <div class="row">
-        <div class="input-box col-md-6">
-          <label>Price ₹</label>
-          <input type="number" name="price" placeholder="0.00" required>
-        </div>
-        <div class="input-box col-md-6">
-          <label>Offer Price</label>
-          <input type="number" name="offerPrice" placeholder="0.00">
-        </div>
-      </div>
+<div class="input-box col-md-6">
+<label>Product ID</label>
+<input type="text" value="SKU-12345" readonly>
+</div>
+</div>
 
-      <div class="input-box full">
-        <label>Product Description</label>
-        <textarea name="description" placeholder="Enter detailed product description..." required></textarea>
-      </div>
+<div class="row">
+<div class="input-box col-md-6">
+<label>Price</label>
+<small class="error-msg"></small>
+<input type="number" name="price">
+</div>
 
-      <div class="row">
-        <div class="input-box col-md-6">
-          <label>Category</label>
-<select name="category" required>
-  <% cat.forEach(c => { %>
-    <option value="<%= c._id %>"><%= c.name %></option>
-  <% }) %>
+<div class="input-box col-md-6">
+<label>Offer Price</label>
+<small class="error-msg"></small>
+<input type="number" name="offerPrice">
+</div>
+</div>
+
+<div class="input-box">
+<label>Description</label>
+<small class="error-msg"></small>
+<textarea name="description"></textarea>
+</div>
+
+<div class="row">
+<div class="input-box col-md-6">
+<label>Category</label>
+<small class="error-msg"></small>
+<select name="category">
+<option value="">Select Category</option>
+<option value="1">Category 1</option>
 </select>
-        </div>
+</div>
 
-        <div class="input-box col-md-6">
-         <label>Brand</label>
-<select name="brand" required>
-  <% brand.forEach(b => { %>
-    <option value="<%= b._id %>"><%= b.brandName %></option>
-  <% }) %>
+<div class="input-box col-md-6">
+<label>Brand</label>
+<small class="error-msg"></small>
+<select name="brand">
+<option value="">Select Brand</option>
+<option value="1">Brand 1</option>
 </select>
-        </div>
-      </div>
+</div>
+</div>
 
-      <div class="row">
-        <div class="input-box col-md-6">
-          <label>Size</label>
-<select name="size" required>
-  <% size.forEach(s => { %>
-    <option value="<%= s %>"><%= s %></option>
-  <% }) %>
+<div class="row">
+<div class="input-box col-md-6">
+<label>Size</label>
+<small class="error-msg"></small>
+<select name="size">
+<option value="">Select Size</option>
+<option>S</option>
+<option>M</option>
 </select>
-        </div>
+</div>
 
-        <div class="input-box col-md-3">
-          <label>Quantity</label>
-          <input type="number" name="quantity" required>
-        </div>
+<div class="input-box col-md-3">
+<label>Quantity</label>
+<small class="error-msg"></small>
+<input type="number" name="quantity">
+</div>
 
-        <div class="input-box col-md-3">
-          <label>Color</label>
-          <input type="text" name="color" required>
-        </div>
-      </div>
+<div class="input-box col-md-3">
+<label>Color</label>
+<small class="error-msg"></small>
+<input type="text" name="color">
+</div>
+</div>
 
-      <div class="row mt-2">
-        <div class="input-box col-md-6">
-          <label>
-            <input type="checkbox" name="isNew" value="true">
-            Add to New Collection
-          </label>
-        </div>
-      </div>
+<!-- Image -->
+<div>
+<button type="button" id="chooseBtn">Choose Images</button>
+<input type="file" id="imageInput" multiple style="display:none">
+<div id="preview"></div>
+</div>
 
-      <!-- Image Upload -->
-      <div class="image-upload-box">
-        <p>Drag and drop images or click "Choose Images"</p>
-        <button type="button" id="chooseBtn">Choose Images</button>
-        <input type="file" name="images" id="imageInput" multiple accept="image/*" style="display:none">
-        <div class="preview-row" id="preview"></div>
-      </div>
-
-      <!-- Crop Modal -->
-      <div id="cropModal" class="modal">
-        <div class="modal-content">
-          <img id="cropImage" style="max-width:100%">
-          <button id="cropBtn" type="button" class="btn btn-primary mt-2">Crop & Save</button>
-          <button id="closeModal" type="button" class="btn btn-secondary mt-2">Cancel</button>
-        </div>
-      </div>
-
-      <div class="btn-row mt-3">
-        <button type="button" class="cancel" onclick="window.location.href='/admin/products'">Cancel</button>
-        <button type="submit" class="add">Add Product</button>
-      </div>
-
-    </form>
+<button 
+  type="submit" 
+  class="btn btn-success px-4 py-2 fw-bold rounded-3 mt-5">
+  Add Product
+</button>
+<button 
+  type="button" 
+  class="btn btn-outline-dark px-4 py-2 rounded-3 mt-5"
+  onclick="window.location.href='/admin/products'">
+  Cancel
+</button>
+<div id="cropModal" class="modal">
+  <div class="modal-content">
+    <img id="cropImage">
+    <br>
+    <button id="cropBtn">Crop & Save</button>
+    <button id="closeModal">Cancel</button>
   </div>
 </div>
+</form>
+</div>
+</div>
 
-<!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/cropperjs@1.5.13/dist/cropper.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
 <script>
 let cropper;
 let croppedFiles = [];
 
-const chooseBtn = document.getElementById("chooseBtn");
 const fileInput = document.getElementById("imageInput");
 const preview = document.getElementById("preview");
 const cropModal = document.getElementById("cropModal");
@@ -140,85 +141,118 @@ const cropImage = document.getElementById("cropImage");
 const cropBtn = document.getElementById("cropBtn");
 const closeModal = document.getElementById("closeModal");
 
-chooseBtn.addEventListener("click", () => fileInput.click());
+document.getElementById("chooseBtn").onclick = () => fileInput.click();
 
+// 👉 Select image → open crop modal
 fileInput.addEventListener("change", (e) => {
-    if (!e.target.files.length) return;
-    const file = e.target.files[0];
+    const file = e.target.files[0]; // only one at a time
+
+    if (!file) return;
+
     const reader = new FileReader();
-    reader.onload = () => {
+
+    reader.onload = function () {
         cropImage.src = reader.result;
         cropModal.style.display = "flex";
 
-        if(cropper) cropper.destroy();
-        cropper = new Cropper(cropImage, { aspectRatio: 1, viewMode: 2 });
+        if (cropper) cropper.destroy();
+
+        cropper = new Cropper(cropImage, {
+            aspectRatio: 1,
+            viewMode: 1
+        });
     };
+
     reader.readAsDataURL(file);
 });
 
+// 👉 Crop & save
 cropBtn.addEventListener("click", () => {
-    if(!cropper) return;
-    const canvas = cropper.getCroppedCanvas({ width: 500, height: 500 });
+    if (!cropper) return;
+
+    const canvas = cropper.getCroppedCanvas({
+        width: 500,
+        height: 500
+    });
+
     canvas.toBlob((blob) => {
-        const file = new File([blob], Date.now() + ".jpg", { type: "image/jpeg" });
+        const file = new File([blob], Date.now() + ".jpg", {
+            type: "image/jpeg"
+        });
+
         croppedFiles.push(file);
 
+        // update input files
         const dataTransfer = new DataTransfer();
         croppedFiles.forEach(f => dataTransfer.items.add(f));
         fileInput.files = dataTransfer.files;
 
+        // preview
         const img = document.createElement("img");
         img.src = URL.createObjectURL(file);
         preview.appendChild(img);
 
         cropModal.style.display = "none";
         cropper.destroy();
-    }, "image/jpeg");
+    });
 });
 
+// 👉 close modal
 closeModal.addEventListener("click", () => {
     cropModal.style.display = "none";
-    if(cropper) cropper.destroy();
+    if (cropper) cropper.destroy();
+});
+document.querySelector(".product-form").addEventListener("submit", function (e) {
+
+let isValid = true;
+
+const fields = [
+"name","price","description","category",
+"brand","size","quantity","color"
+];
+
+// clear errors
+document.querySelectorAll(".error-msg").forEach(el => el.textContent = "");
+document.querySelectorAll("input,textarea,select").forEach(el => el.classList.remove("error"));
+
+fields.forEach(name => {
+const input = this[name];
+const value = input.value.trim();
+const errorEl = input.parentElement.querySelector(".error-msg");
+
+if (!value) {
+errorEl.textContent = "All fields are required";
+input.classList.add("error");
+isValid = false;
+}
 });
 
-// Form Validation
-document.querySelector(".product-form").addEventListener("submit", function(e) {
-    const price = Number(this.price.value);
-    const offer = Number(this.offerPrice.value);
+// offer price check
+const price = Number(this.price.value);
+const offer = Number(this.offerPrice.value);
 
-    // Price validation
-    if (!price || price <= 0) {
-        e.preventDefault();
-        Swal.fire({
-            icon: "error",
-            title: "Invalid Price",
-            text: "Price must be greater than 0"
-        });
-        return;
-    }
+if (offer && offer >= price) {
+const errorEl = this.offerPrice.parentElement.querySelector(".error-msg");
+errorEl.textContent = "Offer price must be less than price";
+this.offerPrice.classList.add("error");
+isValid = false;
+}
 
-    // Offer price cannot be greater than price
-    if (offer > price) {
-        e.preventDefault();
-        Swal.fire({
-            icon: "error",
-            title: "Invalid Offer Price",
-            text: "Offer price cannot be greater than regular price"
-        });
-        return;
-    }
+// image check
+if (croppedFiles.length < 3){
+ Swal.fire({
+        icon: "warning",
+        title: "Images Required",
+        text: "Please upload at least 3 product images",
+        confirmButtonColor: "#d14d4d"
+    });
+isValid = false;
+}
 
-    // ✅ New check: require minimum 3 images
-    if (!fileInput.files || fileInput.files.length < 3) {
-        e.preventDefault();
-        Swal.fire({
-            icon: "error",
-            title: "Upload Error",
-            text: "Please upload at least 3 images for the product."
-        });
-        return;
-    }
+if (!isValid) e.preventDefault();
+
 });
 </script>
+
 </body>
 </html>

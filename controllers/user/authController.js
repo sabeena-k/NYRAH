@@ -46,40 +46,87 @@ const loadSignIn = async (req, res) => {
     res.redirect('pageNotFound')
    }
 };
-const SignIn=async(req,res)=>{
-    try{
-        const {email,password}=req.body
-        
-        const findUser=await findUserByEmail(email);
-       
-        if(!findUser){
-            return res.render('user/signin',{message:'User not found'})
+const SignIn = async (req, res) => {
+  try {
+    const { email, password } = req.body;
 
-        }
-        if(findUser.isBlocked){
-            return res.render('user/signin',{message:'User is blocked by admin'})
-        }
-        const passwordMatch=await bcrypt.compare(password,findUser.password)
-        if(!passwordMatch){
-            return res.render('user/signin',{message:'incorrect Password'})
-        }
-         req.session.regenerate(err => {
-      if (err) {
-        console.error(err);
-        return res.render('user/signin', { message: 'Session error' });
-      }
+    const findUser = await findUserByEmail(email);
+    if (!findUser) return res.render('user/signin', { message: 'User not found' });
+    if (findUser.isBlocked) return res.render('user/signin', { message: 'User is blocked by admin' });
 
-      req.session.user = findUser._id;
+    const passwordMatch = await bcrypt.compare(password, findUser.password);
+    if (!passwordMatch) return res.render('user/signin', { message: 'Incorrect password' });
+
+    // ✅ Remove regenerate() — just set the session directly
+    req.session.user = {
+      id: findUser._id,
+      role: "user"
+    };
+
+    req.session.save((err) => {
+      if (err) return res.render('user/signin', { message: 'Session error' });
       res.redirect('/home');
     });
 
-    }catch(error){
-console.error('login error',error)
-res.render('user/signin',{message:'login failed . Please try again later'})
+  } catch (error) {
+    console.error('Login error', error);
+    res.render('user/signin', { message: 'Login failed. Please try again later' });
+  }
+};
+const googleCallback = async (req, res) => {
+  try {
+    const user = req.user;
+
+    if (!user) {
+      return res.redirect('/signin');
     }
+
+    if (user.isBlocked) {
+      req.logout(err => {
+        if (err) console.error(err);
+      });
+
+      return res.send(`
+        <script>
+          window.opener.postMessage('google-login-blocked', window.origin);
+          window.close();
+        </script>
+      `);
+    }
+
+    // 🔥 IMPORTANT FIX
+    req.login(user, (err) => {
+      if (err) {
+        console.error(err);
+        return res.redirect('/signin');
+      }
+
+     if (user.role === "admin") {
+  req.session.admin = {
+    id: user._id,
+    role: "admin"
+  };
+} else {
+  req.session.user = {
+    id: user._id,
+    role: "user"
+  };
 }
+      req.session.save(() => {
+        res.send(`
+          <script>
+            window.opener.postMessage('google-login-success', window.origin);
+            window.close();
+          </script>
+        `);
+      });
+    });
 
-
+  } catch (error) {
+    console.error('Google login error:', error);
+    res.redirect('/signin');
+  }
+};
 const loadSignUp = async (req, res) => {
     try{
         if(req.session.user){  
@@ -249,16 +296,13 @@ const handleLogout = (req, res) => {
     if (!req.session.user) return res.redirect('/signin');
   res.render('user/logout');
 };
-const logout=async(req,res)=>{
-   req.session.destroy(err => {
-    if (err) {
-      console.error(err);
-      return res.redirect('/home');
-    }
-    res.clearCookie('connect.sid'); 
-    res.redirect('/signin'); 
-  });
+const userLogout=async(req,res)=>{
+  if (req.session.user) {
+    req.session.user = null;
+  }
+  res.redirect('/signin');
 };
+
 const loadForgotPassword = async (req, res) => {
     try {
         res.render("user/forgot-password", { error: null });
@@ -417,7 +461,8 @@ export {
     verifyOtp,
     resendOtp,
     SignIn,
-    handleLogout,logout,sendOtp,
+    googleCallback,
+    handleLogout,userLogout,sendOtp,
     passverifyOtp,resendForgotOtp,resetPassword,
     loadForgotPassword,loadOtpPage,loadResetPasswordPage
 };
